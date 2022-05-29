@@ -558,7 +558,13 @@ Note that these defaults can be manually overridden.
 
 ### Starting values
 
-The algorithm needs starting values for each parameter it wants to estimate. If it were provided a single starting value for each parameter, the  EM optimizer would be at risk of finding a local optimum instead of the global optimum. In other words, it would converge on a suboptimal solution and the resulting parameter estimates would be biased. To prevent this, we should give the algorithm a sufficient set of random starting values for each parameter in order to maximize our chances of finding the deepest valley that is the global optimum (Geiser, 2013).
+The algorithm needs starting values for each parameter it wants to estimate. 
+If it were provided a single starting value for each parameter, 
+the EM optimizer would be at risk of finding a local optimum instead of the global optimum. 
+In other words, it would converge on a suboptimal solution and the resulting parameter estimates 
+would be biased. To prevent this, we should give the algorithm a sufficient set of random starting values 
+for each parameter in order to maximize our chances of 
+finding the deepest valley that is the global optimum (Geiser, 2013).
 
 [@nylund-gibsonTenFrequentlyAsked2018; ]
 
