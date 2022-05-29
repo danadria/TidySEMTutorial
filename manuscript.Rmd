@@ -55,13 +55,11 @@ library("papaja")
 library(worcs)
 ```
 
-Latent class analysis has become quite popular across scientific fields,
-and under a number of different names.
+Latent class analysis has become quite popular across scientific fields,  and under a number of different names.
 <!-- Vermunt and Magidson (2004) defined it more generally as virtually any statistical model where “some of the parameters … differ across unobserved subgroups” (Vermunt, J.K. and Magidson, J., 2004. Latent class analysis. In: M.S. Lewis-Beck, A. Bryman, and T.F. Liao (eds.), The Sage Encyclopedia of Social Sciences Research Methods, 549-553. Thousand Oaks, CA: Sage Publications). -->
 The purpose of this technique is to estimate unobserved group membership
 based on a parametric model of one or more observed indicators of group membership.
-Despite the popularity of the method, there is a noted absence of 
-guidelines for estimating and reporting latent class analyses [].
+Despite the popularity of the method, there is a noted absence of guidelines for estimating and reporting latent class analyses [].
 <!-- Prior work resulted in the "GRoLTS-Checklist"; reporting guidelines for a specific subcategory of latent class analysis known as latent growth models. vermuntj.k.LatentClassAnalysis2004-->
 <!-- General reporting guidelines for latent class analysis are still lacking, however. -->
 This complicates manuscript review and assessment of the quality of published studies,
@@ -465,41 +463,6 @@ and that alternative
 
 	* Consider alternative parameterizations; e.g., free variances/covariances 
 	* See Nylund
-1. Starting values [@nylund-gibsonTenFrequentlyAsked2018; ]
-    In many circumstances and especially in a cluster analysis setting, the mixture component means are expected to be different. Thus, a reasonable and largely employed way of initiating EM consists of starting from the solution of a K-means type algorithm. [@biernackiChoosingStartingValues2003]
-1. Algorithm
-    EM is a local optimizer. Imagine we are estimating two parameters, e.g. the class-specific means $\mu_c$ on a continuous indicator (ignoring the variance for now). The EM algorithm will attempt to find a combination of values for these two parameters that maximizes the likelihood ($LL$) of all observed data. In practice, instead of maximizing $LL$, often $-2*LL$ is minimized, as this offers computational advantages. We can think of this optimization problem as a three-dimensional landscape: The X and Y dimensions are determined by the class-specific means, so $X = \mu_1$ and $Y = \mu_2$ - and the Z-dimension is determined by $Z = -2*LL$. The optimizer must find the deepest "valley" in this landscape, which reflects the combination of $\mu_1$ and $\mu_2$ that maximizes the likelihood of the data.
-The EM optimizer behaves somewhat like a marble, dropped in this landscape.
-It is dropped at some random point in space, and will roll into the nearest valley.
-The problem is that, once EM rolls into a valley, it will settle on the bottom of that valley (this is known as "convergence").
-It cannot climb out again.
-Thus, if their are multiple valleys, the risk is that the optimizer gets stuck in a shallower valley (a "local optimum"), and never discovers the deepest valley (the "global optimum", or best solution).
-One solution to this problem is to drop many marbles at random places, compare their final $-2*LL$ values,
-choose the solution with the lowest $-2*LL$, and make sure that several marbles replicated this solution.
-This is the "random starts" approach.
-
-One problem with the random starts approach is that it is computationally expensive to run this many replications.
-Moreover, because the algorithm begins with random starting values,
-many of the marbles are likely to be very far away from a "good enough" solution.
-Two innovations may improve the estimation procedure.
-The first is that, instead of picking random starting values, a "reasonable solution" may be used for the starting values.
-For example, if we assume that the different classes are likely to have different mean values on the indicators, then the K-means clustering algorithm can be used to determine these cluster centroids.
-We can compute the expected values of all model parameters by treating the K-means solution as a known class solution, and use these as starting values for a mixture model.
-One remaining concern is that this approach may result in starting values close to a local optimum,
-and that the EM algorithm will thus never find the global optimum.
-A second innovation addresses this concern.
-Instead of using EM, it is possible to use an optimizer that can climb out of a valley.
-Simulated annealing iteratively considers some "destination" in the landscape, and compares its likelihood to the current one. If the destination likelihood is higher, the estimator moves there.
-If the destination likelihood is *lower*, the estimator still moves there occasionally, based on probability.
-This latter property allows it to escape local optima.
-
-By default, `tidySEM` eploys this solution of deriving starting values using K-means clustering,
-and identifying the global optimum solution using simulated annealing.
-Once a solution has been found,
-simulated annealing is followed up with a short run of the EM algorithm,
-as EM inherently produces an asymptotic covariance matrix for the parameters that can be used to compute standard errors.
-Note that these defaults can be manually overridden.
-
 
 
 ## Software
@@ -559,9 +522,47 @@ fully-reproducible analyses and
 
 ## Best practices in estimation
 
+### Algorithm
+
+    Mixture model parameters are estimated through maximum likelihood (ML) estimation with expectation-maximization (EM) as a local optimizer. Imagine we are estimating two parameters, e.g. the class-specific means $\mu_c$ on a continuous indicator (ignoring the variance for now). The EM algorithm will attempt to find a combination of values for these two parameters that maximizes the likelihood ($LL$) of all observed data. In practice, instead of maximizing $LL$, often $-2*LL$ is minimized, as this offers computational advantages. We can think of this optimization problem as a three-dimensional landscape: The X and Y dimensions are determined by the class-specific means, so $X = \mu_1$ and $Y = \mu_2$ - and the Z-dimension is determined by $Z = -2*LL$. The optimizer must find the deepest "valley" in this landscape, which reflects the combination of $\mu_1$ and $\mu_2$ that maximizes the likelihood of the data.
+The EM optimizer behaves somewhat like a marble, dropped in this landscape.
+It is dropped at some random point in space, and will roll into the nearest valley.
+The problem is that, once EM rolls into a valley, it will settle on the bottom of that valley (this is known as "convergence").
+It cannot climb out again.
+Thus, if their are multiple valleys, the risk is that the optimizer gets stuck in a shallower valley (a "local optimum"), and never discovers the deepest valley (the "global optimum", or best solution).
+One solution to this problem is to drop many marbles at random places, compare their final $-2*LL$ values,
+choose the solution with the lowest $-2*LL$, and make sure that several marbles replicated this solution.
+This is the "random starts" approach.
+
+One problem with the random starts approach is that it is computationally expensive to run this many replications.
+Moreover, because the algorithm begins with random starting values,
+many of the marbles are likely to be very far away from a "good enough" solution.
+Two innovations may improve the estimation procedure.
+The first is that, instead of picking random starting values, a "reasonable solution" may be used for the starting values.
+For example, if we assume that the different classes are likely to have different mean values on the indicators, then the K-means clustering algorithm can be used to determine these cluster centroids.
+We can compute the expected values of all model parameters by treating the K-means solution as a known class solution, and use these as starting values for a mixture model.
+One remaining concern is that this approach may result in starting values close to a local optimum,
+and that the EM algorithm will thus never find the global optimum.
+A second innovation addresses this concern.
+Instead of using EM, it is possible to use an optimizer that can climb out of a valley.
+Simulated annealing iteratively considers some "destination" in the landscape, and compares its likelihood to the current one. If the destination likelihood is higher, the estimator moves there.
+If the destination likelihood is *lower*, the estimator still moves there occasionally, based on probability.
+This latter property allows it to escape local optima.
+
+By default, `tidySEM` eploys this solution of deriving starting values using K-means clustering,
+and identifying the global optimum solution using simulated annealing.
+Once a solution has been found,
+simulated annealing is followed up with a short run of the EM algorithm,
+as EM inherently produces an asymptotic covariance matrix for the parameters that can be used to compute standard errors.
+Note that these defaults can be manually overridden.
+
 ### Starting values
 
-### Algorithm
+The algorithm needs starting values for each parameter it wants to estimate. If it were provided a single starting value for each parameter, the  EM optimizer would be at risk of finding a local optimum instead of the global optimum. In other words, it would converge on a suboptimal solution and the resulting parameter estimates would be biased. To prevent this, we should give the algorithm a sufficient set of random starting values for each parameter in order to maximize our chances of finding the deepest valley that is the global optimum (Geiser, 2013).
+
+[@nylund-gibsonTenFrequentlyAsked2018; ]
+
+    In many circumstances and especially in a cluster analysis setting, the mixture component means are expected to be different. Thus, a reasonable and largely employed way of initiating EM consists of starting from the solution of a K-means type algorithm. [@biernackiChoosingStartingValues2003]
 
 ### Label switching
 
