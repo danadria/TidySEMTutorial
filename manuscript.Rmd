@@ -1,0 +1,1172 @@
+---
+title             : "Best Practices in Mixture Modeling using Free Open Source Software"
+shorttitle        : "BEST PRACTICES MIXTURE MODELING"
+
+author: 
+  - name          : "Caspar J. van Lissa"
+    affiliation   : "1,2"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Padualaan 14, 3584CH Utrecht, The Netherlands"
+    email         : "c.j.vanlissa@gmail.com"
+
+affiliation:
+  - id            : "1"
+    institution   : "Utrecht University, Methodology & Statistics"
+  - id            : "2"
+    institution   : "Open Science Community Utrecht"
+
+author_note: |
+  Methodology & Statistics
+  Padualaan 14
+  3582CH Utrecht, The Netherlands
+
+abstract: |
+  Latent class analysis is a popular technique for identifying groups in data based
+  on a parametric model. Examples of this technique are known as mixture models, latent profile
+  analysis, latent class analysis, growth mixture modeling, and latent class
+  growth analysis. Despite the popularity of this technique, there is limited
+  guidance with respect to best practices in estimating and reporting mixture
+  models. Moreover, although user-friendly interfaces for advanced mixture
+  modeling have long been available in commercial software packages, open
+  source alternatives have remained somewhat inaccessible. This tutorial
+  describes best practices for the estimation and reporting of latent class analysis,
+  using free and open source software in R. To this end, this tutorial
+  introduces new functionality for estimating and reporting mixture mixture
+  models in the `tidySEM` R-package. These functions rely on estimation using
+  the OpenMx R-package.
+
+keywords          : "keywords"
+wordcount         : "X"
+
+figsintext        : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+lineno            : yes
+mask              : no
+
+class             : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r load_packages, include = FALSE}
+library("papaja")
+#bibliography      : ["r-references.bib"]
+library(worcs)
+```
+
+Latent class analysis has become quite popular across scientific fields,
+and under a number of different names.
+<!-- Vermunt and Magidson (2004) defined it more generally as virtually any statistical model where “some of the parameters … differ across unobserved subgroups” (Vermunt, J.K. and Magidson, J., 2004. Latent class analysis. In: M.S. Lewis-Beck, A. Bryman, and T.F. Liao (eds.), The Sage Encyclopedia of Social Sciences Research Methods, 549-553. Thousand Oaks, CA: Sage Publications). -->
+The purpose of this technique is to estimate unobserved group membership
+based on a parametric model of one or more observed indicators of group membership.
+Despite the popularity of the method, there is a noted absence of 
+guidelines for estimating and reporting latent class analyses [].
+<!-- Prior work resulted in the "GRoLTS-Checklist"; reporting guidelines for a specific subcategory of latent class analysis known as latent growth models. vermuntj.k.LatentClassAnalysis2004-->
+<!-- General reporting guidelines for latent class analysis are still lacking, however. -->
+This complicates manuscript review and assessment of the quality of published studies,
+and introduces a risk of misapplications of the technique.
+The present paper seeks to address this gap in the literature by suggesting updated guidelines for estimation and reporting on latent class analysis, based on best practice.
+
+Throughout this paper, examples make use of free, open source software for latent class analysis in R. 
+As the open science movement is gaining momentum,
+researchers are becoming increasingly aware
+how important it is that analyses can be reproduced and audited.
+In line with open science principles, one of the suggested reporting standards relates to reproducible code.
+In this context, it is important to note that user-friendly methods for estimating latent class analyses have predominantly been available in commercial software packages (e.g., *Mplus* and *Latent GOLD*).
+A potential downside of commercial software is that it restricts the ability to reproduce analyses to license holders,
+and prevents auditing research because the underlying source code is proprietary.
+To overcome these limitations, the present paper introduces new user-friendly functions in the `tidySEM` R-package that can be used to estimate a wide range of latent class analysis models using the free, open-source R-package `OpenMx`.
+The reporting guidelines described in this paper are adopted in `tidySEM` by default.
+The `tidySEM` R-package thus makes advanced mixture modeling based on best practices widely accessible,
+and facilitates the adoption of the estimation and reporting guidelines described in this paper.
+
+<!-- In practice, this technique is often used to  -->
+
+
+## Defining latent class analysis
+
+Latent class analysis can be understood as a method for estimating unobserved groups
+based on a parametric model of observed indicators of group membership.
+The concept of latent class analysis can be understood in different ways.
+Generally speaking, it can be said that a mixture model assumes that the study population
+is composed of $K$ subpopulations, or classes.
+It further assumes that the observed data are a mixture of data generated by class-specific models.
+The simplest univariate "model" is a normal distribution, which can be described with two parameters:
+the mean and the variance.
+Commonly, the same model is estimated accross all classes, but with different parameters for each class (i.e., class-specific means and variances).
+Mixture modeling then estimates both the parameters for each class, and the probability for each that an individual belongs to each class.
+
+As an illustrative example, imagine that a detective wants to know if it would be
+possible to use mixture modeling to identify the sex of a suspect,
+based on footprints found at the crime scene.
+To test the feasibility of this approach,
+the detective records the shoe sizes and sex of 100 volunteers.
+The resulting observed data look like this:
+
+```{r shoedens, echo = FALSE, fig.cap="Kernel density plot of shoe sizes."}
+library(tidySEM)
+library(ggplot2)
+set.seed(1)
+n = 100
+C <- sample(c("Man", "Woman"), n, replace = TRUE)
+means <- c(Man = 9, Woman = 7)
+X <- rnorm(n, mean = means[C], sd = 1)
+X <- round(X*2)/2
+obsparam <- tapply(X, C, mean)
+est <- mx_profiles(data.frame(X), 2)
+estparam <- table_results(est, c("label", "est", "matrix"))
+estparam <- estparam$est[estparam$matrix == "M"]
+props <- class_prob(est, "individual")$individual
+props <- apply(props, 1, which.max)
+
+ggplot(data.frame(Shoesize = X), aes(x = Shoesize)) + geom_density() + theme_bw()
+```
+
+The distribution is evidently bimodal, which bodes well for the intended mixture model.
+In this case, the number of classes is known a-priori.
+When estimating a two-class mixture model, the detective observes that the model estimates
+the mean shoesize of the two groups are equal to `r report(estparam[1], equals = FALSE)` and  `r report(estparam[2], equals = FALSE)`,
+which is close to the true means of the two groups, namely `r report(obsparam[1], equals = FALSE)` and  `r report(obsparam[2], equals = FALSE)`.
+When tabulating estimated group membership against observed (known) group membership, it can be seen that women are classified with a high degree of accuracy, but men are not:
+
+```{r tabshoe, results="asis"}
+library(kableExtra)
+tab <- table(C, props)
+tab <- data.frame(Observed = rownames(tab), as.data.frame.array(tab))
+names(tab)[2:3] <- c("Class 1", "Class 2")
+rownames(tab) <- NULL
+kbl(tab, caption = "Observed group membership by estimated class membership.")
+```
+
+One way to is to conceptualize latent class analysis is by analogy to a measurement model in structural equation modeling.
+A mixture model is like confirmatory factor analysis, except that the continuous latent variable is substituted with a categorical latent variable.
+One difference between the two techniques is that factor analysis can be considered as a way to group observed *variables* into latent constructs, with factor loadings indicating which items belong are most indicative of a construct.
+By contrast, mixture modeling groups *individuals* into classes [see @nylund-gibsonTenFrequentlyAsked2018].
+In line with this distinction, latent class analysis is sometimes referred to as a "person-centered" technique, and factor analysis as a "variable-centered" technique.
+
+When the focus is on the model parameters in each group,
+then latent class analysis can be thought of as similar to a multi-group structural equation model.
+The main distinction is that group membership is not known a-priori,
+but is instead estimated - with measurement error - based on the data.
+Whereas in a multigroup model, the data are split by group and treated as independent samples,
+in a mixture model, all cases contribute to the estimation of all parameters in all groups.
+The relative contribution of each case to the parameters of each group is determined by that case's posterior probability of belonging to that group.
+
+When the focus is on each individual's estimated class membership,
+latent class analysis can be thought of as a type of clustering algorithm.
+In line with this perspective, mixture modeling is sometimes described as "model-based
+clustering" (Hennig, Meila, Murtagh, & Rocci, 2015; Scrucca, Fop, Murphy, &
+Raftery, 2017).
+Many clustering algorithms apply some recursive splitting algorithm to the data.
+By contrast "model-based" clustering refers to the fact that latent class analysis 
+estimates cluster membership based on a parametric model.
+Specifically, the posterior class probability that an individual belongs to a latent class
+can be computed from the likelihood of that individual's observed data under given the class-specific model.
+
+Finally, in the context of machine learning, latent class analysis can be considered as an
+*unsupervised classification* problem [@figueiredoUnsupervisedLearningFinite2002].
+The term *unsupervised* refers to the fact that the outcome variable, true class membership,
+is not known, and the term *classification* refers to the fact that the algorithm is predicting a categorical outcome (class membership).
+
+## A taxonomy of latent class analyses
+
+In this paper, we use the term latent class analysis to refer to techniques that estimate latent class membership based on a parametric model of observed indicators.
+From a historical perspective, the term latent class analysis was initially conceived to refer to analyses with categorical (binary) indicators [@vermuntj.k.LatentClassAnalysis2004].
+Nowadays, there are a number of related techniques, known by distinct names, that serve a similar purpose.
+The term "latent class analysis" seems most appropriate as an umbrella term for this broader class of models,
+as it only refers to the purpose of the analysis, and does not imply restrictions to the model used, or the level of measurement of the indicators.
+Given the abundance of terms in use for closely related classes of models, we will provide a rudimentary taxonomy of latent class analyses.
+
+One common type of latent class analyses is the *finite Gaussian mixture model*;
+a univariate analysis where the observed distribution of a single variable is assumed to result from a mixture of a known number of Gaussian (normal) distributions.
+The parameters of a finite Gaussian mixture model are the means and variances of these underlying normal distributions.
+The analysis of shoe sizes presented earlier is a canonical example of this type of analysis.
+In the multivatiate case, with more than one indicator variable,
+the parameters of a mixture model are the means, variances, and covariances between the indicators (which can be standardized to obtain correlations).
+These parameters can be estimated freely, or constrained, across classes.
+
+The technique known as *latent profile analysis (LPA)* is a special case of the mixture model,
+which assumes conditional independence of the indicators.
+Conditional independence means that, 
+after class membership is accounted for,
+the covariances/correlations between indicators are assumed to be zero.
+This can be conceived of as a restricted mixture model with covariances fixed to zero.
+In some cases, such constraints will be inappropriate;
+for example, when the cohesion between indicators is expected to differ between classes.
+As an example, a mixture model analysis of ocean plastic particles found two classes of particles based on length and width:
+A class of smaller particles with a high correlation between length and width, meaning that these particles were approximately round or square in shape, and a class of larger particles with a low correlation between length and width, meaning that these particles were heterogenous in shape.
+From a theoretical perspective, this makes sense, because the smaller particles have been ground down to a more uniform shape by the elements.
+
+It is also possible to estimate a mixture model based on latent indicators.
+This means that, within each class, one or more continuous latent variables are estimated based on the observed indicators.
+Categorical latent variable membership is then estimated based on these continuous latent variables.
+A common application of this approach is in longitudinal research, where the indicators reflect one construct assessed at different time points.
+Examples of this approach include *growth mixture models* (GMM) and *latent class growth analyses* (LCGA).
+These techniques estimate a latent growth model to describe individual trajectories over time.
+The growth mixture model is a latent class model where the parameters that indicate class membership 
+are the intercepts and variances (and typically covariances) of the latent growth variables, e.g., a latent intercept and slope.
+This technique assumes that individuals within a class can have heterogenous trajectories.
+If the variance of the growth parameters is fixed to zero, it is known as a latent class growth analysis.
+This latter approach assumes that all individuals within a class share the same identical trajectory,
+and that any variance in the indicators not explained by the class-specific latent trajectories is due to residual error variance.
+
+When a latent class analysis relies on categorical indicators,
+typically of a binary or ordinal measurement level,
+it has a different parameterization than a mixture model.
+One common assumption is that each categorical variable reflects an underlying standard normal distribution.
+The parameters in such a model are then "thresholds", corresponding to the quantiles of a standard normal distribution (with $N(\mu = 0, \sigma = 1)$).
+These thresholds are estimated based on the proportion of individuals in each of the response categories of the indicator variable.
+For example, a binary indicator has a single threshold that distinguishes the two response categories.
+If responses are distributed 50/50, then the corresponding threshold would be  $t_1 = 0.00$.
+If the responses are distributed 60/40, then the resulting threshold would be $t_1 = 0.25$.
+This paper will primarily focus on mixture models and special cases thereof,
+although most of the suggested guidelines are applicable to latent class analyses.
+
+<!-- f a multivariate mixture estimation is constrained so that measures must be uncorrelated within each distribution it is termed latent profile analysis. Modified to handle discrete data, this constrained analysis is known as LCA. Discrete latent trait models further constrain the classes to form from segments of a single dimension: essentially allocating members to classes on that dimension: an example would be assigning cases to social classes on a dimension of ability or merit. -->
+
+<!-- ecause LPA is model-based, a number of different model parameterizations can be -->
+<!-- estimated. These models differ in terms of whether--and how--parameters are -->
+<!-- estimated across the profiles. These parameters are the means for the different -->
+<!-- profiles, which, in this approach, always are estimated freely across the -->
+<!-- profiles; the variances for the variables used to create the profiles, which can -->
+<!-- be estimated freely or can be estimated to be the same, or equal, across -->
+<!-- profiles; and the covariances of the variables used to create the profiles, -->
+<!-- which can be freely-estimated, estimated to be equal, or fixed to be zero. -->
+
+<!-- In general, as more parameters are estimated (i.e., those that are fixed to zero -->
+<!-- are estimated as being equal across profiles; or those estimated as being equal -->
+<!-- across profiles are freely-estimated across them), the model becomes more -->
+<!-- complex; the model may fit better, but also be overfit, meaning that the -->
+<!-- profiles identified may be challenging to replicate with another, separate data -->
+<!-- set. Even still, flexibility in terms of which models can be estimated also has -->
+<!-- affordances. For example, the varying means, equal variances, and covariances -->
+<!-- fixed to 0. A researcher might choose this model specification if she wants to -->
+<!-- model the variables to be used to create profiles that are independent. This -->
+<!-- model is very simple, as no covariances are estimated and the variances are -->
+<!-- estimated to be the same across profiles. As we estimate more parameters (and -->
+<!-- decrease the degrees of freedom), we are more likely to fit the data, but less -->
+<!-- likely to be able to replicate the model with a second set of data. As we -->
+<!-- progress toward more complex models (with increasingly complex -->
+<!-- parameterization), then we are more likely to fit the data better. -->
+<!-- In all, this flexibility associated with LPA also has a more pragmatic cost. It -->
+<!-- can be very difficult to efficiently---and reproducibly---estimate and compare a -->
+<!-- number of models. This cost means that analysts may focus on a subset of models. -->
+<!-- It may also mean that unintentional errors are introduced through copying and -->
+<!-- pasting the output of model estimations. Part of why we developed tidyLPA was to -->
+<!-- make the model estimation process more efficient and more reproducible. As we -->
+<!-- describe later, we do this using R, which has a number of benefits, including -->
+<!-- being open-source, powerful (in terms of pre-processing and using the output of -->
+<!-- models), and increasingly widely-used in the psychological sciences. We also -->
+<!-- provide an interface to perhaps the most widely-used software for LPA, MPlus. In -->
+<!-- this way, tidyLPA can both allow researchers to estimate models they already -->
+<!-- estimate using MPlus more efficiently and reproducibly, and, for those without -->
+<!-- access to this software, to do so entirely using R and the open-source R package -->
+<!-- mclust. -->
+
+## Use cases for latent class analysis
+
+There are several use cases for which latent class analyses are suitable.
+One example is to test a theory that postulates the existence of a categorical latent variable.
+For example, *identity status theory* posits that, at any given point in time, adolescents reside in one of four identity statuses.
+Mixture modeling can be used to identify these four statuses based on observed indicators (e.g., self-reported identity exploration and commitment).
+If results indicate that the data are better described by a different number of classes,
+or that the four-class solution does not correspond to the predicted pattern of responses on the indicators, then the theory may be called into question.
+
+Another use case is unsupervised learning;
+when the goal is to restore unobserved class membership based on observed indicators,
+or to classify individuals.
+For example, a mixture model can be used as a diagnostic aid when several clinical indicators can be used to distinguish between a fixed number of physical [@baughmanMixtureModelAnalysis2006] or mental [@wuAbuseDependencePrescription2011] health problems.
+The example of shoe size is a rudimentary illustration of this type of application.
+
+
+<!-- Inductively identify number of latent classes -->
+<!-- Classify individuals -->
+<!-- Identify items (observed characteristics) that -->
+<!-- indicate these classes well -->
+<!-- Predict class membership from covariates -->
+<!-- Predict outcomes from class membership -->
+<!-- Dimension reduction -->
+<!-- Violation of assumptions -->
+
+
+<!-- In medical and psychological science, LPA can be useful when -->
+<!-- considerable between-subject heterogeneity exists in scores on a range of variables and when -->
+<!-- this variation cannot be explained by known, manifest variables (e.g., Wolfe 1970; Sterba -->
+<!-- 2013). Here, LPA can help to identify or approximate possibly meaningful sub-grouping of -->
+<!-- subjects that may help to better understand sample heterogeneity (Sterba 2013). -->
+<!-- Generally, LPA works under the assumption that sample (residual) variance can be reduced -->
+<!-- by assuming a categorical latent variable that effectively subdivides the sample into >=2 -->
+<!-- subgroups that are more homogeneous in terms of their patterns of variable means and -->
+<!-- (co)variances. In case an LPA model is found to fit a dataset well, it is often the case that -->
+<!-- subjects in each class resemble each other relatively well in terms of their scores on the input -->
+<!-- variables. Depending on the model configuration, the identified classes can show different -->
+<!-- class-specific patterns of means and class-specific or class-varying variances. -->
+
+
+<!--                                                1 -->
+<!-- A -->
+<!-- downside is that these models are more complex (much more parameters to be estimated). -->
+<!-- Using criteria, such as the Bayesian Information criterion (BIC) helps to find a model that -->
+<!-- strikes a good balance between model-fit and model-complexity. When doing an LPA, most -->
+<!-- applied researchers will usually be most interested in the differences and/or overlap between -->
+<!-- the classes’ specific patterns of parameter estimates. These can be used to characterize the -->
+<!-- classes and, possibly, provide clues about underlying mechanisms (Sterba 2013). -->
+
+<!-- This tutorial -->
+<!-- LPA is less widely used than other latent variable models and, possibly due to that, has -->
+<!-- long been only available in specialized software packages such as Mplus. Luckily, ongoing -->
+<!-- developments in many different scientific fields (e.g., ecology, econometrics) have yielded a -->
+<!-- number of packages that also allow users to conduct LPA in the open-source R-platform. -->
+<!-- However, the use of R does require experience and documentation of packages can be rather -->
+<!-- limited or technical, making it less easily accessible for applied researchers. Therefore, this -->
+<!-- tutorial is aimed to help applied researchers to get going with LPA in R, illustrating the use -->
+<!-- of several packages and, for reference, providing a comparison of the results obtained in R -->
+<!-- with results obtained with Mplus. -->
+
+# Best practices
+
+## In estimation
+
+The best practices in estimation, as outlined in Table \@ref(tab:checkest),
+are inspired by prior recommendations for best practices for estimating
+specific sub-types of latent class analyses,
+including latent class growth analysis [@schootGRoLTSChecklistGuidelinesReporting2017]
+and latent class analysis with ordinal indicators [e.g., @nylund-gibsonTenFrequentlyAsked2018].
+These were generalized to be more relevant to all types of latent class analyses,
+and updated to current best practices, as explained below.
+
+```{r checkest}
+tab_check <- data.frame(Item = c(
+  "Examine observed data",
+  "Handling missing data",
+  "Alternative model specifications",
+  "Starting values",
+  "Algorithm"
+))
+tab_check$`#` = paste0(1:length(tab_check$Item), ".")
+kbl(tab_check[, c("#", "Item")])
+```
+### Examine observed data
+
+Examining observed data is essential for any analysis,
+as it may reveal patterns and violations of assumptions that had not been considered prior to data collection.
+Pay special attention to level of measurement of the indicators.
+Indicators with an ordinal level of measurement are likely to violate the assumption of within-class normal distributions [see @vermuntKmeansMayPerform2011].
+Personal experience consulting on latent class analyses and moderating the `tidyLPA` Google group
+suggest that the mis-application of mixture models to ordinal (e.g., Likert-type) indicators is perhaps the most common source of user error.
+Whereas it has been argued that some parametric methods are robust when scales with 7+ indicators are treated as continuous [e.g., @normanLikertScalesLevels2010],
+this certainly does not imply that all methods are.
+It is certainly unlikely that such ordinal variables can be treated as a *mixture* of multiple normal distributions.
+The problem becomes eggregious when the number of classes estimated equals or exceeds the number of categories; in this case, each class-specific mean could describe a single response category, and a class-specific variance component would be nonsensical.
+In sum, Likert-type scales are rarely suitable for mixture modeling;
+a latent class analysis with ordinal indicators may be more appropriate.
+
+Extensive descriptive statistics (including the number of unique values, variance of categorical variables, and missingness; see next paragraph) can be obtained using the function `tidySEM::descriptives(data)`.
+Note, however, that sample-level descriptive statistics are of limited value when the goal of a study is to identify sub-samples using latent class analysis.
+Plots (density plots for continuous variables, and bar charts for categorical ones) may be more diagnostic.
+Note that density plots can also aid in the choice of the number of classes, as further explained in the section on visualization.
+Descriptive statistics and plots can be relegated to online supplements, provided that these are readily accessible [consider using a GitHub repository as a comprehensive public research archive, as explained in @vanlissaWORCSWorkflowOpen2020].
+
+### Missing data
+
+Previous work has emphasized the importance of examining the pattern of missing data and reporting how missingness was handled [@schootGRoLTSChecklistGuidelinesReporting2017].
+Three types of missingness have been distinguished in the literature [@rubinInferenceMissingData1976]:
+Missing completely at random (MCAR), which means that missingness is random;
+missing at random (MAR), which means that missingness is contingent on the *observed* data (and can thus be accounted for);
+and finally missing not at random (MNAR), which means that missingness is related to unobserved factors.
+It is possible to conduct a so-called "MCAR" test, 
+for example the non-parametric MCAR test [@jamshidianTestsHomoscedasticityNormality2010].
+But note that the name "MCAR test" is somewhat misleading,
+as the null-hypothesis of this test is that the data are not MAR,
+and a significant test statistic indicates that missingness is related to the observed data (MAR).
+A non-significant test statistic does not distinguish between MCAR or MNAR.
+As Little's classic MCAR test relies on the comparison of variances across groups with different patterns of missing data, it assumes normality [@littleTestMissingCompletely1988].
+This assumption is tenuous in the context of latent class analysis.
+A non-parametric MCAR test, as provided by Jamshidian and Jalal, may be more suitable [-@jamshidianTestsHomoscedasticityNormality2010].
+Unfortunately, this test was removed from the central R-repository CRAN due to lack of maintenance.
+For this tutorial, I have re-implemented it in the `mice` package as `mice::MCAR()`,
+with a fast backend in C++ and new printing and plotting methods. 
+
+While we concur that investigating missingness is due dilligence,
+it is important to emphasize that missingness is adequately handled by default in many software packages for latent class analyses, such as `OpenMx` (and e.g., Mplus).
+These packages use Full Information Maximum Likelihood (FIML) estimation,
+which makes use of all available information without imputing missing values.
+FIML is a best-practice solution for handling missing data; on par with multiple imputation [@leeComparisonFullInformation2021].
+FIML estimation assumes that missingness is either MCAR or MAR.
+Thus, one would typically proceed with FIML regardless of the outcome of an MCAR test.
+Although FIML does not, by default, handle missingness in exogenous variables - all indicator variables in latent class analysis are endogenous, so this is not a concern.
+
+Multiple imputation is less suitable to latent class analyses for two reasons.
+First, because latent class analyses are often computationally expensive,
+and conducting them on multiple imputed datasets may be unfeasible.
+Second, because there is no straightforward way to integrate latent class analysis results across multiple datasets.
+To conclude; our recommendation is to inspect missingness (e.g., using `mice::MCAR()`)
+and report the number of missings per variable (e.g., using `tidySEM::descriptives()`),
+before proceeding with FIML.
+One minor concern is that the K-means algorithm,
+which `tidySEM` uses for determining starting values,
+is *not* robust to missing values.
+When it fails, `tidySEM` automatically switches to hierarchical clustering,
+unless the user specifies a different
+clustering algorithm or uses manual starting values.
+
+### Alternative model specifications
+
+The different types of latent class models have different parameters.
+For example, mixture models and latent profile analyses typically have class-specific means, variances, and covariances.
+Latent growth analyses have the same parameters, but with respect to the latent growth variables.
+Latent class analyses with ordinal indicators have thresholds.
+All of these parameters can be freely estimated across classes, or constrained,
+or fixed (e.g., to zero).
+The total number of parameters thus scales with the number of estimated classes.
+Consequently, latent class analyses have a potentially very high number of parameters.
+As any of these parameters could be mis-specified,
+it is important to consider alternative model specifications.
+However, alternative model specifications may be approached differently depending on whether an analysis is data driven (exploratory), or theoretically driven (confirmatory).
+This distinction has remained underemphasized in prior writing.
+
+Prior literature on latent class analysis has emphasized exploratory applications of the method [see @nylundDecidingNumberClasses2007].
+In exploratory analyses, a large number of models are typically estimated in batch,
+with varying numbers of classes and model specifications.
+The "correct" model specification is then determined based on a combination of fit indices,
+significance tests,
+and interpretability.
+For latent profile analysis, the function `tidySEM::mx_profiles(classes, variances, covariances)`
+largely automates this process.
+The argument `classes` indicates which class solutions should be estimated (e.g., 1 through 6).
+The argument `variances` specifies whether variances should be `"equal"` or `"varying"` across classes.
+The argument `covariances` specifies whether covariances should be constrained to `"zero"`, `"equal"` or `"varying"` across classes.
+The means are free to vary across classes by default, although the more general function `tidySEM::mx_mixture()` could be used to circumvent this.
+After all models have been estimated, the function `tidySEM::table_fit()` can be used to obtain a model fit table suitable for determining the optimal model according to best practices.
+Note however that this table does not include the bootstrapped likelihood ratio test (BLRT) by default,
+because this test is very computationally expensive.
+It is recommended to use the function `tidySEM::BLRT()` to compare a shortlist of likely candidate models based on other fit indices.
+Fit indices typically used for determining the optimal number of classes include
+the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC).
+Both information criteria are based on the -2 log likelihood (which is lower for better fitting models),
+and add a penalty for the number of parameters (thus incentivizing simpler models).
+This helps balance fit and model complexity.
+The BIC usually applies a stronger penalty for complexity that scales logarithmically with the sample size.
+
+Fit indices may occasionally contradict each other, so it is important to identify a suitable strategy to reconcile them.
+One option is to select a specific fit index before analyzing the data.
+Another option is to always prefer the most parsimoneous model that has best fit according to any of the available fit indices.
+Yet another option is to incorporate information from multiple fit indices using the analytic hierarchy process [@akogulComparisonInformationCriteria2016].
+
+
+
+Confirmatory analyses typically require less comprehensive alternative model specifications.
+For example, in the context of preregistered analyses, the main models of interest may have been specified a priori.
+
+
+Van de Schoot and colleagues [-@vandeschootGRoLTSChecklistGuidelinesReporting2017] argue that there are many choices to be made in the specification of latent trajectory models,
+and that alternative 
+
+	* Consider alternative parameterizations; e.g., free variances/covariances 
+	* See Nylund
+1. Starting values [@nylund-gibsonTenFrequentlyAsked2018; ]
+    In many circumstances and especially in a cluster analysis setting, the mixture component means are expected to be different. Thus, a reasonable and largely employed way of initiating EM consists of starting from the solution of a K-means type algorithm. [@biernackiChoosingStartingValues2003]
+1. Algorithm
+    EM is a local optimizer. Imagine we are estimating two parameters, e.g. the class-specific means $\mu_c$ on a continuous indicator (ignoring the variance for now). The EM algorithm will attempt to find a combination of values for these two parameters that maximizes the likelihood ($LL$) of all observed data. In practice, instead of maximizing $LL$, often $-2*LL$ is minimized, as this offers computational advantages. We can think of this optimization problem as a three-dimensional landscape: The X and Y dimensions are determined by the class-specific means, so $X = \mu_1$ and $Y = \mu_2$ - and the Z-dimension is determined by $Z = -2*LL$. The optimizer must find the deepest "valley" in this landscape, which reflects the combination of $\mu_1$ and $\mu_2$ that maximizes the likelihood of the data.
+The EM optimizer behaves somewhat like a marble, dropped in this landscape.
+It is dropped at some random point in space, and will roll into the nearest valley.
+The problem is that, once EM rolls into a valley, it will settle on the bottom of that valley (this is known as "convergence").
+It cannot climb out again.
+Thus, if their are multiple valleys, the risk is that the optimizer gets stuck in a shallower valley (a "local optimum"), and never discovers the deepest valley (the "global optimum", or best solution).
+One solution to this problem is to drop many marbles at random places, compare their final $-2*LL$ values,
+choose the solution with the lowest $-2*LL$, and make sure that several marbles replicated this solution.
+This is the "random starts" approach.
+
+One problem with the random starts approach is that it is computationally expensive to run this many replications.
+Moreover, because the algorithm begins with random starting values,
+many of the marbles are likely to be very far away from a "good enough" solution.
+Two innovations may improve the estimation procedure.
+The first is that, instead of picking random starting values, a "reasonable solution" may be used for the starting values.
+For example, if we assume that the different classes are likely to have different mean values on the indicators, then the K-means clustering algorithm can be used to determine these cluster centroids.
+We can compute the expected values of all model parameters by treating the K-means solution as a known class solution, and use these as starting values for a mixture model.
+One remaining concern is that this approach may result in starting values close to a local optimum,
+and that the EM algorithm will thus never find the global optimum.
+A second innovation addresses this concern.
+Instead of using EM, it is possible to use an optimizer that can climb out of a valley.
+Simulated annealing iteratively considers some "destination" in the landscape, and compares its likelihood to the current one. If the destination likelihood is higher, the estimator moves there.
+If the destination likelihood is *lower*, the estimator still moves there occasionally, based on probability.
+This latter property allows it to escape local optima.
+
+By default, `tidySEM` eploys this solution of deriving starting values using K-means clustering,
+and identifying the global optimum solution using simulated annealing.
+Once a solution has been found,
+simulated annealing is followed up with a short run of the EM algorithm,
+as EM inherently produces an asymptotic covariance matrix for the parameters that can be used to compute standard errors.
+Note that these defaults can be manually overridden.
+
+
+
+## Software
+
+Many software packages are available for the estimation of latent class analyses.
+Some of these packages have limited functionality, or implement particular innovations.
+Other packages implement latent class analyses in the context of a more flexible structural equation modeling framework.
+The most notable examples of the latter are the commercial programs Mplus and Latent GOLD, 
+and the free open source R-package OpenMx.
+The commercial packages stand out because they offer relatively user-friendly interfaces
+and implement sensible defaults for complex analyses, including latent class analysis.
+This somewhat lowers the threshold for applied researchers to adopt such methods.
+Commercial software also has several downsides, however.
+One such downside is that use of the software is restricted to those individuals and institutions who can afford a license.
+A second downside is that the source code, being proprietary, cannot be audited, debugged, or enhanced by third parties.
+This incurs the risk that mistakes in the source code may go unnoticed, and curbs progress as software developers cannot add new functionality.
+
+Conversely, the free open source program OpenMx is very flexible,
+but not very user-friendly.
+
+
+New functionality in the R-package `tidySEM` seeks to lower the threshold for latent class analysis using `OpenMx`.
+It adheres to best practices in estimation and reporting, as described in this paper.
+The user interface is simple, making use of the model syntax of the widely used `lavaan` R-package.
+This syntax offers a human-readable way to specify latent variable models.
+Minor enhancements are made to simplify the specification of latent class analysis.
+
+Because of the limitations in ex tools, we set out to develop a tool that a)
+provided sensible defaults and were easy to use, but provided the option to
+access and modify all of the inputs to the model (i.e., low barrier, high
+ceiling), b) interfaced to existing tools, and are able to translate between
+what existing tools are capable of and what researchers and analysts
+carrying-out person-oriented analyses would like to specify, 
+
+fully-reproducible analyses and 
+
+<!-- 3. Packages -->
+<!-- 3.1 R-packages -->
+<!-- LPA models can be fit in R (version 4.0.3; R-core team, 2020), running in Rstudio (version -->
+<!-- 1.3.1093 used here). There are many R-packages that offer some form of latent class/mixture -->
+<!-- analytic functionality. However, the majority of packages is focused on analyses with discrete -->
+<!-- indicator variables (e.g., ‘poLCA’, Linzer & Lewis, 2011; ‘e1071::lca’, Meyer et al., 2019) -->
+<!-- or require a lot of coding to define the required models (e.g., openMX, Neale et al., 2016). -->
+<!-- For the current tutorial, two packages were selected that work with continuous indicator -->
+<!-- variables and that require limited user coding. ‘mclust’ package (Scrucca et al., 2016) is the -->
+<!-- first package that will be illustrated. This package is a specialist tool and allows for a wide -->
+<!-- variety of model configurations to be estimated; as such it offers much more functionality -->
+<!-- than most researchers will likely need. Therefore, the current tutorial focuses on a limited -->
+<!-- range of relatively simple LPA model configurations that are commonly encountered in the -->
+<!-- literature. Conveniently, Rosenberger et al., (2018) recently developed the package ‘tidyLPA’ -->
+<!-- which can be used as a relatively easy to use front-end for estimating common LPA models -->
+<!-- with ‘mclust’, basically streamlining some of the in- and output functionality of ‘mclust’. -->
+
+<!-- Although ‘tidyLPA’ is easy to use, this comes at the expense of restricting modeling options -->
+<!-- to a few, oft-used options. For completeness, both the ‘mclust’ and ‘tidyLPA’ approach will -->
+<!-- be illustrated. -->
+
+## Best practices in estimation
+
+### Starting values
+
+### Algorithm
+
+### Label switching
+
+<!-- Initialization around a Single Mode -->
+<!-- Another common approach is to run a single chain or to initialize the parameters near realistic values.36 -->
+
+<!-- This can work better than the hard constraint approach if reasonable initial values can be found and the labels do not switch within a Markov chain. The result is that all chains are glued to a neighborhood of a particular mode in the posterior. -->
+<!-- https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/1467-9868.00265?casa_token=Tjk8gR4w8AEAAAAA:RygJL5OgdBaVWY6oaB8XlnyMOnzQgOVDBd2EHDyQD6TH-DzxRxpmU1J4AG8N-HpL5dHHNINRybiaMl6w -->
+
+## Best practices in reporting
+
+The most relevant 
+
+1. Open science
+	* Use comprehensive citation; this includes referencing the software used.
+	* Share code and (if possible) data. Van Lissa and colleagues suggest sharing synthetic data in case the original data cannot be shared, and provide functions to generate such synthetic data.
+	* Ideally, make the entire research project reproducible so that others may download it and reproduce it with just one click; for guidance, see Van Lissa and colleagues.
+
+
+```{r}
+grolts <- structure(list(Number = c("1.", "2.", "3a.", "3b.", "3c.", "4.", 
+"5.", "6a.", "6b.", "7.", "8.", "9.", "10.", "11.", "12.", "13.", 
+"14a.", "14b.", "14c.", "15.", "16."), Item = c("Is the metric of time used in the statistical model reported?", 
+"Is information presented about the mean and variance of time within a wave?", 
+"Is the missing data mechanism reported?", "Is a description provided of what variables are related to attrition/missing data?", 
+"Is a description provided of how missing data in the analyses were dealt with?", 
+"Is information about the distribution of the observed variables included?", 
+"Is the software mentioned?", "Are alternative specifications of within-class heterogeneity considered (e.g., LGCA vs. LGMM) and clearly documented? If not, was sufficient justification provided as to eliminate certain specifications from consideration?", 
+"Are alternative specifications of the between-class differences in variance–covariance matrix structure considered and clearly documented? If not, was sufficient justification provided as to eliminate certain specifications from consideration?", 
+"Are alternative shape/functional forms of the trajectories described?", 
+"If covariates have been used, can analyses still be replicated?", 
+"Is information reported about the number of random start values and final iterations included?", 
+"Are the model comparison (and selection) tools described from a statistical perspective?", 
+"Are the total number of fitted models reported, including a one-class solution?", 
+"Are the number of cases per class reported for each model (absolute sample size, or proportion)?", 
+"If classification of cases in a trajectory is the goal, is entropy reported?", 
+"Is a plot included with the estimated mean trajectories of the final solution?", 
+"Are plots included with the estimated mean trajectories for each model?", 
+"Is a plot included of the combination of estimated means of the final model and the observed individual trajectories split out for each latent class?", 
+"Are characteristics of the final class solution numerically described (i.e., means, SD/SE, n, CI, etc.)?", 
+"Are the syntax files available (either in the appendix, supplementary materials, or from the authors)?"
+), relevant = c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+TRUE, TRUE, TRUE)), row.names = c(NA, -21L), class = "data.frame")
+```
+
+## Best practices in visualization
+
+# Tutorial
+
+<!-- 5. Tutorial -->
+<!-- 5.1 ‘mclust’ -->
+<!-- To run LPA using the ‘mclust’ package, the Mclust() function can be used. This function -->
+<!-- requires data as its minimum input. In addition, the number of clusters to fit (G) and model -->
+<!-- variants to fit and select from (modelNames) can be entered (defaults are: G=1-9 and all -->
+<!-- fourteen model variants). In many cases, we may want to consider a more limited range of -->
+<!-- model variants to with different numbers of classes. For multivariate data, a total of fourteen -->
+<!-- options are available (see help("mclustModelNames") for an overview). Each model variant -->
+<!-- is estimated for each value of the specified range of G using Expectation Maximization (EM), -->
+<!-- using the Bayesian Information Criterion (BIC) to compare different model variants and -->
+<!-- select the optimal one. -->
+<!-- Conducting a latent variable model or mixture analysis with Mplus or comparable software -->
+<!-- usually entails fitting models with different numbers of classes (that are otherwise configured -->
+<!-- similarly) and to compare the fit between these models to select the best model. The -->
+<!-- default approach taken in the ‘mclust’ package is slightly different in that the main modeling -->
+<!-- command Mclust() fits multiple models for all possible combinations of the specified number -->
+<!-- of classes and model configurations . The eventual output of ‘mclust’ is the BIC-selected best -->
+<!-- model variant with the optimal combination of number of classes and model configuration. -->
+<!-- An advantage of the ‘mclust’ approach is that it is efficient and flexible: given a number of -->
+<!-- classes, the best model configuration is selected straight away and we do not have to run all -->
+<!-- model combinations one by one. This makes the approach especially suitable for exploratory -->
+<!-- analyses. However, like stated above, this approach is somewhat less usual in some fields, -->
+<!-- where estimation of LPA is approached in a more confirmatory fashion. In addition, it does -->
+<!-- take some control away from the researcher, who may want to primarily focus on selecting -->
+<!-- the number of classes, given a particular , theory-based model configuration that is kept -->
+<!-- constant throughout analyses, which is often the chosen strategy in software like Mplus and -->
+<!-- made easily available through the ‘tidyLPA’ package. -->
+<!-- Here, both approaches are shown: (1) the ‘mclust’ aproach and (2) the ‘tidyLPA’ approach. -->
+
+
+
+
+<!--                                               5 -->
+<!-- 5.1.1 The ‘mclust’ approach -->
+<!-- In this approach, we run consecutive models with increasing numbers of classes (G=1 to -->
+<!-- G=9), for each model we let the package fit the four above described model variants (“EEI”, -->
+<!-- “EEE”, “VVI” and “VVV”) and select the best-fitting one. We start by loading the package -->
+<!-- (library(mclust)) and creating an object mnames that contains the names of the four models -->
+<!-- we want to be fitted. Next, we use the Mclust() function to fit the models: -->
+<!-- library(mclust) -->
+
+<!-- ## Package 'mclust' version 5.4.7 -->
+<!-- ## Type 'citation("mclust")' for citing this R package in publications. -->
+<!-- mnames <- c("EEI", "EEE", "VVI", "VVV") -->
+
+<!-- # Fit 1-5 class model -->
+<!-- mod_g1_9 <- Mclust(dat1[, 1:10], modelNames = mnames) -->
+
+<!-- We can first look at the optimal number of classes and the optimal model variant that were -->
+<!-- selected, using the following code: -->
+<!-- # Opimal number of classes -->
+<!-- mod_g1_9$G -->
+
+<!-- ## [1] 3 -->
+<!-- # Optimal model variant -->
+<!-- mod_g1_9$modelName -->
+
+<!-- ## [1] "EEI" -->
+<!-- This shows us that a 3-class EEI model was selected as the best model based on the BIC. We -->
+<!-- can get a better perspective of this model’s performance if we compare it to the other fitted -->
+<!-- models. We can do this by taking a closer look at the other models’ BIC values: -->
+<!-- mod_g1_9$BIC -->
+
+<!-- ##   Bayesian Information Criterion (BIC): -->
+<!-- ##           EEI       EEE       VVI       VVV -->
+<!-- ##   1 -14661.61 -12986.57 -14661.61 -12986.57 -->
+<!-- ##   2 -13275.65 -12611.60 -13095.82 -12678.12 -->
+<!-- ##   3 -12142.11 -12290.68 -12163.08 -12731.18 -->
+<!-- ##   4 -12178.44 -12330.04 -12241.21 -12970.57 -->
+<!-- ##   5 -12223.14 -12379.96 -12320.47 -13231.35 -->
+<!-- ##   6 -12264.04 -12423.72 -12406.59 -13522.40 -->
+<!-- ##   7 -12269.39 -12451.25 -12497.03 -13748.91 -->
+<!-- ##   8 -12298.30 -12483.35 -12568.62 -13980.82 -->
+<!-- ##   9 -12347.11 -12529.40 -12645.50 -14269.34 -->
+<!-- ## -->
+
+
+<!--                                              6 -->
+<!-- ## Top 3 models based on the BIC criterion: -->
+<!-- ##     EEI,3     VVI,3     EEI,4 -->
+<!-- ## -12142.11 -12163.08 -12178.44 -->
+<!-- mod_g1_9$loglik -->
+
+<!-- ## [1] -5951.275 -->
+<!-- mod_g1_9$df -->
+
+<!-- ## [1] 42 -->
+<!-- Here, we can see the BICs for all fitted models (in this case 1-9 classes and 4 model variants: -->
+<!-- 36 models in total). We can see that the closest contenders were a 3-class model with a VVI -->
+<!-- configuration (with variances allowed to vary both within and between classes) and a 4-class -->
+<!-- EEI model. -->
+<!-- Note that the BIC values are negative, and that values that are more negative are considered -->
+<!-- to fit poorer than values closer to 0. This may strike some users as odd, given that in -->
+<!-- many modeling applications, we are used to consider lower BIC values to indicate better -->
+<!-- fit. However, the ‘mclust’ approach of maximizing the BIC is correct for the used modeling -->
+<!-- approach (see e.g., Fraley & Raftery, 2003; Banfield & Raftery, 1993). For theoretical reasons, -->
+<!-- the BIC is calculated in’mclust’ as: -->
+
+
+<!--                            BIC = 2(Loglikelihood) - df (log(n)) -->
+
+<!-- where df is the number of parameters (degrees of freedom) and n is the sample size. We can -->
+<!-- see, that here, higher loglikelihood values lead to a higher BIC. For the best fitting model in -->
+<!-- our example, the loglikelihood is -5951.275, the number of parameters is 42 and the sample -->
+<!-- size is 300. If we plug these into the formula, we get the following BIC: -->
+
+
+<!--                      BIC = 2(-5951.275) - 42(log(300)) = -12142.11 -->
+
+<!-- As expected, the obtained value indeed corresponds to the BIC we got in the model output -->
+<!-- (see above). Other software packages, such as Mplus and ‘tidyLPA’ (see below) use a slightly -->
+<!-- different formula to calculate the BIC, where higher loglikelihood values lead to lower BIC -->
+<!-- values: -->
+
+
+<!--                            BIC = df (log(n)) - 2(Loglikelihood) -->
+
+<!-- When we plug the best-model values into this formula, we get: -->
+
+
+<!--                       BIC = 42(log(300)) - 2(-5951.275) = 12142.11 -->
+
+<!-- We can see that the absolute BIC value is the same, irrespective of the used formula, with -->
+<!-- only the sign differing between the two approaches. -->
+
+<!--                                               7 -->
+<!-- Now, let us continue by taking a closer look at the class sizes and the mean values and -->
+<!-- variances of the ten variables for the three identified classes. Because the best model has and -->
+<!-- EEI configuration, printing out a single variance matrix from one class will suffice, because -->
+<!-- the variances are the same across classes (this is different in cases where the optimal model -->
+<!-- allows for between-class differences in (co)variances: -->
+<!-- # tabulate class-membership numbers -->
+<!-- table(summary(mod_g1_9)$classification) -->
+
+<!-- ## -->
+<!-- ##   1   2      3 -->
+<!-- ## 100 110     90 -->
+<!-- # display the means per class -->
+<!-- mod_g1_9$parameters$mean -->
+
+<!-- ##             [,1]         [,2]        [,3] -->
+<!-- ##   var1 2.023572      6.083019   2.0304980 -->
+<!-- ##   var2 3.056837      6.937785   4.8997993 -->
+<!-- ##   var3 1.718166      1.107873   7.9385872 -->
+<!-- ##   var4 6.086727      2.854402   6.9657536 -->
+<!-- ##   var5 7.101109      2.225675   4.7416266 -->
+<!-- ##   var6 3.691936      8.081570   2.2469977 -->
+<!-- ##   var7 5.009819      2.817889   0.8862725 -->
+<!-- ##   var8 8.316894      8.080891   3.9350536 -->
+<!-- ##   var9 1.978136      1.896294   9.1537131 -->
+<!-- ##   var10 1.191249     5.142590   8.0332628 -->
+<!-- # select the first of 3 10-by-10 variance matrices -->
+<!-- mod_g1_9$parameters$variance$sigma[1:10, 1:10, 1] -->
+
+<!-- ##               var1       var2       var3       var4       var5       var6       var7       var8 -->
+<!-- ##   var1    2.539537   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000 -->
+<!-- ##   var2    0.000000   2.117941   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000 -->
+<!-- ##   var3    0.000000   0.000000   2.509035   0.000000   0.000000   0.000000   0.000000   0.000000 -->
+<!-- ##   var4    0.000000   0.000000   0.000000   2.812796   0.000000   0.000000   0.000000   0.000000 -->
+<!-- ##   var5    0.000000   0.000000   0.000000   0.000000   2.647399   0.000000   0.000000   0.000000 -->
+<!-- ##   var6    0.000000   0.000000   0.000000   0.000000   0.000000   2.694156   0.000000   0.000000 -->
+<!-- ##   var7    0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   2.368379   0.000000 -->
+<!-- ##   var8    0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   2.540704 -->
+<!-- ##   var9    0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000 -->
+<!-- ##   var10   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000 -->
+<!-- ##               var9      var10 -->
+<!-- ##   var1    0.000000   0.000000 -->
+<!-- ##   var2    0.000000   0.000000 -->
+<!-- ##   var3    0.000000   0.000000 -->
+<!-- ##   var4    0.000000   0.000000 -->
+
+
+<!--                                                8 -->
+<!-- ##   var5    0.000000   0.000000 -->
+<!-- ##   var6    0.000000   0.000000 -->
+<!-- ##   var7    0.000000   0.000000 -->
+<!-- ##   var8    0.000000   0.000000 -->
+<!-- ##   var9    2.509146   0.000000 -->
+<!-- ##   var10   0.000000   2.204457 -->
+<!-- From this output, we can see that the three classes have class-sizes of 100, 110 and 90, -->
+<!-- respectively. These sizes along with the patterns of class-specific mean variable scores -->
+<!-- correspond with those that served as the input for the simulation. As specified, the variances -->
+<!-- vary slightly across variables. -->
+<!-- The class allocation in LPA is probabilistic in nature: each subject in the data is assigned a -->
+<!-- probability for each of the estimated classes, based on their pattern of scores on the input -->
+<!-- variables. These probabilities can be inspected in the z-matrix (here: mod_g1_9$z). Subjects -->
+<!-- can be allocated to one of the classes based on their highest class-probability. These posterior -->
+<!-- allocations can be found in the classification matrix (here: mod_g1_9$classification). -->
+<!-- These class-allocations were tabulated above to evaluate class sizes. -->
+<!-- Note that class-allocation in this way only yields useful classifications if the patterns of -->
+<!-- class-probabilities allow for allocation of each subject to a single class with sufficient certainty. -->
+<!-- In case of too much uncertainty, using the classification is not advised. We can inspect the -->
+<!-- uncertainty of allocation for all subjects (here: mod_g1_9$uncertainty). This gives us a list -->
+<!-- of uncertainties for all subjects. Next, we can evaluate the extent of uncertainty by looking -->
+<!-- at the maximum uncertainty or, for instance, the averaged uncertainty across subjects: -->
+<!-- max(mod_g1_9$uncertainty) -->
+
+<!-- ## [1] 0.003852604 -->
+<!-- mean(mod_g1_9$uncertainty) -->
+
+<!-- ## [1] 2.607299e-05 -->
+<!-- Here, the uncertainty is atypically low because of the used idealized data. In many cases, -->
+<!-- uncertainty is higher and it may be of interest to investigate it further, for instance, by -->
+<!-- looking at (e.g., plotting or tabulating) the uncertainty per class: -->
+<!-- cprob <- cbind(mod_g1_9$z, mod_g1_9$classification) -->
+<!-- cprob <- as.data.frame(cprob) -->
+<!-- colnames(cprob) <- c("prob (class 1)", "prob (class 2)", "prob (class 3)", "class") -->
+<!-- aggregate(cprob[, 1:3], list(cprob$class), mean) -->
+
+<!-- ##   Group.1 prob (class 1) prob (class 2) prob (class 3) -->
+<!-- ## 1       1   9.999824e-01   1.761611e-05   3.350070e-10 -->
+<!-- ## 2       2   5.486300e-05   9.999451e-01   7.192849e-08 -->
+<!-- ## 3       3   2.591358e-08   1.675400e-07   9.999998e-01 -->
+<!-- Here we can see that for each class, the mean probability of membership of that class was -->
+
+
+<!--                                                  9 -->
+<!-- very high and probabilities for the other classes were very low. Again, these values reflect the -->
+<!-- idealized data; in many cases, more differentiated class-probability patterns may be observed. -->
+
+<!-- 5.1.2 ‘tidyLPA’ -->
+<!-- When running ‘mclust’ models from the ‘tidyLPA’ package, the estimations are approached -->
+<!-- a little differently. By default, the number of models that can be estimated is restricted to -->
+<!-- six relatively common variants (see help(tidyLPA::estimate_profiles) for details). Of -->
+<!-- these models, four can be estimated with ‘mclust’. These models differ in terms of how the -->
+<!-- variances and covariances are allowed to vary or constrained to be equal across classes and -->
+<!-- whether covariances are or are not fixed to zero within classes. These models have each been -->
+<!-- allocated a number (1-6) in ‘tidyLPA’. See the table below how these numbers correspond to -->
+<!-- the above mentioned model configurations. -->
+<!--  Model variant    model number -->
+<!--  EEI              1 -->
+<!--  EEE              3 -->
+<!--  VVI              2 -->
+<!--  VVV              6 -->
+<!-- Models four and five are different and can only be fit when R is interfacing with Mplus using -->
+<!-- the ‘MplusAutomation’ package. This is outside the scope of this tutorial. -->
+<!-- To fit an LPA model in ‘tidyLPA’, we use the estimate_profiles() function. Here, we need -->
+<!-- to enter the data.frame to be used (df) and the number of classes to estimate (n_profiles). -->
+<!-- To determine what kind of model configuration to estimate, the authors have provided two -->
+<!-- different ways in the estimate_profiles() command. In the first approach, we simply tell what -->
+<!-- model number (see Table 2) we want to estimate using the models= argument For instance, if -->
+<!-- we want to estimate LPA models with 1 to 9 classes, with an EEI configuration, we can use: -->
+<!-- <!-- suppressMessages(library(tidyLPA)) --> -->
+<!-- <!-- suppressMessages(mod_1c_v1 <- estimate_profiles(df = dat1[1:10], n_profiles = 1:9, --> -->
+<!-- <!--     models = 1)) --> -->
+
+<!-- The package issues a standard message by default notifying us that we use the models -->
+<!-- argument and that the variances and covariances arguments are ignored. Here, we suppress -->
+<!-- the message. The output shows us the model-fit information for the 1 to 9-class EEI models: -->
+<!-- <!-- mod_1c_v1 --> -->
+
+<!-- ## tidyLPA analysis using mclust: -->
+<!-- ## -->
+<!-- ## Model Classes AIC       BIC      Entropy            prob_min   prob_max   n_min   n_max   BLRT_p -->
+<!-- ## 1      1       14587.53 14661.61 1.00               1.00       1.00       1.00    1.00 -->
+<!-- ## 1      2       13160.84 13275.65 1.00               1.00       1.00       0.30    0.70    0.01 -->
+<!-- ## 1      3       11986.55 12142.11 1.00               1.00       1.00       0.30    0.37    0.01 -->
+<!-- ## 1      4       11982.14 12178.44 0.91               0.79       1.00       0.14    0.33    0.05 -->
+<!-- ## 1      5       11986.09 12223.14 0.89               0.75       1.00       0.06    0.33    0.30 -->
+
+
+<!--                                               10 -->
+<!-- ##   1      6         11986.25    12264.04   0.84      0.78       1.00        0.08   0.30    0.16 -->
+<!-- ##   1      7         11950.86    12269.39   0.81      0.77       0.91        0.08   0.17    0.01 -->
+<!-- ##   1      8         11939.04    12298.30   0.82      0.79       0.92        0.08   0.17    0.02 -->
+<!-- ##   1      9         11947.10    12347.11   0.82      0.76       0.92        0.06   0.16    0.57 -->
+<!-- Here, we can see that the BIC takes on different values compared to ‘mclust’, with lower -->
+<!-- rather than higher values indicating best fit (see explanation above). Instead of drawing the -->
+<!-- fit indices (e.g., BIC, AIC) directly from the ‘mclust’ package, ‘tidyLPA’ only draws the ‘raw’ -->
+<!-- loglikelihood values and posterior probabilities from the ‘mclust’ output and (re)calculates -->
+<!-- the BIC, AIC, entropy etc. to mirror as well as possible those provided in Mplus. In addition, -->
+<!-- p-values of the the bootstrapped likelihood ratio test (BLRT) are given by default. These -->
+<!-- p-values indicate for each k-class model whether adding the kth class adds significantly to -->
+<!-- model fit. For instance, the BLRT_p of 0.04 for the 4-class model indicates that adding -->
+<!-- a fourth class led to an improvement of model fit compared to the 3-class model that was -->
+<!-- just significant when using an alpha of 0.05. When using ’mclust’ as a stand-alone package, -->
+<!-- the BLRT is not calculated by default, but can be obtained with the mclustBootstrapLRT -->
+<!-- function. -->
+<!-- Next, we can run similar commands, with different values for the models argument. It is -->
+<!-- also possible to estimate more than one model variant in a single run by providing a vector -->
+<!-- of model numbers (e.g., models=c(1,6)). -->
+<!-- The second approach to determine the model variant to be estimated is by using the variances -->
+<!-- and covariances arguments in the estimate_profiles command. The variances argument -->
+<!-- can have the values "equal" (i.e. variable variances constrained to be equal across classes) or -->
+<!-- "varying" (i.e. variances allowed to vary across classes). The covariances argument can -->
+<!-- have the values: "zero" (i.e. all variable covariances fixed to zero), "equal" (i.e. covariances -->
+<!-- constrained to be equal across classes) or "varying" (i.e. covariances allowed to vary across -->
+<!-- classes). Now, if we again want to estimate LPA models with 1 to 9 classes, with an EEI -->
+<!-- configuration, we can use: -->
+<!-- <!-- mod_1c_v2 <- estimate_profiles(df = dat1[1:10], n_profiles = 1:9, variances = "equal", --> -->
+<!-- <!--     covariances = "zero") --> -->
+<!-- <!-- mod_1c_v2$model_1_class_2$fit --> -->
+
+<!-- <!-- ##         Model           Classes        LogLik                   AIC              AWE --> -->
+<!-- <!-- ## 1.000000e+00       2.000000e+00 -6.549418e+03          1.316084e+04     1.354347e+04 --> -->
+<!-- <!-- ##           BIC              CAIC           CLC                   KIC            SABIC --> -->
+<!-- <!-- ## 1.327565e+04       1.330665e+04 1.310084e+04           1.319484e+04     1.317734e+04 --> -->
+<!-- <!-- ##           ICL           Entropy      prob_min              prob_max            n_min --> -->
+<!-- <!-- ## -1.327568e+04      9.996750e-01 9.999484e-01           9.999990e-01     3.000000e-01 --> -->
+<!-- <!-- ##         n_max          BLRT_val        BLRT_p --> -->
+<!-- <!-- ## 7.000000e-01       1.448699e+03 9.900990e-03 --> -->
+<!-- As expected, the output is exactly the same as the one we got when using the models -->
+<!-- argument. Now, if we want to, we can continue fitting other model variants using either -->
+<!-- approach. Next, we can manually compare the models in terms of their BIC and AIC values -->
+
+
+<!--                                               11 -->
+<!-- or we can use compare_solutions to do this in an automated fashion. Interestingly, the -->
+<!-- best model can be selected based on the integrated information about several fit indices -->
+<!-- (analytic hierarchy process; see help(tidyLPA::AHP)) for more details). We obtain the model -->
+<!-- comparison with the following code. -->
+<!-- <!-- comp <- suppressWarnings(compare_solutions(mod_1c_v1)) --> -->
+<!-- <!-- comp$fits --> -->
+
+<!-- <!-- ##   # A tibble: 9 x 18 --> -->
+<!-- <!-- ##     Model Classes LogLik    AIC    AWE    BIC   CAIC    CLC    KIC SABIC      ICL --> -->
+<!-- <!-- ##     <dbl>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>           <dbl> --> -->
+<!-- <!-- ##   1     1       1 -7274. 14588. 14834. 14662. 14682. 14550. 14611. 14598. -14662. --> -->
+<!-- <!-- ##   2     1       2 -6549. 13161. 13543. 13276. 13307. 13101. 13195. 13177. -13276. --> -->
+<!-- <!-- ##   3     1       3 -5951. 11987. 12506. 12142. 12184. 11905. 12032. 12009. -12142. --> -->
+<!-- <!-- ##   4     1       4 -5938. 11982. 12638. 12178. 12231. 11878. 12038. 12010. -12218. --> -->
+<!-- <!-- ##   5     1       5 -5929. 11986. 12778. 12223. 12287. 11860. 12053. 12020. -12273. --> -->
+<!-- <!-- ##   6     1       6 -5918. 11986. 12915. 12264. 12339. 11838. 12064. 12026. -12353. --> -->
+<!-- <!-- ##   7     1       7 -5889. 11951. 13016. 12269. 12355. 11780. 12040. 11997. -12376. --> -->
+<!-- <!-- ##   8     1       8 -5873. 11939. 13141. 12298. 12395. 11747. 12039. 11991. -12409. --> -->
+<!-- <!-- ##   9     1       9 -5866. 11947. 13285. 12347. 12455. 11733. 12058. 12005. -12458. --> -->
+<!-- <!-- ##   # ... with 7 more variables: Entropy <dbl>, prob_min <dbl>, prob_max <dbl>, --> -->
+<!-- <!-- ##   #   n_min <dbl>, n_max <dbl>, BLRT_val <dbl>, BLRT_p <dbl> --> -->
+<!-- <!-- comp$best --> -->
+
+<!-- <!-- ## LogLik       AIC      AWE      BIC     CAIC        CLC    KIC   SABIC       ICL --> -->
+<!-- <!-- ##      9         8        3        3        3          9      3       8         3 --> -->
+<!-- As shown in the ‘mclust’ examples above, the EEI model (models=1) with 3 classes fit the -->
+<!-- data best, not only according to the BIC, but according to the integrated information from a -->
+<!-- broader range of fit indices. Note that we did not fit any competing EEE, VVV and VVI -->
+<!-- models here. If we would have wanted to compare fit to these model variants too, we should -->
+<!-- have actively told the package to fit these too, either by specifying a vector of different types -->
+<!-- of models to fit in the models argument or by repeating the analysis with different values for -->
+<!-- the variances and covariances arguments. -->
+
+<!-- 5.2 Comparison to Mplus -->
+<!-- For comparison, we fit the equivalent EEI model variants in Mplus. For this, we can mostly -->
+<!-- rely on the defaults of Mplus. We only need to specify that we want to estimate class-specific -->
+<!-- variable means. The variances are automatically constrained to be equal across classes and -->
+<!-- within class variable covariances are fixed to 0. Here we have the separate codes for fitting -->
+<!-- the first 4 models wit 1-4 class models (code for the 5-9 class models not shown). -->
+<!-- <!-- !! 1-class model --> -->
+<!-- <!--   DATA: file='dat1.dat'; --> -->
+<!-- <!--   VARIABLE: --> -->
+
+
+<!-- <!--                                                  12 --> -->
+<!-- <!--     names=id v1-v10; --> -->
+<!-- <!--     usevariables= v1-v10; --> -->
+<!-- <!--     classes = c(1); --> -->
+<!-- <!--   ANALYSIS: --> -->
+<!-- <!--     type = mixture; --> -->
+<!-- <!--     starts= 250 50; --> -->
+<!-- <!--   MODEL: --> -->
+<!-- <!--   %overall% --> -->
+<!-- <!--   %C#1% --> -->
+<!-- <!--   [v1-v10]; --> -->
+
+<!-- <!-- !! 2-class model --> -->
+<!-- <!--   DATA: file='dat1.dat'; --> -->
+<!-- <!--   VARIABLE: --> -->
+<!-- <!--     names=id v1-v10; --> -->
+<!-- <!--     usevariables= v1-v10; --> -->
+<!-- <!--     classes = c(2); --> -->
+<!-- <!--   ANALYSIS: --> -->
+<!-- <!--     type = mixture; --> -->
+<!-- <!--     starts= 250 50; --> -->
+<!-- <!--   MODEL: --> -->
+<!-- <!--   %overall% --> -->
+<!-- <!--   %C#1% --> -->
+<!-- <!--   [v1-v10]; --> -->
+<!-- <!--   %C#2% --> -->
+<!-- <!--   [v1-v10]; --> -->
+
+<!-- <!-- !! 3-class model --> -->
+<!-- <!--   DATA: file='dat1.dat'; --> -->
+<!-- <!--   VARIABLE: --> -->
+<!-- <!--     names=id v1-v10; --> -->
+<!-- <!--     usevariables= v1-v10; --> -->
+<!-- <!--     classes = c(3); --> -->
+<!-- <!--   ANALYSIS: --> -->
+<!-- <!--     type = mixture; --> -->
+<!-- <!--     starts= 250 50; --> -->
+<!-- <!--   MODEL: --> -->
+<!-- <!--   %overall% --> -->
+<!-- <!--   %C#1% --> -->
+<!-- <!--   [v1-v10]; --> -->
+<!-- <!--   %C#2% --> -->
+<!-- <!--   [v1-v10]; --> -->
+<!-- <!--   %C#3% --> -->
+<!-- <!--   [v1-v10]; --> -->
+
+
+<!-- <!--                             13 --> -->
+<!-- <!-- !! 3-class model --> -->
+<!-- <!--   DATA: file='dat1.dat'; --> -->
+<!-- <!--   VARIABLE: --> -->
+<!-- <!--     names=id v1-v10; --> -->
+<!-- <!--     usevariables= v1-v10; --> -->
+<!-- <!--     classes = c(4); --> -->
+<!-- <!--   ANALYSIS: --> -->
+<!-- <!--     type = mixture; --> -->
+<!-- <!--     starts= 250 50; --> -->
+<!-- <!--   MODEL: --> -->
+<!-- <!--   %overall% --> -->
+<!-- <!--   %C#1% --> -->
+<!-- <!--   [v1-v10]; --> -->
+<!-- <!--   %C#2% --> -->
+<!-- <!--   [v1-v10]; --> -->
+<!-- <!--   %C#3% --> -->
+<!-- <!--   [v1-v10]; --> -->
+<!-- <!--   %C#4% --> -->
+<!-- <!--   [v1-v10]; --> -->
+<!-- Each of the models was fitted with multiple initial stage random starts and multiple final -->
+<!-- stage optimizations to reduce the risk of finding solutions on a local maximum. For the 1-6 -->
+<!-- class models, 250 iniitial and 50 final starts were used. For the 7-class model 1000 initial -->
+<!-- starts and 200 final optimizations were used and for the 8- and 9-class models, a replicable -->
+<!-- global solution could only be obtained with 5000 initial stage starts and 1000 final stage -->
+<!-- optimizations. The fit indices for each of the fitted models is displayed in the table below. -->
+<!-- For now, we only look at the estimated fit indices. -->
+<!--                 EEI models -->
+<!--  Classes   AIC       BIC -->
+<!--  1         14587.535 14587.535 -->
+<!--  2         13160.836 13275.653 -->
+<!--  3         11986.551 12142.11 -->
+<!--  4         11957.71  12154.01 -->
+<!--  5         11951.766 12188.808 -->
+<!--  6         11944.632 12222.415 -->
+<!--  7         11935.501 12254.027 -->
+<!--  8         11929.428 12288.695 -->
+<!--  9         11925.203 12325.212 -->
+<!-- If we compare the BIC values for the EEI models to those obtained with ‘mclust’ directly -->
+<!-- and via ‘tidyLPA’, we can see that the results are quite similar for the less complex models, -->
+<!-- with the BIC-values for the 2- and 3-class models being exactly the same in terms of their -->
+<!-- absolute values. When taking a closer look at the 3-class model that was previously found to -->
+<!-- be the best model, we can also see that that the Mplus-based classifications (n=100, n=110, -->
+<!-- and n=90) and entropy estimates (entropy=1.0) are similar to those obtained with ‘mclust’ -->
+
+<!--                                              14 -->
+<!-- and/or ‘tidyLPA’. -->
+<!--  If we look at the larger picture and evaluate the overlap between the BIC values obtained -->
+<!--  for all models with class numbers ranging from 1 to 9, we can see that the estimated BIC -->
+<!-- values show more differences between the R-packages and Mplus for the models with larger -->
+<!--  numbers of classes. This can be explained by the different methods used by Mplus and -->
+<!-- ‘mclust’/’tidyLPA’ to generate the start values for estimation (see below). These differences -->
+<!--  can cause the packages to yield different results for more complex models and/or models that -->
+<!--  are increasingly misspecified (as the models with more than 3 classes were in our example). -->
+
+<!-- 6. Final comments -->
+<!-- In this tutorial we have seen that it is relatively easy to run an LPA in R. As with all -->
+<!-- data-driven analyses, care should be taken not to over-interpret the results. In the end, LPA -->
+<!-- identifies classes in such a way as to optimally explain variance on a range of variables and -->
+<!-- not to optimize interpretability or usefulness. -->
+<!-- Another remark with regard to LPA results is that class-membership is probabilistic in nature: -->
+<!-- each subject in an analyzed sample has a probability of being in each of the model’s classes. -->
+<!-- Subjects can be allocated to a class based on their highest class-probability. Importantly, -->
+<!-- this can only be done with enough certainty if separation between classes is sufficient, which -->
+<!-- means that we see that each subject has a clear highest probability (e.g., p=0.9) for one of -->
+<!-- the classes. The entropy statistic is often used to quantify this separation, with values <0.8 -->
+<!-- being taken to indicate insufficient separation to allocate subjects to one class. In such cases, -->
+<!-- the class probabilities themselves can still be used in further investigations. -->
+<!-- Depending on one’s preferences, one can choose either the ‘mclust’ or the ‘tidyLPA’ package. -->
+<!-- The latter may be especially attractive for persons that already have experience with Mplus -->
+<!-- or comparable software. It is important to note, though, that differences exist between the -->
+<!-- estimation approaches taken by both R-packages and by Mplus. -->
+<!-- Mixture models such as LPA need to be estimated in an iterative fashion, using an EM -->
+<!-- algorithm that is very sensitive to the used start values, where poor start values can lead the -->
+<!-- estimation process to a poor solution. In addition, there is often a chance that the iterative -->
+<!-- EM process leads to a solution that is at a local, rather than a global maximum in the -->
+<!-- likelihood ‘landscape’. -->
+
+### Starting values
+
+<!-- Different methods have been developed to initialize the estimation (get starting values) in -->
+<!-- such a way as to optimize the chance of arriving at an accurate model solution (Biernacki et -->
+<!-- al., 2003; Shireman et al., 2016). Mplus and ‘mclust’ take two different approaches. Mplus -->
+<!-- uses a ‘brute force’ approach and reruns the model with multiple sets of random start values, -->
+<!-- each generated from uniform distributions of values with ranges that are based on the data -->
+<!-- (Muthén & Muthén, 1998-2015). The best solution is the model with the highest loglikelihood -->
+<!-- that was arrived upon from at least two different starting points. In contrast, ‘mclust’ uses -->
+<!-- the data itself to generate a set of plausible start values using hierarchical clustering. This -->
+<!-- means that the start values are informed by the (hierarchical structure of) the data, which -->
+<!-- can work well. A downside is that only a single set of start values is used, so the risk of -->
+<!-- arriving at a local optimum is not addressed. These approaches show clear differences and -->
+<!-- have been shown previously to not always arrive at the same solutions, with some authors -->
+<!-- being especially critical of the ‘mclust’ approach (Shireman et al., 2017). In our example, -->
+<!-- we did not see much difference between the two approaches, but it should be noted that -->
+<!-- many real-world data sets do not have such a clear latent structure, making it much more -->
+<!-- challenging to arrive at an accurate solution, given the data. -->
+<!-- Based on the provided examples and these technical differences between ‘mclust’ and Mplus, -->
+<!-- it is probably better to see ‘mclust’ and ‘tidyLPA’ as useful alternatives for Mplus, rather -->
+<!-- than as tools to exactly mimic what can be done with the latter software. -->
+
+
+<!-- References -->
+<!-- Banfield, J., Raftery, A.E. (1993). Model-based Gaussian and non-Gaussian clustering. -->
+<!-- Biometrics. 49: 803–821. -->
+<!-- Biernacki,C.,Celeux,G., Govaert,G.(2003).Choosing starting values for the EM algorithm -->
+<!-- for getting the highest likelihood in multivariate Gaussian mixture models. Computational -->
+<!-- Studies and Data Analysis, 41, 561–575. -->
+<!-- Celeux, G., Govaert, G. (1995) Gaussian parsimonious clustering models. Pattern Recognition. -->
+<!-- 28:781–793 -->
+<!-- Fraley, C., Raftery, A.E. (1998) How many clusters? Which clustering method? Answers via -->
+<!-- model-based cluster analysis. The Computer Journal 41: 578-588. -->
+<!-- Gibson, W. A. (1959). Three multivariate models: Factor analysis, latent structure analysis, -->
+<!-- and latent profile analysis. Psychometrika, 24, 229–252. -->
+<!-- Linzer, D.A., Lewis J. (2011). “poLCA: an R Package for Polytomous Variable Latent Class -->
+<!-- Analysis.” Journal of Statistical Software. 42(10): 1-29 -->
+<!-- Meyer, D., Dimitriadou, E., Hornik, K., Weingessel, A., Leisch, F. (2019). e1071: Misc -->
+<!-- Functions of the Department of Statistics, Probability Theory Group (Formerly: E1071), TU -->
+<!-- Wien. R package version 1.7-3. https://CRAN.R-project.org/package=e1071 -->
+<!-- Muthén, L., Muthén, B., 1998–2015. Mplus User’s Guide, 7th ed., Muthén & Muthén, Los -->
+<!-- Angeles. -->
+<!-- Neale, M.C., Hunter, M.D., Pritikin, J.N., Zahery, M., Brick, T.R., Kirkpatrick, R.M., -->
+<!-- Estabrook, R., Bates, T.C., Maes, H.H., Boker, S.M. (2016). “OpenMx 2.0: Extended -->
+<!-- structural equation and statistical modeling.” Psychometrika 81(2): 535-549. -->
+<!-- Nylund-Gibson, K., Choi, A. Y. (2018). Ten frequently asked questions about latent class -->
+<!-- analysis. Translational Issues in Psychological Sciences, 4, 440–461. -->
+<!-- Oberski, D. (2016). Mixture models: Latent profile and latent class analysis. In J. Robertson -->
+<!-- & M. Kaptein (Eds.), Modern statistical methods for HCI (pp. 275–287). Cham, Switzerland: -->
+<!-- Springer Inter-national Publishing. -->
+
+
+
+<!--                                              16 -->
+<!-- Pastor, D.A., Barron, K.E., Miller, B.J., Davis, S.L. (2007). A latent profile analysis of -->
+<!-- college students’ achievement goal orientation. Contemporary Educational Psychology 32(1): -->
+<!-- 8-47. -->
+<!-- Rosenberg, J.M., Beymer, P.N., Anderson, D.J., Van Lissa, C.J., & Schmidt, J.A. (2018). -->
+<!-- tidyLPA: An R Package to Easily Carry Out Latent Profile Analysis (LPA) Using Open-Source -->
+<!-- or Commercial Software. Journal of Open Source Software 3(30): 978. -->
+<!-- Scrucca, L., Fop M., Murphy, T.B., Raftery A.E. (2016) mclust 5: clustering, classification -->
+<!-- and density estimation using Gaussian finite mixture models The R Journal 8/1: 289-317. -->
+<!-- Shireman, E. M., Steinley, D., & Brusco, M. J. (2016). Local Optima in Mixture Modeling. -->
+<!-- Multivariate Behavioral Research 51(4): 466–481. -->
+<!-- Shireman, E., Steinley, D., Brusco, M.J. (2017). Examining the effect of initialization -->
+<!-- strategies on the performance of Gaussian mixture modeling. Behavioral Research Methods -->
+<!-- 49(1):282-293. -->
+<!-- Sterba, S.K. (2013). Understanding Linkages Among Mixture Models. Multivariate Behav -->
+<!-- Res. 2013 48(6): 775-815. -->
+<!-- Wolfe, J. (1970). Pattern clustering by multivariate mixture analysis. Multivariate Behavioral -->
+<!-- Research, 5: 329–350. -->
+
+
+<!-- Shireman 2016: -->
+<!-- https://www.tandfonline.com/doi/full/10.1080/00273171.2016.1160359?casa_token=YMvI52JWPq0AAAAA%3A20nlLRukoCkUmIil2lRWnsUS-33AlU6HmDRGsu07aJ0nTzS-skjvHnroJBtBVHM5HE0X8iStM1eyqw -->
+
+<!-- mixture models have two possible uses: either (a) classifying observations into groups through the estimation of distinct, underlying distributions or (b) using a set of well-defined parametric distributions (often times the Gaussian distribution) to approximate a messy data space that cannot be approximated by standard models that assume a single distribution (whether univariate or multivariate). While both are legitimate uses of mixture modeling, the only necessary and sufficient condition for fitting a mixture model is nonnormality in the data (see Bauer & Curran, 2003). It is certainly true that if there are distinct groups arising from distinct distributions, it is necessary to have a set of parameters to model each of those groups. Unfortunately, it may often be the case (in fact, it is probably likely) we are in the converse situation where the full data space is either nonlinear, asymmetric, or both, and there exist no distinct groups in the population. In this case, the mixture model is capturing the departure from “clean” structure, but the groups themselves are not meaningful in the sense that they are giving rise to distinct subpopulations. As such, their boundaries are going to be amorphous, and their parameters, regardless of their stability, lose meaning in terms of reflecting an underlying data-generative mechanism, making the interpretation of the means, covariances, or a specific individuals' membership an exercise in folly. Obviously, knowing which situation a data set falls in is paramount, and using the prevalence of local optima as a potential indicator is a crucial first step. -->
+
+
+
+
+<!-- The optimal number of latent classes (i.e. identity configurations) was determined using the BIC (Fraley & Raftery, 1998); with lower values indicating a better statistical fit. Solutions were considered to be admissible if they consisted of at least 5% of the sample (Depaoli, 2013), if the entropy (a measure of class separability) exceeded .8 (Wang, Deng, Yang, 2017), and if the solution was theoretically interpretable and qualitatively distinct from the other class solutions (Howard & Hoffman, 2018). -->
