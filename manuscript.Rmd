@@ -562,7 +562,7 @@ The EM algorithm needs starting values for each parameter it wants to estimate.
 If it were provided a single starting value for each parameter, 
 the EM optimizer would be at risk of finding a local optimum instead of the global optimum. 
 In other words, it would converge on a suboptimal solution resulting in biased parameter and model fit estimates. 
-To prevent this, we should give the algorithm a sufficiently large set of random starting values for each parameter in order to maximize our chances of finding the deepest valley that is the global optimum (McLachlan & Peel, 2004). Furthermore, we should ensure the number of initial stage iterations is large for optimization to be successful (Geiser, 2012). 
+To prevent this, we should give the algorithm a sufficiently large set of random starting values for each parameter in order to maximize our chances of finding the deepest valley that is the global optimum (McLachlan & Peel, 2004). Also, we should ensure the number of initial stage iterations is large for optimization to be successful (Geiser, 2012). 
 
 Furthermore, the choice of the starting values can impact the speed of the algorithm's convergence or in case of having poor initial values the algorithm might diverge altogether (McLachlan & Peel, 2004).
 The key is to use a large number of starting value sets. Geiser (2013) recommends at least 500 sets of initial values in the first optimization step for simple models, and a greater number of sets for more complex models. A large number of starting values ensures that we find the true maximum and estimate the model parameters and fit accurately.
@@ -578,6 +578,8 @@ Each set of starting values will result in a model with a log likelihood value. 
 
 Another consideration has to do with conditional item probabilities which indicate the probability of a positive score on an item given that the person belongs to a particular latent class. If many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1), we are observing boundary parameter estimates. This can be a sign of an invalid solution, warn us that too many classes were extracted, or indicate a local optimum. Boundary parameter estimates are more likely to happen when working with sparse data and should be interpreted with caution (Geiser, 2012).
 
+An important outcome of LCA are unconditional class probabilities. These communicate the probability that an individual belongs to each class. A limitation is that our final class solution need not reflect true class membership. Once we do accept a particular class solution, special care also needs to be taken when naming the classes. Class names should be chosen to accurately reflect group membership. Overly simplified and generalized class names may prove misleading to both audiences and researches alike leading to what is known as a naming fallacy (Weller, Bowen & Faubert, 2020).
+
 
 ### Label switching
 
@@ -588,6 +590,8 @@ Another consideration has to do with conditional item probabilities which indica
 <!-- https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/1467-9868.00265?casa_token=Tjk8gR4w8AEAAAAA:RygJL5OgdBaVWY6oaB8XlnyMOnzQgOVDBd2EHDyQD6TH-DzxRxpmU1J4AG8N-HpL5dHHNINRybiaMl6w -->
 
 ## Best practices in reporting
+
+Among studies using LCA, reporting practices vary significantly (Weller, Bowen & Faubert, 2020).
 
 The most relevant 
 
