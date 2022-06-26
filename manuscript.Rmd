@@ -524,28 +524,50 @@ fully-reproducible analyses and
 
 ### Algorithm
 
-    Mixture model parameters and model fit statistics are estimated by maximum likelihood (ML) estimation with the expectation-maximization (EM) algorithm as a local optimizer. Imagine we are estimating two parameters, e.g. the class-specific means $\mu_c$ on a continuous indicator (ignoring the variance for now). The EM algorithm will attempt to find a combination of values for these two parameters that maximizes the likelihood ($LL$) of all observed data. In practice, instead of maximizing $LL$, often $-2*LL$ is minimized, as this offers computational advantages. We can think of this optimization problem as a three-dimensional landscape: The X and Y dimensions are determined by the class-specific means, so $X = \mu_1$ and $Y = \mu_2$ - and the Z-dimension is determined by $Z = -2*LL$. The optimizer must find the deepest "valley" in this landscape, which reflects the combination of $\mu_1$ and $\mu_2$ that maximizes the likelihood of the data.
+Mixture model parameters and model fit statistics can be estimated in a variety of ways.
+The choice of the estimator depends on the presence of missing values,
+sample size, number of indicators, and available computational resources (Weller, Bowen & Faubert, 2020).
+A commonly used technique is maximum likelihood (ML) estimation
+with the expectation-maximization (EM) algorithm as a local optimizer. 
+Imagine we are estimating two parameters, e.g. the class-specific means $\mu_c$ on a continuous indicator
+(ignoring the variance for now). The EM algorithm will attempt to find a combination of values
+for these two parameters that maximizes the likelihood ($LL$) of all observed data. 
+In practice, instead of maximizing $LL$, often $-2*LL$ is minimized, as this offers computational advantages. 
+We can think of this optimization problem as a three-dimensional landscape: 
+The X and Y dimensions are determined by the class-specific means, 
+so $X = \mu_1$ and $Y = \mu_2$ - and the Z-dimension is determined by $Z = -2*LL$. 
+The optimizer must find the deepest "valley" in this landscape, 
+which reflects the combination of $\mu_1$ and $\mu_2$ that maximizes the likelihood of the data.
 The EM optimizer behaves somewhat like a marble, dropped in this landscape.
 It is dropped at some random point in space, and will roll into the nearest valley.
-The problem is that, once EM rolls into a valley, it will settle on the bottom of that valley (this is known as "convergence").
+The problem is that, once EM rolls into a valley, it will settle on the bottom of that valley
+(this is known as "convergence").
 It cannot climb out again.
-Thus, if their are multiple valleys, the risk is that the optimizer gets stuck in a shallower valley (a "local optimum"), and never discovers the deepest valley (the "global optimum", or best solution).
+Thus, if their are multiple valleys, the risk is that the optimizer gets stuck in a shallower valley 
+(a "local optimum"), and never discovers the deepest valley (the "global optimum", or best solution).
 One solution to this problem is to drop many marbles at random places, compare their final $-2*LL$ values,
 choose the solution with the lowest $-2*LL$, and make sure that several marbles replicated this solution.
 This is the "random starts" approach.
 
-One problem with the random starts approach is that it is computationally expensive to run this many replications.
+One problem with the random starts approach is that 
+it is computationally expensive to run this many replications.
 Moreover, because the algorithm begins with random starting values,
 many of the marbles are likely to be very far away from a "good enough" solution.
 Two innovations may improve the estimation procedure.
-The first is that, instead of picking random starting values, a "reasonable solution" may be used for the starting values.
-For example, if we assume that the different classes are likely to have different mean values on the indicators, then the K-means clustering algorithm can be used to determine these cluster centroids.
-We can compute the expected values of all model parameters by treating the K-means solution as a known class solution, and use these as starting values for a mixture model.
+The first is that, instead of picking random starting values, 
+a "reasonable solution" may be used for the starting values.
+For example, if we assume that the different classes are likely to have different mean values on the indicators, 
+then the K-means clustering algorithm can be used to determine these cluster centroids.
+We can compute the expected values of all model parameters by treating the K-means solution as a known class solution,
+and use these as starting values for a mixture model.
 One remaining concern is that this approach may result in starting values close to a local optimum,
 and that the EM algorithm will thus never find the global optimum.
 A second innovation addresses this concern.
+
 Instead of using EM, it is possible to use an optimizer that can climb out of a valley.
-Simulated annealing iteratively considers some "destination" in the landscape, and compares its likelihood to the current one. If the destination likelihood is higher, the estimator moves there.
+Simulated annealing iteratively considers some "destination" in the landscape, 
+and compares its likelihood to the current one. If the destination likelihood is higher, 
+the estimator moves there.
 If the destination likelihood is *lower*, the estimator still moves there occasionally, based on probability.
 This latter property allows it to escape local optima.
 
@@ -562,10 +584,16 @@ The EM algorithm needs starting values for each parameter it wants to estimate.
 If it were provided a single starting value for each parameter, 
 the EM optimizer would be at risk of finding a local optimum instead of the global optimum. 
 In other words, it would converge on a suboptimal solution resulting in biased parameter and model fit estimates. 
-To prevent this, we should give the algorithm a sufficiently large set of random starting values for each parameter in order to maximize our chances of finding the deepest valley that is the global optimum (McLachlan & Peel, 2004). Also, we should ensure the number of initial stage iterations is large for optimization to be successful (Geiser, 2012). 
+To prevent this, we should give the algorithm a sufficiently large set of random starting values for each parameter
+in order to maximize our chances of finding the deepest valley that is the global optimum (McLachlan & Peel, 2004). 
+Also, we should ensure the number of initial stage iterations is large for optimization to be successful (Geiser, 2012). 
 
-Furthermore, the choice of the starting values can impact the speed of the algorithm's convergence or in case of having poor initial values the algorithm might diverge altogether (McLachlan & Peel, 2004).
-The key is to use a large number of starting value sets. Geiser (2013) recommends at least 500 sets of initial values in the first optimization step for simple models, and a greater number of sets for more complex models. A large number of starting values ensures that we find the true maximum and estimate the model parameters and fit accurately.
+Furthermore, the choice of the starting values can impact the speed of the algorithm's convergence
+or in case of having poor initial values the algorithm might diverge altogether (McLachlan & Peel, 2004).
+The key is to use a large number of starting value sets. 
+Geiser (2013) recommends at least 500 sets of initial values in the first optimization step for simple models, 
+and a greater number of sets for more complex models. 
+A large number of starting values ensures that we find the true maximum and estimate the model parameters and fit accurately.
 
 
 [@nylund-gibsonTenFrequentlyAsked2018; ]
@@ -574,11 +602,49 @@ The key is to use a large number of starting value sets. Geiser (2013) recommend
 
 ### Assessing Estimation Results
 
-Each set of starting values will result in a model with a log likelihood value. Ideally, the largest log likelihood value will be replicated a large number of times with each log likelihood value generated by a different starting value set. Successful replications of the largest log likelihood value across different starting values instill confidence that the estimation was successful. The model with the highest replicated likelihood will be chosen as our best-fit. If the largest log likelihood value is not replicated many times, the model may be unidentified (Geiser, 2012). Nylund-Gibson and Choi (2018) recommend that the highest log likelihood should be replicated in at least 3-10% of the models initialized with different starting values in the first step of the optimization. 
+In LCA, a sequence of models is fitted to the data with each additional model having one more class than the previous model.
+The final model called the final class solution is chosen based on both theoretical and statistical criteria.
+Theory should inform the choice of indicator variables ... 
+With regards to statistical criteria, model fit is often assessed through multiple information criteria.
+Examples include the Akaike information criterion (AIC), the Consistent Akaike Information Criterion (CAIC),
+the Bayesian information criterion (BIC), and the Sample-size Adjusted Bayesian Information Criterion (SABIC). 
+As a general rule, the lower the value of an information criterion, the better the model fits the data.
+Multiple information criteria should be compared when choosing the final class solution. 
+This can be done by means of an elbow plot (for an example see Nylund-Gibson and Choi, 2018).
+Other statistical criteria include the Bayes factor and likelihood ratio tests
+which can also be used to assess model fit (Weller, Bowen & Faubert, 2020).
 
-Another consideration has to do with conditional item probabilities which indicate the probability of a positive score on an item given that the person belongs to a particular latent class. If many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1), we are observing boundary parameter estimates. This can be a sign of an invalid solution, warn us that too many classes were extracted, or indicate a local optimum. Boundary parameter estimates are more likely to happen when working with sparse data and should be interpreted with caution (Geiser, 2012).
 
-An important outcome of LCA are unconditional class probabilities. These communicate the probability that an individual belongs to each class. A limitation is that our final class solution need not reflect true class membership. Once we do accept a particular class solution, special care also needs to be taken when naming the classes. Class names should be chosen to accurately reflect group membership. Overly simplified and generalized class names may prove misleading to both audiences and researches alike leading to what is known as a naming fallacy (Weller, Bowen & Faubert, 2020).
+When estimators which require sets of starting values are used,
+each fitted model will have a corresponding log likelihood value. 
+Ideally, the largest log likelihood value of the final class solution will be replicated a large number of times 
+with each log likelihood value generated by a different starting value set. 
+Successful replications of the largest log likelihood value across different starting values
+instill confidence that the estimation was successful. 
+The model with the highest replicated likelihood will be chosen as our best-fit. 
+If the largest log likelihood value is not replicated many times, the model may be unidentified (Geiser, 2012). 
+Nylund-Gibson and Choi (2018) recommend that the highest log likelihood should be replicated 
+in at least 3-10% of the models initialized with different starting values in the first step of the optimization. 
+This consideration does not apply in case of models which use simulated annealing since these do not have starting values.
+
+Once we have selected the final class solution, 
+<!-- Continue the paragraph with info about classification diagnostics, e.g. the average latent class posterior probability. -->
+
+Another consideration has to do with conditional item probabilities which indicate 
+the probability of a positive score on an item given that the person belongs to a particular latent class. 
+If many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1), 
+we are observing boundary parameter estimates. This can be a sign of an invalid solution, 
+warn us that too many classes were extracted, or indicate a local optimum. 
+Boundary parameter estimates are more likely to happen when working with sparse data 
+and should be interpreted with caution (Geiser, 2012).
+
+An important outcome of LCA are unconditional class probabilities. 
+These communicate the probability that an individual belongs to each class. 
+A limitation is that our final class solution need not reflect true class membership. 
+Once we do accept a particular class solution, special care also needs to be taken when naming the classes. 
+Class names should be chosen to accurately reflect group membership. 
+Overly simplified and generalized class names may prove misleading to both audiences and researches alike
+leading to what is known as a naming fallacy (Weller, Bowen & Faubert, 2020).
 
 
 ### Label switching
