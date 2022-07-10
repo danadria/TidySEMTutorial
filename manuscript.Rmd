@@ -586,12 +586,14 @@ the EM optimizer would be at risk of finding a local optimum instead of the glob
 In other words, it would converge on a suboptimal solution resulting in biased parameter and model fit estimates. 
 To prevent this, we should give the algorithm a sufficiently large set of random starting values for each parameter
 in order to maximize our chances of finding the deepest valley that is the global optimum (McLachlan & Peel, 2004). 
+Hipp and Bauer (2006) recommend using minimally 50-100 sets of random starting values.
+<!-- add more on this -->
 Also, we should ensure the number of initial stage iterations is large for optimization to be successful (Geiser, 2012). 
 
 Furthermore, the choice of the starting values can impact the speed of the algorithm's convergence
 or in case of having poor initial values the algorithm might diverge altogether (McLachlan & Peel, 2004).
 The key is to use a large number of starting value sets. 
-Geiser (2013) recommends at least 500 sets of initial values in the first optimization step for simple models, 
+Geiser (2013) recommends at least 500 sets of initial values in the first optimization step for simple models,
 and a greater number of sets for more complex models. 
 A large number of starting values ensures that we find the true maximum and estimate the model parameters and fit accurately.
 
@@ -602,41 +604,79 @@ A large number of starting values ensures that we find the true maximum and esti
 
 ### Assessing Estimation Results
 
-In LCA, a sequence of models is fitted to the data with each additional model having one more class than the previous model.
+In LCA, a sequence of models is fitted to the data 
+with each additional model estimating one more class than the previous model.
 The final model called the final class solution is chosen based on both theoretical and statistical criteria.
-Theory should inform the choice of indicator variables ... 
-With regards to statistical criteria, model fit is often assessed through multiple information criteria.
+Theory should drive the selection of indicator variables, inform the expectations and reflect on the findings.
+There are several statistical criteria to consider in model selection.
+These include but are not limited to information criteria, likelihood ratio tests, 
+and the Bayes factor (Weller, Bowen & Faubert, 2020).
+
+Model fit can be assessed through a comparison of multiple information criteria.
 Examples include the Akaike information criterion (AIC), the Consistent Akaike Information Criterion (CAIC),
 the Bayesian information criterion (BIC), and the Sample-size Adjusted Bayesian Information Criterion (SABIC). 
 As a general rule, the lower the value of an information criterion, the better the model fits the data.
+We expect the information criteria values to drop with each successive model until the final class solution is reached
+Further models with additional classes should show worse fit. 
+Therefore, information criteria reach an optimum before their values start to rise with increasing number of classes.
 Multiple information criteria should be compared when choosing the final class solution. 
 This can be done by means of an elbow plot (for an example see Nylund-Gibson and Choi, 2018).
-Other statistical criteria include the Bayes factor and likelihood ratio tests
-which can also be used to assess model fit (Weller, Bowen & Faubert, 2020).
+Other statistical criteria to assess model fit include the likelihood ratio test and the Bayes factor (Weller, Bowen & Faubert, 2020).
 
+The likelihood ratio (LR) $\chi^2$ test is commonly used to assess goodness-of-fit. 
+It can be used to compare two nested models.
+Two models are said to be nested when one model is based on a subset of indicators of the other model.
+Typically, we compare our final class solution, a constrained model to an unconstrained one.
+The perfect fit would mean the $\chi^2\ =\ 0$ and $p\ =\ 1$.
+We want to the LR test to be non-significant as this implies
+that our model is more parsimonious yet it fits the data as well as the unconstrained model.
+A downside of the LR $\chi^2$ test statistic is that it is highly dependent on sample size (Masyn, 2013).
+Large samples will often effortlessly to reject the null even when the final class solution is a good fit,
+and small samples will often be underpowered resulting in non-significant $\chi^2$ statistic.
+Special caution is advised when interpreting p-values derived from models with small sample sizes 
+or sparse data (Masyn, 2013).
+<!-- A potential solution to small sample size biased p values: parametric bootstrapping and posterior predictive checking see Collins & Lanza cited in Masyn 2013) -->
+
+<!-- Add a paragraph about using the Bayes factor -->
 
 When estimators which require sets of starting values are used,
 each fitted model will have a corresponding log likelihood value. 
 Ideally, the largest log likelihood value of the final class solution will be replicated a large number of times 
 with each log likelihood value generated by a different starting value set. 
 Successful replications of the largest log likelihood value across different starting values
-instill confidence that the estimation was successful. 
+instill confidence that the estimation was successful and we indeed found the global maximum (Masyn, 2013). 
 The model with the highest replicated likelihood will be chosen as our best-fit. 
-If the largest log likelihood value is not replicated many times, the model may be unidentified (Geiser, 2012). 
+If the largest log likelihood value is not replicated many times, the model may be unidentified (Geiser, 2012).
+Such a model does not have a unique solution. For a discussion on model identification for LCA, see Masyn (2013).
 Nylund-Gibson and Choi (2018) recommend that the highest log likelihood should be replicated 
 in at least 3-10% of the models initialized with different starting values in the first step of the optimization. 
 This consideration does not apply in case of models which use simulated annealing since these do not have starting values.
+<!-- Masyn 2013 claims that "replication of the likelihood value is neither a necessary nor a sufficient requirement -->
+<!-- to ensure that a global (rather than a local) maximum has been reached.". For discussion see Hipp & Bauer, 2006 -->
 
-Once we have selected the final class solution, 
+Once we have selected the final class solution, we have to inspect classification diagnostics.
+Classification diagnostics answer the question of how accurate 
+
+Entropy is a measure of accuracy with regards to modeled classes. 
+Values above .80 and close to 1 are considered ideal.
+
+The average latent class posterior probability [see Masyn, 2013]
 <!-- Continue the paragraph with info about classification diagnostics, e.g. the average latent class posterior probability. -->
 
-Another consideration has to do with conditional item probabilities which indicate 
-the probability of a positive score on an item given that the person belongs to a particular latent class. 
-If many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1), 
+Conditional item probabilities indicate the probability of a positive score on an item 
+given that the person belongs to a particular latent class. 
+<!-- If a particular item is endorsed by two or more classes at markedly different rates, -->
+<!-- it is said to discriminate well between classes and is consequently considered a good indicator. -->
+<!-- The classes are considered highly homogeneous with respect to an item when for a particular item -->
+<!-- there are a distinct difference in conditional item probabilities of two or more classes. -->
+<!-- If an item is endorsed below 30% for one class and above 70% for another class, 
+the classes have high homogeneity with respect to this item (Masyn, 2013). MY OWN WRITING BUT NOT FLOWY ENOUGH-->
+However, if many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1), 
 we are observing boundary parameter estimates. This can be a sign of an invalid solution, 
 warn us that too many classes were extracted, or indicate a local optimum. 
 Boundary parameter estimates are more likely to happen when working with sparse data 
-and should be interpreted with caution (Geiser, 2012).
+and should be interpreted with caution (Geiser, 2012). 
+
 
 An important outcome of LCA are unconditional class probabilities. 
 These communicate the probability that an individual belongs to each class. 
@@ -648,6 +688,14 @@ leading to what is known as a naming fallacy (Weller, Bowen & Faubert, 2020).
 
 
 ### Label switching
+
+The final class solution will usually discover and enumerate several classes. 
+The class ordering however is completely arbitrary.
+The class labeled as Class 1 in one solution may become Class 2 or Class 3 in another model,
+even when the only difference between the models is in their starting values. 
+Label switching is something to be mindful of when comparing different LCA models (Masyn, 2013).
+
+<!-- Article discussing label switching: see Chung, Loken & Schafer -->
 
 <!-- Initialization around a Single Mode -->
 <!-- Another common approach is to run a single chain or to initialize the parameters near realistic values.36 -->
