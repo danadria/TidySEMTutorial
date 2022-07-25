@@ -603,42 +603,66 @@ A large number of starting values ensures that we find the true maximum and esti
     In many circumstances and especially in a cluster analysis setting, the mixture component means are expected to be different. Thus, a reasonable and largely employed way of initiating EM consists of starting from the solution of a K-means type algorithm. [@biernackiChoosingStartingValues2003]
 
 ### Assessing Estimation Results
+<!-- maybe change to class enumeration -->
 
 In LCA, a sequence of models is fitted to the data 
 with each additional model estimating one more class than the previous model.
 The final model called the final class solution is chosen based on both theoretical and statistical criteria.
 Theory should drive the selection of indicator variables, inform the expectations and reflect on the findings.
-There are several statistical criteria to consider in model selection.
-These include but are not limited to information criteria, likelihood ratio tests, 
+In addition to this, there are several statistical criteria to consider in model selection.
+These include but are not limited to likelihood ratio tests, information criteria, 
 and the Bayes factor (Weller, Bowen & Faubert, 2020).
 
-Model fit can be assessed through a comparison of multiple information criteria.
+Absolute model fit can be assessed using the likelihood ratio (LR) $\chi^2$ goodness-of-fit test. 
+It can compare two nested models when they have the same number of classes (Lanza et al., 2003).
+Typically, we compare our final class solution (a constrained model) 
+to an unconstrained one (a model characterized by the perfect fit).
+The former model is a special, less complex version of the latter.
+In this case, we compare our model-based response pattern frequencies to those in the dataset.
+Therefore, we make a statement about how well our model fits the data.
+The perfect fit would be indicated by the $\chi^2\ =\ 0$ and $p\ =\ 1$.
+Ideally, the LR $\chi^2$ test will be non-significant as this implies
+that while our constrained model is more parsimonious, it fits the data just as well as the unconstrained model.
+The underlying assumption of this procedure is that the test statistic is asymptotically distributed
+as a $\chi^2$ meaning that it can be approximated using this distribution.
+This is the case when the sample size is adequate (Lanza et al., 2003). 
+The dependence of the LR $\chi^2$ test statistic on sample size has its downsides (Masyn, 2013). 
+Very large samples will often effortlessly reject the null even when the final class solution is a good fit,
+and small samples will often be underpowered resulting in non-significant $\chi^2$ statistic.
+In fact, small samples might not be well approximated using the $\chi^2$ distribution,
+which is a problem shared with large yet sparse datasets.
+In such cases, special caution is advised when interpreting the resulting p-values (Masyn, 2013).
+
+Relative model fit can be examined using the likelihood ratio test. 
+This is only appropriate when the two models we wish to compare are nested.
+The likelihood ratio test statistic is computed as the difference in maximum log likelihoods of the two models,
+with the new degrees of freedom being the difference in their degrees of freedom.
+This statistic also follows the $\chi^2$ distribution.
+Similar to the LR $\chi^2$ goodness-of-fit test, we want the test statistic to be non-significant
+in order to give support to the simpler model. 
+The likelihood ratio test can only compare two models at a time (Lanza et al., 2003).
+
+
+If we wish to simultaneously compare multiple models based on their relative fit,
+this can be done through a comparison of multiple information criteria.
 Examples include the Akaike information criterion (AIC), the Consistent Akaike Information Criterion (CAIC),
-the Bayesian information criterion (BIC), and the Sample-size Adjusted Bayesian Information Criterion (SABIC). 
+the Bayesian information criterion (BIC), and the Sample-size Adjusted Bayesian Information Criterion (SABIC).
+Information criteria are a sum of a measure of fit (usually a form of the converged maximum log likelihood value) 
+and a penalty for model complexity (combination of sample size and number of modeled parameters).
 As a general rule, the lower the value of an information criterion, the better the model fits the data.
-We expect the information criteria values to drop with each successive model until the final class solution is reached
-Further models with additional classes should show worse fit. 
-Therefore, information criteria reach an optimum before their values start to rise with increasing number of classes.
+When examining several competing models, each with differing number of classes,
+we expect the information criteria values to drop with each successive model until the final class solution is reached.
+Further models with additional classes should show worse fit as information criteria reach an optimum 
+before their values rise again with an increasing number of classes.
 Multiple information criteria should be compared when choosing the final class solution. 
 This can be done by means of an elbow plot (for an example see Nylund-Gibson and Choi, 2018).
-Other statistical criteria to assess model fit include the likelihood ratio test and the Bayes factor (Weller, Bowen & Faubert, 2020).
+Advantages of using information criteria are that we can compare multiple models at a time,
+and these models need not be nested (Masyn, 2013).
 
-The likelihood ratio (LR) $\chi^2$ test is commonly used to assess goodness-of-fit. 
-It can be used to compare two nested models.
-Two models are said to be nested when one model is based on a subset of indicators of the other model.
-Typically, we compare our final class solution, a constrained model to an unconstrained one.
-The perfect fit would mean the $\chi^2\ =\ 0$ and $p\ =\ 1$.
-We want to the LR test to be non-significant as this implies
-that our model is more parsimonious yet it fits the data as well as the unconstrained model.
-A downside of the LR $\chi^2$ test statistic is that it is highly dependent on sample size (Masyn, 2013).
-Large samples will often effortlessly to reject the null even when the final class solution is a good fit,
-and small samples will often be underpowered resulting in non-significant $\chi^2$ statistic.
-Special caution is advised when interpreting p-values derived from models with small sample sizes 
-or sparse data (Masyn, 2013).
-<!-- A potential solution to small sample size biased p values: parametric bootstrapping and posterior predictive checking see Collins & Lanza cited in Masyn 2013) -->
 
-<!-- Add a paragraph about using the Bayes factor -->
+<!-- Add a paragraph about using the Bayes factor see Weller, Bowen & Faubert, 2020-->
 
+<!-- decide whether to keep the following paragraph, if so, where to place it -->
 When estimators which require sets of starting values are used,
 each fitted model will have a corresponding log likelihood value. 
 Ideally, the largest log likelihood value of the final class solution will be replicated a large number of times 
@@ -654,14 +678,29 @@ This consideration does not apply in case of models which use simulated annealin
 <!-- Masyn 2013 claims that "replication of the likelihood value is neither a necessary nor a sufficient requirement -->
 <!-- to ensure that a global (rather than a local) maximum has been reached.". For discussion see Hipp & Bauer, 2006 -->
 
-Once we have selected the final class solution, we have to inspect classification diagnostics.
-Classification diagnostics answer the question of how accurate 
+### Classification Diagnostics 
 
-Entropy is a measure of accuracy with regards to modeled classes. 
-Values above .80 and close to 1 are considered ideal.
+Best models will divide the sample into subgroups which are internally homogeneous and externally distinct.
+Classification diagnostics give us a way to assess the degree to which this is the case.
+They are separate from the absolute and relative goodness-of-fit 
+as a model can fit the data well but show poor latent class separation (Masyn, 2013).
+A fundamental concept when examining classification precision and accuracy are the posterior class probabilities.
+A probability of belonging to each latent class is computed for each individual.
+The highest posterior class probability is then determined and the individual is assigned to the corresponding class.
+We want each individual's posterior class probabilities to be high for one and low for the remaining latent classes.
+This is considered a high classification accuracy and means that the classes are distinct.
+<!-- see if you find content on homogeneity of classes -->
+Three important classification diagnostic measures are entropy, the average posterior probability and the modal class assignment proportion.
 
-The average latent class posterior probability [see Masyn, 2013]
-<!-- Continue the paragraph with info about classification diagnostics, e.g. the average latent class posterior probability. -->
+Entropy is a summary measure of posterior class probabilities across classes and individuals.
+It ranges from 0 (model classification no better than random chance) to 1 (perfect classification).
+As a rule of thumb, values above .80 are deemed acceptable and those approaching 1 are considered ideal.
+<!-- Masyn 2013 "entropy was never intended for, nor should it be used for, model selection during the class enumeration process" p. 570 -->
+<!-- add content about entropy -->
+
+The average posterior probability is a measure of classification uncertainty for each latent class.
+
+The modal class assignment proportion
 
 Conditional item probabilities indicate the probability of a positive score on an item 
 given that the person belongs to a particular latent class. 
@@ -706,10 +745,12 @@ Label switching is something to be mindful of when comparing different LCA model
 ## Best practices in reporting
 
 Among studies using LCA, reporting practices vary significantly (Weller, Bowen & Faubert, 2020).
+Various authors have tried to better and standardize ways of reporting LCA (e.g. Masyn, 2013; Weller, Bowen & Faubert, 2020). 
+Building on their work, we provide guidelines with a strong emphasis on scientific reproducibility and transparency
+better known as the open science framework (OSF). Open science framework promotes scientific openness, reproducibility and integrity 
+through an establishment of guidelines for the scientific process (Foster & Deardorff, 2017)
 
-The most relevant 
 
-1. Open science
 	* Use comprehensive citation; this includes referencing the software used.
 	* Share code and (if possible) data. Van Lissa and colleagues suggest sharing synthetic data in case the original data cannot be shared, and provide functions to generate such synthetic data.
 	* Ideally, make the entire research project reproducible so that others may download it and reproduce it with just one click; for guidance, see Van Lissa and colleagues.
@@ -848,8 +889,8 @@ TRUE, TRUE, TRUE)), row.names = c(NA, -21L), class = "data.frame")
 <!--                            BIC = 2(Loglikelihood) - df (log(n)) -->
 
 <!-- where df is the number of parameters (degrees of freedom) and n is the sample size. We can -->
-<!-- see, that here, higher loglikelihood values lead to a higher BIC. For the best fitting model in -->
-<!-- our example, the loglikelihood is -5951.275, the number of parameters is 42 and the sample -->
+<!-- see, that here, higher log likelihood values lead to a higher BIC. For the best fitting model in -->
+<!-- our example, the log likelihood is -5951.275, the number of parameters is 42 and the sample -->
 <!-- size is 300. If we plug these into the formula, we get the following BIC: -->
 
 
@@ -857,7 +898,7 @@ TRUE, TRUE, TRUE)), row.names = c(NA, -21L), class = "data.frame")
 
 <!-- As expected, the obtained value indeed corresponds to the BIC we got in the model output -->
 <!-- (see above). Other software packages, such as Mplus and ‘tidyLPA’ (see below) use a slightly -->
-<!-- different formula to calculate the BIC, where higher loglikelihood values lead to lower BIC -->
+<!-- different formula to calculate the BIC, where higher log likelihood values lead to lower BIC -->
 <!-- values: -->
 
 
@@ -1015,7 +1056,7 @@ TRUE, TRUE, TRUE)), row.names = c(NA, -21L), class = "data.frame")
 <!-- Here, we can see that the BIC takes on different values compared to ‘mclust’, with lower -->
 <!-- rather than higher values indicating best fit (see explanation above). Instead of drawing the -->
 <!-- fit indices (e.g., BIC, AIC) directly from the ‘mclust’ package, ‘tidyLPA’ only draws the ‘raw’ -->
-<!-- loglikelihood values and posterior probabilities from the ‘mclust’ output and (re)calculates -->
+<!-- log likelihood values and posterior probabilities from the ‘mclust’ output and (re)calculates -->
 <!-- the BIC, AIC, entropy etc. to mirror as well as possible those provided in Mplus. In addition, -->
 <!-- p-values of the the bootstrapped likelihood ratio test (BLRT) are given by default. These -->
 <!-- p-values indicate for each k-class model whether adding the kth class adds significantly to -->
@@ -1229,7 +1270,7 @@ TRUE, TRUE, TRUE)), row.names = c(NA, -21L), class = "data.frame")
 <!-- al., 2003; Shireman et al., 2016). Mplus and ‘mclust’ take two different approaches. Mplus -->
 <!-- uses a ‘brute force’ approach and reruns the model with multiple sets of random start values, -->
 <!-- each generated from uniform distributions of values with ranges that are based on the data -->
-<!-- (Muthén & Muthén, 1998-2015). The best solution is the model with the highest loglikelihood -->
+<!-- (Muthén & Muthén, 1998-2015). The best solution is the model with the highest log likelihood -->
 <!-- that was arrived upon from at least two different starting points. In contrast, ‘mclust’ uses -->
 <!-- the data itself to generate a set of plausible start values using hierarchical clustering. This -->
 <!-- means that the start values are informed by the (hierarchical structure of) the data, which -->
