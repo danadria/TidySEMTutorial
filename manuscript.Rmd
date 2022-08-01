@@ -53,6 +53,7 @@ output            : papaja::apa6_pdf
 library("papaja")
 #bibliography      : ["r-references.bib"]
 library(worcs)
+run_everything = FALSE
 ```
 
 Latent class analysis has become quite popular across scientific fields,  and under a number of different names.
@@ -67,17 +68,7 @@ and introduces a risk of misapplications of the technique.
 The present paper seeks to address this gap in the literature by suggesting updated guidelines for estimation and reporting on latent class analysis, based on best practice.
 
 Throughout this paper, examples make use of free, open source software for latent class analysis in R. 
-As the open science movement is gaining momentum,
-researchers are becoming increasingly aware
-how important it is that analyses can be reproduced and audited.
-In line with open science principles, one of the suggested reporting standards relates to reproducible code.
-In this context, it is important to note that user-friendly methods for estimating latent class analyses have predominantly been available in commercial software packages (e.g., *Mplus* and *Latent GOLD*).
-A potential downside of commercial software is that it restricts the ability to reproduce analyses to license holders,
-and prevents auditing research because the underlying source code is proprietary.
-To overcome these limitations, the present paper introduces new user-friendly functions in the `tidySEM` R-package that can be used to estimate a wide range of latent class analysis models using the free, open-source R-package `OpenMx`.
-The reporting guidelines described in this paper are adopted in `tidySEM` by default.
-The `tidySEM` R-package thus makes advanced mixture modeling based on best practices widely accessible,
-and facilitates the adoption of the estimation and reporting guidelines described in this paper.
+
 
 <!-- In practice, this technique is often used to  -->
 
@@ -102,7 +93,7 @@ To test the feasibility of this approach,
 the detective records the shoe sizes and sex of 100 volunteers.
 The resulting observed data look like this:
 
-```{r shoedens, echo = FALSE, fig.cap="Kernel density plot of shoe sizes."}
+```{r echo = FALSE}
 library(tidySEM)
 library(ggplot2)
 set.seed(1)
@@ -112,13 +103,24 @@ means <- c(Man = 9, Woman = 7)
 X <- rnorm(n, mean = means[C], sd = 1)
 X <- round(X*2)/2
 obsparam <- tapply(X, C, mean)
+```
+
+```{r echo = FALSE, eval = run_everything}
 est <- mx_profiles(data.frame(X), 2)
 estparam <- table_results(est, c("label", "est", "matrix"))
-estparam <- estparam$est[estparam$matrix == "M"]
-props <- class_prob(est, "individual")$individual
-props <- apply(props, 1, which.max)
+estparam <- as.numeric(estparam$est[estparam$matrix == "M"])
+props <- class_prob(est, "individual")$individual[ , "predicted"]
+dput(props, "props.txt")
+dput(estparam, "estparam.txt")
 
-ggplot(data.frame(Shoesize = X), aes(x = Shoesize)) + geom_density() + theme_bw()
+p <- ggplot(data.frame(Shoesize = X), aes(x = Shoesize)) + geom_density() + theme_bw()
+ggsave("shoedens.png", p, device = "png")
+```
+
+```{r shoedens, echo = FALSE, fig.cap="Kernel density plot of shoe sizes."}
+props <- eval(parse("props.txt"))
+estparam <- eval(parse("estparam.txt"))
+knitr::include_graphics("shoedens.png")
 ```
 
 The distribution is evidently bimodal, which bodes well for the intended mixture model.
@@ -777,6 +779,18 @@ version control, citation and formatting, among others (Van Lissa et al., 2020)
 	* Share code and (if possible) data. Van Lissa and colleagues suggest sharing synthetic data in case the original data cannot be shared, and provide functions to generate such synthetic data.
 	* Ideally, make the entire research project reproducible so that others may download it and reproduce it with just one click; for guidance, see Van Lissa and colleagues.
 
+<!-- CJ: I think this belongs here -->
+As the open science movement is gaining momentum,
+researchers are becoming increasingly aware
+how important it is that analyses can be reproduced and audited.
+In line with open science principles, one of the suggested reporting standards relates to reproducible code.
+In this context, it is important to note that user-friendly methods for estimating latent class analyses have predominantly been available in commercial software packages (e.g., *Mplus* and *Latent GOLD*).
+A potential downside of commercial software is that it restricts the ability to reproduce analyses to license holders,
+and prevents auditing research because the underlying source code is proprietary.
+To overcome these limitations, the present paper introduces new user-friendly functions in the `tidySEM` R-package that can be used to estimate a wide range of latent class analysis models using the free, open-source R-package `OpenMx`.
+The reporting guidelines described in this paper are adopted in `tidySEM` by default.
+The `tidySEM` R-package thus makes advanced mixture modeling based on best practices widely accessible,
+and facilitates the adoption of the estimation and reporting guidelines described in this paper.
 
 ```{r}
 grolts <- structure(list(Number = c("1.", "2.", "3a.", "3b.", "3c.", "4.", 
