@@ -277,9 +277,9 @@ For example, a mixture model can be used as a diagnostic aid when several clinic
 The example of shoe size is a rudimentary illustration of this type of application.
 
 <!-- CJ: Include these use cases too: -->
-Descriptive analysis; identify few prototypes based on many variables
-<!-- Inductively identify number of latent classes -->
-<!-- Classify individuals -->
+<!-- Descriptive analysis; identify few prototypes based on many variables, e.g. DJA science funding -->
+<!-- Inductively identify number of latent classes: I know it's a group, but not how many groups -->
+<!-- Classify individuals, e.g. welzijnsmeter -->
 <!-- Identify items (observed characteristics) that -->
 <!-- indicate these classes well -->
 <!-- Predict class membership from covariates -->
@@ -565,6 +565,7 @@ For example, if we assume that the different classes are likely to have differen
 then the K-means clustering algorithm can be used to determine these cluster centroids.
 We can compute the expected values of all model parameters by treating the K-means solution as a known class solution,
 and use these as starting values for a mixture model.
+<!-- In many circumstances and especially in a cluster analysis setting, the mixture component means are expected to be different. Thus, a reasonable and largely employed way of initiating EM consists of starting from the solution of a K-means type algorithm. [@biernackiChoosingStartingValues2003]. -->
 One remaining concern is that this approach may result in starting values close to a local optimum,
 and that the EM algorithm will thus never find the global optimum.
 A second innovation addresses this concern.
@@ -583,10 +584,11 @@ simulated annealing is followed up with a short run of the EM algorithm,
 as EM inherently produces an asymptotic covariance matrix for the parameters that can be used to compute standard errors.
 Note that these defaults can be manually overridden.
 
-One recent paper suggested maximum likelihood with robust standard errors should be used when the observed indicators of a latent class analysis are not normally distributed (Spurk et al., 2020). 
-This statement is incorrect, and may lead readers to believe that they must use commercial software to estimate latent class analyses, as robust maximum likelihood is currently only implemented in Mplus and latentGOLD.
-
+One recent paper suggested maximum likelihood with robust standard errors should be used when the observed indicators are not normally distributed (Spurk et al., 2020). 
+This statement is incorrect, and may lead readers to believe that they must use commercial software, as robust maximum likelihood is currently only implemented in Mplus and latentGOLD.
 As explained before, mixture modeling assumes that observed data are a mixture of (multivariate) normal distributions; thus, the observed indicators will likely not be normally distributed.
+<!-- CJ: Is there even any literature that says robust standard erorrs are better with latent class analysis? -->
+
 <!-- We assume that the population consists of several groups each characterized by its own normal distribution.  -->
 <!-- When two or more normal distributions with different means and standard deviations comprise a mixed population distribution,  -->
 <!-- this combined distribution is no longer normal.  -->
@@ -594,8 +596,8 @@ As explained before, mixture modeling assumes that observed data are a mixture o
 <!-- If this were not the case and our mixed population distribution were normal,  -->
 <!-- there would be no latent classes to extract as the population would consists of a single class only.  -->
 <!-- For this reason, multivariate normality will always be violated when the population is comprised of several latent groups.  -->
-Secondly, the claim that maximum likelihood with robust standard errors should be preferred 
-implicitly implies that only software packages with this estimation technique can be used. 
+<!-- Secondly, the claim that maximum likelihood with robust standard errors should be preferred  -->
+<!-- implicitly implies that only software packages with this estimation technique can be used.  -->
 
 <!-- ### Starting values -->
 
@@ -617,40 +619,18 @@ implicitly implies that only software packages with this estimation technique ca
 <!-- A large number of starting values ensures that we find the true maximum and estimate the model parameters and fit accurately. -->
 
 
-[@nylund-gibsonTenFrequentlyAsked2018; ]
 
-    In many circumstances and especially in a cluster analysis setting, the mixture component means are expected to be different. Thus, a reasonable and largely employed way of initiating EM consists of starting from the solution of a K-means type algorithm. [@biernackiChoosingStartingValues2003]
-
-### Assessing Estimation Results
-<!-- maybe change to class enumeration -->
+### Class enumeration
 
 In LCA, a sequence of models is fitted to the data 
 with each additional model estimating one more class than the previous model.
+<!-- CJ: Not always; you may have a theory about a fixed number. -->
+<!-- CJ: Argue that, even in this case, it is useful to know if the theoretical model is markedly better than other numbers of classes -->
 The final model called the final class solution is chosen based on both theoretical and statistical criteria.
 Theory should drive the selection of indicator variables, inform the expectations and reflect on the findings.
 In addition to this, there are several statistical criteria to consider in model selection.
 These include but are not limited to likelihood ratio tests, information criteria, 
 and the Bayes factor (Weller, Bowen & Faubert, 2020).
-
-Absolute model fit can be assessed using the likelihood ratio (LR) $\chi^2$ goodness-of-fit test. 
-It can compare two nested models when they have the same number of classes (Lanza et al., 2003).
-Typically, we compare our final class solution (a constrained model) 
-to an unconstrained one (a model characterized by the perfect fit).
-The former model is a special, less complex version of the latter.
-In this case, we compare our model-based response pattern frequencies to those in the dataset.
-Therefore, we make a statement about how well our model fits the data.
-The perfect fit would be indicated by the $\chi^2\ =\ 0$ and $p\ =\ 1$.
-Ideally, the LR $\chi^2$ test will be non-significant as this implies
-that while our constrained model is more parsimonious, it fits the data just as well as the unconstrained model.
-The underlying assumption of this procedure is that the test statistic is asymptotically distributed
-as a $\chi^2$ meaning that it can be approximated using this distribution.
-This is the case when the sample size is adequate (Lanza et al., 2003). 
-The dependence of the LR $\chi^2$ test statistic on sample size has its downsides (Masyn, 2013). 
-Very large samples will often effortlessly reject the null even when the final class solution is a good fit,
-and small samples will often be underpowered resulting in non-significant $\chi^2$ statistic.
-In fact, small samples might not be well approximated using the $\chi^2$ distribution,
-which is a problem shared with large yet sparse datasets.
-In such cases, special caution is advised when interpreting the resulting p-values (Masyn, 2013).
 
 Relative model fit can be examined using the likelihood ratio test. 
 This is only appropriate when the two models we wish to compare are nested.
@@ -661,6 +641,27 @@ Similar to the LR $\chi^2$ goodness-of-fit test, we want the test statistic to b
 in order to give support to the simpler model. 
 The likelihood ratio test can only compare two models at a time (Lanza et al., 2003).
 
+### Model fit indices
+
+<!-- Absolute model fit can be assessed using the likelihood ratio (LR) $\chi^2$ goodness-of-fit test.  -->
+<!-- It can compare two nested models when they have the same number of classes (Lanza et al., 2003). -->
+<!-- Typically, we compare our final class solution (a constrained model)  -->
+<!-- to an unconstrained one (a model characterized by the perfect fit). -->
+<!-- The former model is a special, less complex version of the latter. -->
+<!-- In this case, we compare our model-based response pattern frequencies to those in the dataset. -->
+<!-- Therefore, we make a statement about how well our model fits the data. -->
+<!-- The perfect fit would be indicated by the $\chi^2\ =\ 0$ and $p\ =\ 1$. -->
+<!-- Ideally, the LR $\chi^2$ test will be non-significant as this implies -->
+<!-- that while our constrained model is more parsimonious, it fits the data just as well as the unconstrained model. -->
+<!-- The underlying assumption of this procedure is that the test statistic is asymptotically distributed -->
+<!-- as a $\chi^2$ meaning that it can be approximated using this distribution. -->
+<!-- This is the case when the sample size is adequate (Lanza et al., 2003).  -->
+<!-- The dependence of the LR $\chi^2$ test statistic on sample size has its downsides (Masyn, 2013).  -->
+<!-- Very large samples will often effortlessly reject the null even when the final class solution is a good fit, -->
+<!-- and small samples will often be underpowered resulting in non-significant $\chi^2$ statistic. -->
+<!-- In fact, small samples might not be well approximated using the $\chi^2$ distribution, -->
+<!-- which is a problem shared with large yet sparse datasets. -->
+<!-- In such cases, special caution is advised when interpreting the resulting p-values (Masyn, 2013). -->
 
 If we wish to simultaneously compare multiple models based on their relative fit,
 this can be done through a comparison of multiple information criteria.
@@ -682,18 +683,18 @@ and these models need not be nested (Masyn, 2013).
 <!-- Add a paragraph about using the Bayes factor see Weller, Bowen & Faubert, 2020-->
 
 <!-- decide whether to keep the following paragraph, if so, where to place it -->
-When estimators which require sets of starting values are used,
-each fitted model will have a corresponding log likelihood value. 
-Ideally, the largest log likelihood value of the final class solution will be replicated a large number of times 
-with each log likelihood value generated by a different starting value set. 
-Successful replications of the largest log likelihood value across different starting values
-instill confidence that the estimation was successful and we indeed found the global maximum (Masyn, 2013). 
-The model with the highest replicated likelihood will be chosen as our best-fit. 
-If the largest log likelihood value is not replicated many times, the model may be unidentified (Geiser, 2012).
-Such a model does not have a unique solution. For a discussion on model identification for LCA, see Masyn (2013).
-Nylund-Gibson and Choi (2018) recommend that the highest log likelihood should be replicated 
-in at least 3-10% of the models initialized with different starting values in the first step of the optimization. 
-This consideration does not apply in case of models which use simulated annealing since these do not have starting values.
+<!-- When estimators which require sets of starting values are used, -->
+<!-- each fitted model will have a corresponding log likelihood value.  -->
+<!-- Ideally, the largest log likelihood value of the final class solution will be replicated a large number of times  -->
+<!-- with each log likelihood value generated by a different starting value set.  -->
+<!-- Successful replications of the largest log likelihood value across different starting values -->
+<!-- instill confidence that the estimation was successful and we indeed found the global maximum (Masyn, 2013).  -->
+<!-- The model with the highest replicated likelihood will be chosen as our best-fit.  -->
+<!-- If the largest log likelihood value is not replicated many times, the model may be unidentified (Geiser, 2012). -->
+<!-- Such a model does not have a unique solution. For a discussion on model identification for LCA, see Masyn (2013). -->
+<!-- Nylund-Gibson and Choi (2018) recommend that the highest log likelihood should be replicated  -->
+<!-- in at least 3-10% of the models initialized with different starting values in the first step of the optimization.  -->
+<!-- This consideration does not apply in case of models which use simulated annealing since these do not have starting values. -->
 <!-- Masyn 2013 claims that "replication of the likelihood value is neither a necessary nor a sufficient requirement -->
 <!-- to ensure that a global (rather than a local) maximum has been reached.". For discussion see Hipp & Bauer, 2006 -->
 
@@ -725,25 +726,32 @@ The average posterior probability is a measure of classification uncertainty for
 
 The modal class assignment proportion
 
-Conditional item probabilities indicate the probability of a positive score on an item 
-given that the person belongs to a particular latent class. 
+<!-- CJ: This is about model interpretation; conditional item probabilities are the analogue of mean and standard deviation, but when the observed data are biary/ordinal  -->
+<!-- Conditional item probabilities indicate the probability of a positive score on an item  -->
+<!-- given that the person belongs to a particular latent class.  -->
+
 <!-- If a particular item is endorsed by two or more classes at markedly different rates, -->
 <!-- it is said to discriminate well between classes and is consequently considered a good indicator. -->
 <!-- The classes are considered highly homogeneous with respect to an item when for a particular item -->
 <!-- there are a distinct difference in conditional item probabilities of two or more classes. -->
 <!-- If an item is endorsed below 30% for one class and above 70% for another class, 
 the classes have high homogeneity with respect to this item (Masyn, 2013). MY OWN WRITING BUT NOT FLOWY ENOUGH-->
-However, if many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1), 
-we are observing boundary parameter estimates. This can be a sign of an invalid solution, 
-warn us that too many classes were extracted, or indicate a local optimum. 
-Boundary parameter estimates are more likely to happen when working with sparse data 
-and should be interpreted with caution (Geiser, 2012). 
+<!-- However, if many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1),  -->
+<!-- we are observing boundary parameter estimates. This can be a sign of an invalid solution,  -->
+<!-- warn us that too many classes were extracted, or indicate a local optimum.  -->
+<!-- Boundary parameter estimates are more likely to happen when working with sparse data  -->
+<!-- and should be interpreted with caution (Geiser, 2012).  -->
 
+<!-- CJ: THis talks about the problem of inadmissible solultions. With ordinal items, that can happen because of sparse cross-tables (e.g., some combinations of responses never occur). WIth continuous items, that could happen e.g. because you have a zero-inflated, otherwise normally distributed variable; one class would have a mean at zero and its SD would be hard to determine. Or it could happen if you model a five-category Likert scale with a five-component latent profile analysis; each response category will have its own mean, but there's no variance around that (everybody in class 3 has exactly the response value 3). These are all the same problems. -->
 
-An important outcome of LCA are unconditional class probabilities. 
-These communicate the probability that an individual belongs to each class. 
-A limitation is that our final class solution need not reflect true class membership. 
-Once we do accept a particular class solution, special care also needs to be taken when naming the classes. 
+<!-- CJ: Merge with beginning of the paper, where we explain that LCA simultaneously estimates class membership and the descriptives of those classes. -->
+<!-- An important outcome of LCA are unconditional class probabilities.  -->
+<!-- These communicate the probability that an individual belongs to each class.  -->
+<!-- A limitation is that our final class solution need not reflect true class membership.  -->
+<!-- Once we do accept a particular class solution, special care also needs to be taken when naming the classes.  -->
+
+### Interpreting the results
+
 Class names should be chosen to accurately reflect group membership. 
 Overly simplified and generalized class names may prove misleading to both audiences and researches alike
 leading to what is known as a naming fallacy (Weller, Bowen & Faubert, 2020).
