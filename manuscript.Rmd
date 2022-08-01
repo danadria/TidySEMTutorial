@@ -56,22 +56,18 @@ library(worcs)
 run_everything = FALSE
 ```
 
-Latent class analysis has become quite popular across scientific fields,  and under a number of different names.
-<!-- Vermunt and Magidson (2004) defined it more generally as virtually any statistical model where “some of the parameters … differ across unobserved subgroups” (Vermunt, J.K. and Magidson, J., 2004. Latent class analysis. In: M.S. Lewis-Beck, A. Bryman, and T.F. Liao (eds.), The Sage Encyclopedia of Social Sciences Research Methods, 549-553. Thousand Oaks, CA: Sage Publications). -->
-The purpose of this technique is to estimate unobserved group membership
+Latent class analysis is an umbrella term that refers to a number of techniques for estimating unobserved group membership
 based on a parametric model of one or more observed indicators of group membership.
-Despite the popularity of the method, there is a noted absence of guidelines for estimating and reporting latent class analyses [].
+This method has become quite popular across scientific fields, and under a number of different names; most notably (finite Gaussian) mixture modeling and latent profile analysis.
+<!-- Vermunt and Magidson (2004) defined it more generally as virtually any statistical model where “some of the parameters … differ across unobserved subgroups” (Vermunt, J.K. and Magidson, J., 2004. Latent class analysis. In: M.S. Lewis-Beck, A. Bryman, and T.F. Liao (eds.), The Sage Encyclopedia of Social Sciences Research Methods, 549-553. Thousand Oaks, CA: Sage Publications). -->
+Despite the popularity of the method, there is a lack of standards for estimating and reporting latent class analyses.
 <!-- Prior work resulted in the "GRoLTS-Checklist"; reporting guidelines for a specific subcategory of latent class analysis known as latent growth models. vermuntj.k.LatentClassAnalysis2004-->
 <!-- General reporting guidelines for latent class analysis are still lacking, however. -->
 This complicates manuscript review and assessment of the quality of published studies,
 and introduces a risk of misapplications of the technique.
-The present paper seeks to address this gap in the literature by suggesting updated guidelines for estimation and reporting on latent class analysis, based on best practice.
-
-Throughout this paper, examples make use of free, open source software for latent class analysis in R. 
-
-
-<!-- In practice, this technique is often used to  -->
-
+The present paper seeks to address this gap in the literature by suggesting updated guidelines for estimation and reporting on latent class analysis, based on current best practice.
+Importantly, in order to lower the barrier of entry and ensure reproducibility of all examples, this paper exclusively relies on free, open source software for latent class analysis in R.
+Our goal is to make best-practices latent class analysis widely accessable.
 
 ## Defining latent class analysis
 
@@ -211,11 +207,12 @@ If the variance of the growth parameters is fixed to zero, it is known as a late
 This latter approach assumes that all individuals within a class share the same identical trajectory,
 and that any variance in the indicators not explained by the class-specific latent trajectories is due to residual error variance.
 
-When a latent class analysis relies on categorical indicators,
-typically of a binary or ordinal measurement level,
-it has a different parameterization than a mixture model.
-One common assumption is that each categorical variable reflects an underlying standard normal distribution.
-The parameters in such a model are then "thresholds", corresponding to the quantiles of a standard normal distribution (with $N(\mu = 0, \sigma = 1)$).
+The term latent class analysis originally referred to cases where the observed indicators were categorical.
+Nowadays, it is more commonly used as an umbrella term.
+To prevent ambiguity, the special case where indicators are of binary or ordinal measurement level might be described as latent class analysis with ordinal indicators.
+Latent class models with ordinal indicators are parameterized differently from mixture models.
+One common parameterization assumes that each categorical variable reflects an underlying standard normal distribution.
+The parameters are "thresholds" that correspond to quantiles of a standard normal distribution (with $N(\mu = 0, \sigma = 1)$).
 These thresholds are estimated based on the proportion of individuals in each of the response categories of the indicator variable.
 For example, a binary indicator has a single threshold that distinguishes the two response categories.
 If responses are distributed 50/50, then the corresponding threshold would be  $t_1 = 0.00$.
@@ -269,7 +266,7 @@ although most of the suggested guidelines are applicable to latent class analyse
 There are several use cases for which latent class analyses are suitable.
 One example is to test a theory that postulates the existence of a categorical latent variable.
 For example, *identity status theory* posits that, at any given point in time, adolescents reside in one of four identity statuses.
-Mixture modeling can be used to identify these four statuses based on observed indicators (e.g., self-reported identity exploration and commitment).
+Latent class analysis can be used to identify these four statuses based on observed indicators (e.g., self-reported identity exploration and commitment).
 If results indicate that the data are better described by a different number of classes,
 or that the four-class solution does not correspond to the predicted pattern of responses on the indicators, then the theory may be called into question.
 
@@ -279,7 +276,8 @@ or to classify individuals.
 For example, a mixture model can be used as a diagnostic aid when several clinical indicators can be used to distinguish between a fixed number of physical [@baughmanMixtureModelAnalysis2006] or mental [@wuAbuseDependencePrescription2011] health problems.
 The example of shoe size is a rudimentary illustration of this type of application.
 
-
+<!-- CJ: Include these use cases too: -->
+Descriptive analysis; identify few prototypes based on many variables
 <!-- Inductively identify number of latent classes -->
 <!-- Classify individuals -->
 <!-- Identify items (observed characteristics) that -->
@@ -287,7 +285,7 @@ The example of shoe size is a rudimentary illustration of this type of applicati
 <!-- Predict class membership from covariates -->
 <!-- Predict outcomes from class membership -->
 <!-- Dimension reduction -->
-<!-- Violation of assumptions -->
+<!-- Deal with violation of assumptions, e.g. when data are clearly not normally distributed -->
 
 
 <!-- In medical and psychological science, LPA can be useful when -->
@@ -329,7 +327,7 @@ The example of shoe size is a rudimentary illustration of this type of applicati
 ## In estimation
 
 The best practices in estimation, as outlined in Table \@ref(tab:checkest),
-are inspired by prior recommendations for best practices for estimating
+are rooted in existing recommendations for best practices for estimating
 specific sub-types of latent class analyses,
 including latent class growth analysis [@schootGRoLTSChecklistGuidelinesReporting2017]
 and latent class analysis with ordinal indicators [e.g., @nylund-gibsonTenFrequentlyAsked2018].
@@ -347,20 +345,27 @@ tab_check <- data.frame(Item = c(
 tab_check$`#` = paste0(1:length(tab_check$Item), ".")
 kbl(tab_check[, c("#", "Item")])
 ```
+
 ### Examine observed data
 
 Examining observed data is essential for any analysis,
 as it may reveal patterns and violations of assumptions that had not been considered prior to data collection.
 Pay special attention to level of measurement of the indicators.
-Indicators with an ordinal level of measurement are likely to violate the assumption of within-class normal distributions [see @vermuntKmeansMayPerform2011].
+Mixture modeling (including LPA) is strictly speaking only suitable for continuous variables.
+Indicators with an ordinal level of measurement are likely to violate the assumption of within-class normal distributions of mixture models [see @vermuntKmeansMayPerform2011].
 Personal experience consulting on latent class analyses and moderating the `tidyLPA` Google group
-suggest that the mis-application of mixture models to ordinal (e.g., Likert-type) indicators is perhaps the most common source of user error.
+suggest that the mis-application of mixture models to ordinal (e.g., Likert-type) indicators is the most common source of user error.
 Whereas it has been argued that some parametric methods are robust when scales with 7+ indicators are treated as continuous [e.g., @normanLikertScalesLevels2010],
 this certainly does not imply that all methods are.
 It is certainly unlikely that such ordinal variables can be treated as a *mixture* of multiple normal distributions.
-The problem becomes eggregious when the number of classes estimated equals or exceeds the number of categories; in this case, each class-specific mean could describe a single response category, and a class-specific variance component would be nonsensical.
+The problem becomes egregious when the number of classes estimated equals or exceeds the number of categories; in this case, each class-specific mean could describe a single response category, and a class-specific variance component would be nonsensical.
 In sum, Likert-type scales are rarely suitable for mixture modeling;
-a latent class analysis with ordinal indicators may be more appropriate.
+latent class analysis with ordinal indicators is more appropriate.
+
+Relatedly, a recent publication claimed that an assumption of mixture models is that observed indicators are normally distributed [REF SPURK].
+This is incorrect.
+When the number of classes is greater than one, mixture models assume that the observed indicators are a mixture of multiple (multivariate) normal distributions.
+<!-- CJ: Expand on this here -->
 
 Extensive descriptive statistics (including the number of unique values, variance of categorical variables, and missingness; see next paragraph) can be obtained using the function `tidySEM::descriptives(data)`.
 Note, however, that sample-level descriptive statistics are of limited value when the goal of a study is to identify sub-samples using latent class analysis.
@@ -385,7 +390,7 @@ As Little's classic MCAR test relies on the comparison of variances across group
 This assumption is tenuous in the context of latent class analysis.
 A non-parametric MCAR test, as provided by Jamshidian and Jalal, may be more suitable [-@jamshidianTestsHomoscedasticityNormality2010].
 Unfortunately, this test was removed from the central R-repository CRAN due to lack of maintenance.
-For this tutorial, I have re-implemented it in the `mice` package as `mice::MCAR()`,
+For this tutorial, I have re-implemented it in the `mice` package as `mice::mcar()`,
 with a fast backend in C++ and new printing and plotting methods. 
 
 While we concur that investigating missingness is due dilligence,
@@ -402,7 +407,7 @@ First, because latent class analyses are often computationally expensive,
 and conducting them on multiple imputed datasets may be unfeasible.
 Second, because there is no straightforward way to integrate latent class analysis results across multiple datasets.
 To conclude; our recommendation is to inspect missingness (e.g., using `mice::MCAR()`)
-and report the number of missings per variable (e.g., using `tidySEM::descriptives()`),
+and report the proportion of missingness per variable (e.g., using `tidySEM::descriptives()`),
 before proceeding with FIML.
 One minor concern is that the K-means algorithm,
 which `tidySEM` uses for determining starting values,
@@ -451,10 +456,8 @@ The BIC usually applies a stronger penalty for complexity that scales logarithmi
 
 Fit indices may occasionally contradict each other, so it is important to identify a suitable strategy to reconcile them.
 One option is to select a specific fit index before analyzing the data.
-Another option is to always prefer the most parsimoneous model that has best fit according to any of the available fit indices.
+Another option is to always prefer the most parsimonious model that has best fit according to any of the available fit indices.
 Yet another option is to incorporate information from multiple fit indices using the analytic hierarchy process [@akogulComparisonInformationCriteria2016].
-
-
 
 Confirmatory analyses typically require less comprehensive alternative model specifications.
 For example, in the context of preregistered analyses, the main models of interest may have been specified a priori.
@@ -470,13 +473,13 @@ and that alternative
 ## Software
 
 Many software packages are available for the estimation of latent class analyses.
-Some of these packages have limited functionality, or implement particular innovations.
+Some of these packages have limited functionality, or implement specific innovations.
 Other packages implement latent class analyses in the context of a more flexible structural equation modeling framework.
 The most notable examples of the latter are the commercial programs Mplus and Latent GOLD, 
 and the free open source R-package OpenMx.
 The commercial packages stand out because they offer relatively user-friendly interfaces
 and implement sensible defaults for complex analyses, including latent class analysis.
-This somewhat lowers the threshold for applied researchers to adopt such methods.
+This lowers the threshold for applied researchers to adopt such methods.
 Commercial software also has several downsides, however.
 One such downside is that use of the software is restricted to those individuals and institutions who can afford a license.
 A second downside is that the source code, being proprietary, cannot be audited, debugged, or enhanced by third parties.
@@ -571,7 +574,7 @@ Simulated annealing iteratively considers some "destination" in the landscape,
 and compares its likelihood to the current one. If the destination likelihood is higher, 
 the estimator moves there.
 If the destination likelihood is *lower*, the estimator still moves there occasionally, based on probability.
-This latter property allows it to escape local optima.
+This latter property allows it to escape local optima, and find the global optimum.
 
 By default, `tidySEM` employs this solution of deriving starting values using K-means clustering,
 and identifying the global optimum solution using simulated annealing.
@@ -580,38 +583,38 @@ simulated annealing is followed up with a short run of the EM algorithm,
 as EM inherently produces an asymptotic covariance matrix for the parameters that can be used to compute standard errors.
 Note that these defaults can be manually overridden.
 
-In the case of Latent Profile Analysis, it has been suggested that when tests of multivariate normality indicate a violation, 
-maximum likelihood with robust standard errors should be used (Spurk et al., 2020). 
-This statement is problematic for two reasons. 
-Firstly, multivariate normality will always be violated in mixture models by definition. 
-We assume that the population consists of several groups each characterized by its own normal distribution. 
-When two or more normal distributions with different means and standard deviations comprise a mixed population distribution, 
-this combined distribution is no longer normal. 
-For example, you can imagine a bimodal distribution when dealing with two latent classes. 
-If this were not the case and our mixed population distribution were normal, 
-there would be no latent classes to extract as the population would consists of a single class only. 
-For this reason, multivariate normality will always be violated when the population is comprised of several latent groups. 
+One recent paper suggested maximum likelihood with robust standard errors should be used when the observed indicators of a latent class analysis are not normally distributed (Spurk et al., 2020). 
+This statement is incorrect, and may lead readers to believe that they must use commercial software to estimate latent class analyses, as robust maximum likelihood is currently only implemented in Mplus and latentGOLD.
+
+As explained before, mixture modeling assumes that observed data are a mixture of (multivariate) normal distributions; thus, the observed indicators will likely not be normally distributed.
+<!-- We assume that the population consists of several groups each characterized by its own normal distribution.  -->
+<!-- When two or more normal distributions with different means and standard deviations comprise a mixed population distribution,  -->
+<!-- this combined distribution is no longer normal.  -->
+<!-- For example, you can imagine a bimodal distribution when dealing with two latent classes.  -->
+<!-- If this were not the case and our mixed population distribution were normal,  -->
+<!-- there would be no latent classes to extract as the population would consists of a single class only.  -->
+<!-- For this reason, multivariate normality will always be violated when the population is comprised of several latent groups.  -->
 Secondly, the claim that maximum likelihood with robust standard errors should be preferred 
 implicitly implies that only software packages with this estimation technique can be used. 
 
-### Starting values
+<!-- ### Starting values -->
 
-The EM algorithm needs starting values for each parameter it wants to estimate. 
-If it were provided a single starting value for each parameter, 
-the EM optimizer would be at risk of finding a local optimum instead of the global optimum. 
-In other words, it would converge on a suboptimal solution resulting in biased parameter and model fit estimates. 
-To prevent this, we should give the algorithm a sufficiently large set of random starting values for each parameter
-in order to maximize our chances of finding the deepest valley that is the global optimum (McLachlan & Peel, 2004). 
-Hipp and Bauer (2006) recommend using minimally 50-100 sets of random starting values.
-<!-- add more on this -->
-Also, we should ensure the number of initial stage iterations is large for optimization to be successful (Geiser, 2012). 
+<!-- The EM algorithm needs starting values for each parameter it wants to estimate.  -->
+<!-- If it were provided a single starting value for each parameter,  -->
+<!-- the EM optimizer would be at risk of finding a local optimum instead of the global optimum.  -->
+<!-- In other words, it would converge on a suboptimal solution resulting in biased parameter and model fit estimates.  -->
+<!-- To prevent this, we should give the algorithm a sufficiently large set of random starting values for each parameter -->
+<!-- in order to maximize our chances of finding the deepest valley that is the global optimum (McLachlan & Peel, 2004).  -->
+<!-- Hipp and Bauer (2006) recommend using minimally 50-100 sets of random starting values. -->
+<!-- <!-- add more on this --> -->
+<!-- Also, we should ensure the number of initial stage iterations is large for optimization to be successful (Geiser, 2012).  -->
 
-Furthermore, the choice of the starting values can impact the speed of the algorithm's convergence
-or in case of having poor initial values the algorithm might diverge altogether (McLachlan & Peel, 2004).
-The key is to use a large number of starting value sets. 
-Geiser (2013) recommends at least 500 sets of initial values in the first optimization step for simple models,
-and a greater number of sets for more complex models. 
-A large number of starting values ensures that we find the true maximum and estimate the model parameters and fit accurately.
+<!-- Furthermore, the choice of the starting values can impact the speed of the algorithm's convergence -->
+<!-- or in case of having poor initial values the algorithm might diverge altogether (McLachlan & Peel, 2004). -->
+<!-- The key is to use a large number of starting value sets.  -->
+<!-- Geiser (2013) recommends at least 500 sets of initial values in the first optimization step for simple models, -->
+<!-- and a greater number of sets for more complex models.  -->
+<!-- A large number of starting values ensures that we find the true maximum and estimate the model parameters and fit accurately. -->
 
 
 [@nylund-gibsonTenFrequentlyAsked2018; ]
