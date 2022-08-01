@@ -578,6 +578,20 @@ simulated annealing is followed up with a short run of the EM algorithm,
 as EM inherently produces an asymptotic covariance matrix for the parameters that can be used to compute standard errors.
 Note that these defaults can be manually overridden.
 
+In the case of Latent Profile Analysis, it has been suggested that when tests of multivariate normality indicate a violation, 
+maximum likelihood with robust standard errors should be used (Spurk et al., 2020). 
+This statement is problematic for two reasons. 
+Firstly, multivariate normality will always be violated in mixture models by definition. 
+We assume that the population consists of several groups each characterized by its own normal distribution. 
+When two or more normal distributions with different means and standard deviations comprise a mixed population distribution, 
+this combined distribution is no longer normal. 
+For example, you can imagine a bimodal distribution when dealing with two latent classes. 
+If this were not the case and our mixed population distribution were normal, 
+there would be no latent classes to extract as the population would consists of a single class only. 
+For this reason, multivariate normality will always be violated when the population is comprised of several latent groups. 
+Secondly, the claim that maximum likelihood with robust standard errors should be preferred 
+implicitly implies that only software packages with this estimation technique can be used. 
+
 ### Starting values
 
 The EM algorithm needs starting values for each parameter it wants to estimate. 
@@ -695,6 +709,10 @@ Three important classification diagnostic measures are entropy, the average post
 Entropy is a summary measure of posterior class probabilities across classes and individuals.
 It ranges from 0 (model classification no better than random chance) to 1 (perfect classification).
 As a rule of thumb, values above .80 are deemed acceptable and those approaching 1 are considered ideal.
+Entropy should not be used to select a particular class solution. 
+An appropriate use of entropy is that it can disqualify certain solutions if class separability is too low 
+or if one of the latent classes is too small to be meaningful or to calculate descriptive statistics.
+
 <!-- Masyn 2013 "entropy was never intended for, nor should it be used for, model selection during the class enumeration process" p. 570 -->
 <!-- add content about entropy -->
 
@@ -749,6 +767,10 @@ Various authors have tried to better and standardize ways of reporting LCA (e.g.
 Building on their work, we provide guidelines with a strong emphasis on scientific reproducibility and transparency
 better known as the open science framework (OSF). Open science framework promotes scientific openness, reproducibility and integrity 
 through an establishment of guidelines for the scientific process (Foster & Deardorff, 2017)
+To this end, van Lissa and colleagues (2020) developed WORCS, a workflow for open reproducible code in science.
+WORCS consists of step-by-step guidelines for research projects based on the TOP-guidelines developed by Nosek and colleagues (2015).
+It can be easily implemented in R in form of an R package which facilitates preregistration, article drafting,
+version control, citation and formatting, among others (Van Lissa et al., 2020)
 
 
 	* Use comprehensive citation; this includes referencing the software used.
