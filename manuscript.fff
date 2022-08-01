@@ -1,0 +1,5 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\includegraphics[width=7in]{shoedens} \caption{Kernel density plot of shoe sizes.}\label{fig:shoedens}
+\end{figure*}
