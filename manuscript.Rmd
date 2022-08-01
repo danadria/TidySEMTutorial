@@ -37,7 +37,7 @@ abstract: |
 
 keywords          : "keywords"
 wordcount         : "X"
-
+bibliography      : "mixture.bib"
 figsintext        : no
 figurelist        : no
 tablelist         : no
@@ -329,7 +329,7 @@ The example of shoe size is a rudimentary illustration of this type of applicati
 The best practices in estimation, as outlined in Table \@ref(tab:checkest),
 are rooted in existing recommendations for best practices for estimating
 specific sub-types of latent class analyses,
-including latent class growth analysis [@schootGRoLTSChecklistGuidelinesReporting2017]
+including latent class growth analysis [@vandeschootGRoLTSChecklistGuidelinesReporting2017]
 and latent class analysis with ordinal indicators [e.g., @nylund-gibsonTenFrequentlyAsked2018].
 These were generalized to be more relevant to all types of latent class analyses,
 and updated to current best practices, as explained below.
@@ -584,7 +584,7 @@ simulated annealing is followed up with a short run of the EM algorithm,
 as EM inherently produces an asymptotic covariance matrix for the parameters that can be used to compute standard errors.
 Note that these defaults can be manually overridden.
 
-One recent paper suggested maximum likelihood with robust standard errors should be used when the observed indicators are not normally distributed (Spurk et al., 2020). 
+One recent paper suggested maximum likelihood with robust standard errors should be used when the observed indicators are not normally distributed [@spurkLatentProfileAnalysis2020]. 
 This statement is incorrect, and may lead readers to believe that they must use commercial software, as robust maximum likelihood is currently only implemented in Mplus and latentGOLD.
 As explained before, mixture modeling assumes that observed data are a mixture of (multivariate) normal distributions; thus, the observed indicators will likely not be normally distributed.
 <!-- CJ: Is there even any literature that says robust standard erorrs are better with latent class analysis? -->

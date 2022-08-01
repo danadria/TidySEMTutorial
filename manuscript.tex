@@ -69,6 +69,29 @@
   \let\oldsubparagraph\subparagraph
   \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 \ifLuaTeX
 \usepackage[bidi=basic]{babel}
 \else
@@ -193,15 +216,15 @@ the OpenMx R-package.
 \begin{document}
 \maketitle
 
-Latent class analysis has become quite popular across scientific fields, and under a number of different names.
-The purpose of this technique is to estimate unobserved group membership
+Latent class analysis is an umbrella term that refers to a number of techniques for estimating unobserved group membership
 based on a parametric model of one or more observed indicators of group membership.
-Despite the popularity of the method, there is a noted absence of guidelines for estimating and reporting latent class analyses {[}{]}.
+This method has become quite popular across scientific fields, and under a number of different names; most notably (finite Gaussian) mixture modeling and latent profile analysis.
+Despite the popularity of the method, there is a lack of standards for estimating and reporting latent class analyses.
 This complicates manuscript review and assessment of the quality of published studies,
 and introduces a risk of misapplications of the technique.
-The present paper seeks to address this gap in the literature by suggesting updated guidelines for estimation and reporting on latent class analysis, based on best practice.
-
-Throughout this paper, examples make use of free, open source software for latent class analysis in R.
+The present paper seeks to address this gap in the literature by suggesting updated guidelines for estimation and reporting on latent class analysis, based on current best practice.
+Importantly, in order to lower the barrier of entry and ensure reproducibility of all examples, this paper exclusively relies on free, open source software for latent class analysis in R.
+Our goal is to make best-practices latent class analysis widely accessable.
 
 \hypertarget{defining-latent-class-analysis}{%
 \subsection{Defining latent class analysis}\label{defining-latent-class-analysis}}
@@ -253,7 +276,7 @@ Woman & 51 & 0\\
 One way to is to conceptualize latent class analysis is by analogy to a measurement model in structural equation modeling.
 A mixture model is like confirmatory factor analysis, except that the continuous latent variable is substituted with a categorical latent variable.
 One difference between the two techniques is that factor analysis can be considered as a way to group observed \emph{variables} into latent constructs, with factor loadings indicating which items belong are most indicative of a construct.
-By contrast, mixture modeling groups \emph{individuals} into classes (see \textbf{nylund-gibsonTenFrequentlyAsked2018?}).
+By contrast, mixture modeling groups \emph{individuals} into classes (see Nylund-Gibson \& Choi, 2018).
 In line with this distinction, latent class analysis is sometimes referred to as a ``person-centered'' technique, and factor analysis as a ``variable-centered'' technique.
 
 When the focus is on the model parameters in each group,
@@ -276,7 +299,7 @@ Specifically, the posterior class probability that an individual belongs to a la
 can be computed from the likelihood of that individual's observed data under given the class-specific model.
 
 Finally, in the context of machine learning, latent class analysis can be considered as an
-\emph{unsupervised classification} problem (\textbf{figueiredoUnsupervisedLearningFinite2002?}).
+\emph{unsupervised classification} problem (Figueiredo \& Jain, 2002).
 The term \emph{unsupervised} refers to the fact that the outcome variable, true class membership,
 is not known, and the term \emph{classification} refers to the fact that the algorithm is predicting a categorical outcome (class membership).
 
@@ -284,7 +307,7 @@ is not known, and the term \emph{classification} refers to the fact that the alg
 \subsection{A taxonomy of latent class analyses}\label{a-taxonomy-of-latent-class-analyses}}
 
 In this paper, we use the term latent class analysis to refer to techniques that estimate latent class membership based on a parametric model of observed indicators.
-From a historical perspective, the term latent class analysis was initially conceived to refer to analyses with categorical (binary) indicators (\textbf{vermuntj.k.LatentClassAnalysis2004?}).
+From a historical perspective, the term latent class analysis was initially conceived to refer to analyses with categorical (binary) indicators (Vermunt, J.K. et al., 2004).
 Nowadays, there are a number of related techniques, known by distinct names, that serve a similar purpose.
 The term ``latent class analysis'' seems most appropriate as an umbrella term for this broader class of models,
 as it only refers to the purpose of the analysis, and does not imply restrictions to the model used, or the level of measurement of the indicators.
@@ -323,11 +346,12 @@ If the variance of the growth parameters is fixed to zero, it is known as a late
 This latter approach assumes that all individuals within a class share the same identical trajectory,
 and that any variance in the indicators not explained by the class-specific latent trajectories is due to residual error variance.
 
-When a latent class analysis relies on categorical indicators,
-typically of a binary or ordinal measurement level,
-it has a different parameterization than a mixture model.
-One common assumption is that each categorical variable reflects an underlying standard normal distribution.
-The parameters in such a model are then ``thresholds'', corresponding to the quantiles of a standard normal distribution (with \(N(\mu = 0, \sigma = 1)\)).
+The term latent class analysis originally referred to cases where the observed indicators were categorical.
+Nowadays, it is more commonly used as an umbrella term.
+To prevent ambiguity, the special case where indicators are of binary or ordinal measurement level might be described as latent class analysis with ordinal indicators.
+Latent class models with ordinal indicators are parameterized differently from mixture models.
+One common parameterization assumes that each categorical variable reflects an underlying standard normal distribution.
+The parameters are ``thresholds'' that correspond to quantiles of a standard normal distribution (with \(N(\mu = 0, \sigma = 1)\)).
 These thresholds are estimated based on the proportion of individuals in each of the response categories of the indicator variable.
 For example, a binary indicator has a single threshold that distinguishes the two response categories.
 If responses are distributed 50/50, then the corresponding threshold would be \(t_1 = 0.00\).
@@ -341,14 +365,14 @@ although most of the suggested guidelines are applicable to latent class analyse
 There are several use cases for which latent class analyses are suitable.
 One example is to test a theory that postulates the existence of a categorical latent variable.
 For example, \emph{identity status theory} posits that, at any given point in time, adolescents reside in one of four identity statuses.
-Mixture modeling can be used to identify these four statuses based on observed indicators (e.g., self-reported identity exploration and commitment).
+Latent class analysis can be used to identify these four statuses based on observed indicators (e.g., self-reported identity exploration and commitment).
 If results indicate that the data are better described by a different number of classes,
 or that the four-class solution does not correspond to the predicted pattern of responses on the indicators, then the theory may be called into question.
 
 Another use case is unsupervised learning;
 when the goal is to restore unobserved class membership based on observed indicators,
 or to classify individuals.
-For example, a mixture model can be used as a diagnostic aid when several clinical indicators can be used to distinguish between a fixed number of physical (\textbf{baughmanMixtureModelAnalysis2006?}) or mental (\textbf{wuAbuseDependencePrescription2011?}) health problems.
+For example, a mixture model can be used as a diagnostic aid when several clinical indicators can be used to distinguish between a fixed number of physical (Baughman, Bisgard, Lynn, \& Meade, 2006) or mental (Wu, Woody, Yang, Pan, \& Blazer, 2011) health problems.
 The example of shoe size is a rudimentary illustration of this type of application.
 
 \hypertarget{best-practices}{%
@@ -358,10 +382,10 @@ The example of shoe size is a rudimentary illustration of this type of applicati
 \subsection{In estimation}\label{in-estimation}}
 
 The best practices in estimation, as outlined in Table \ref{tab:checkest},
-are inspired by prior recommendations for best practices for estimating
+are rooted in existing recommendations for best practices for estimating
 specific sub-types of latent class analyses,
 including latent class growth analysis (\textbf{schootGRoLTSChecklistGuidelinesReporting2017?})
-and latent class analysis with ordinal indicators (e.g., \textbf{nylund-gibsonTenFrequentlyAsked2018?}).
+and latent class analysis with ordinal indicators (e.g., Nylund-Gibson \& Choi, 2018).
 These were generalized to be more relevant to all types of latent class analyses,
 and updated to current best practices, as explained below.
 
@@ -387,48 +411,53 @@ and updated to current best practices, as explained below.
 Examining observed data is essential for any analysis,
 as it may reveal patterns and violations of assumptions that had not been considered prior to data collection.
 Pay special attention to level of measurement of the indicators.
-Indicators with an ordinal level of measurement are likely to violate the assumption of within-class normal distributions (see \textbf{vermuntKmeansMayPerform2011?}).
+Mixture modeling (including LPA) is strictly speaking only suitable for continuous variables.
+Indicators with an ordinal level of measurement are likely to violate the assumption of within-class normal distributions of mixture models (see Vermunt, 2011).
 Personal experience consulting on latent class analyses and moderating the \texttt{tidyLPA} Google group
-suggest that the mis-application of mixture models to ordinal (e.g., Likert-type) indicators is perhaps the most common source of user error.
-Whereas it has been argued that some parametric methods are robust when scales with 7+ indicators are treated as continuous (e.g., \textbf{normanLikertScalesLevels2010?}),
+suggest that the mis-application of mixture models to ordinal (e.g., Likert-type) indicators is the most common source of user error.
+Whereas it has been argued that some parametric methods are robust when scales with 7+ indicators are treated as continuous (e.g., Norman, 2010),
 this certainly does not imply that all methods are.
 It is certainly unlikely that such ordinal variables can be treated as a \emph{mixture} of multiple normal distributions.
-The problem becomes eggregious when the number of classes estimated equals or exceeds the number of categories; in this case, each class-specific mean could describe a single response category, and a class-specific variance component would be nonsensical.
+The problem becomes egregious when the number of classes estimated equals or exceeds the number of categories; in this case, each class-specific mean could describe a single response category, and a class-specific variance component would be nonsensical.
 In sum, Likert-type scales are rarely suitable for mixture modeling;
-a latent class analysis with ordinal indicators may be more appropriate.
+latent class analysis with ordinal indicators is more appropriate.
+
+Relatedly, a recent publication claimed that an assumption of mixture models is that observed indicators are normally distributed {[}REF SPURK{]}.
+This is incorrect.
+When the number of classes is greater than one, mixture models assume that the observed indicators are a mixture of multiple (multivariate) normal distributions.
 
 Extensive descriptive statistics (including the number of unique values, variance of categorical variables, and missingness; see next paragraph) can be obtained using the function \texttt{tidySEM::descriptives(data)}.
 Note, however, that sample-level descriptive statistics are of limited value when the goal of a study is to identify sub-samples using latent class analysis.
 Plots (density plots for continuous variables, and bar charts for categorical ones) may be more diagnostic.
 Note that density plots can also aid in the choice of the number of classes, as further explained in the section on visualization.
-Descriptive statistics and plots can be relegated to online supplements, provided that these are readily accessible (consider using a GitHub repository as a comprehensive public research archive, as explained in \textbf{vanlissaWORCSWorkflowOpen2020?}).
+Descriptive statistics and plots can be relegated to online supplements, provided that these are readily accessible (consider using a GitHub repository as a comprehensive public research archive, as explained in Van Lissa et al., 2020).
 
 \hypertarget{missing-data}{%
 \subsubsection{Missing data}\label{missing-data}}
 
 Previous work has emphasized the importance of examining the pattern of missing data and reporting how missingness was handled (\textbf{schootGRoLTSChecklistGuidelinesReporting2017?}).
-Three types of missingness have been distinguished in the literature (\textbf{rubinInferenceMissingData1976?}):
+Three types of missingness have been distinguished in the literature (Rubin, 1976):
 Missing completely at random (MCAR), which means that missingness is random;
 missing at random (MAR), which means that missingness is contingent on the \emph{observed} data (and can thus be accounted for);
 and finally missing not at random (MNAR), which means that missingness is related to unobserved factors.
 It is possible to conduct a so-called ``MCAR'' test,
-for example the non-parametric MCAR test (\textbf{jamshidianTestsHomoscedasticityNormality2010?}).
+for example the non-parametric MCAR test (Jamshidian \& Jalal, 2010).
 But note that the name ``MCAR test'' is somewhat misleading,
 as the null-hypothesis of this test is that the data are not MAR,
 and a significant test statistic indicates that missingness is related to the observed data (MAR).
 A non-significant test statistic does not distinguish between MCAR or MNAR.
-As Little's classic MCAR test relies on the comparison of variances across groups with different patterns of missing data, it assumes normality (\textbf{littleTestMissingCompletely1988?}).
+As Little's classic MCAR test relies on the comparison of variances across groups with different patterns of missing data, it assumes normality (Little, 1988).
 This assumption is tenuous in the context of latent class analysis.
-A non-parametric MCAR test, as provided by Jamshidian and Jalal, may be more suitable (\textbf{jamshidianTestsHomoscedasticityNormality2010?}).
+A non-parametric MCAR test, as provided by Jamshidian and Jalal, may be more suitable (2010).
 Unfortunately, this test was removed from the central R-repository CRAN due to lack of maintenance.
-For this tutorial, I have re-implemented it in the \texttt{mice} package as \texttt{mice::MCAR()},
+For this tutorial, I have re-implemented it in the \texttt{mice} package as \texttt{mice::mcar()},
 with a fast backend in C++ and new printing and plotting methods.
 
 While we concur that investigating missingness is due dilligence,
 it is important to emphasize that missingness is adequately handled by default in many software packages for latent class analyses, such as \texttt{OpenMx} (and e.g., Mplus).
 These packages use Full Information Maximum Likelihood (FIML) estimation,
 which makes use of all available information without imputing missing values.
-FIML is a best-practice solution for handling missing data; on par with multiple imputation (\textbf{leeComparisonFullInformation2021?}).
+FIML is a best-practice solution for handling missing data; on par with multiple imputation (Lee \& Shi, 2021).
 FIML estimation assumes that missingness is either MCAR or MAR.
 Thus, one would typically proceed with FIML regardless of the outcome of an MCAR test.
 Although FIML does not, by default, handle missingness in exogenous variables - all indicator variables in latent class analysis are endogenous, so this is not a concern.
@@ -438,7 +467,7 @@ First, because latent class analyses are often computationally expensive,
 and conducting them on multiple imputed datasets may be unfeasible.
 Second, because there is no straightforward way to integrate latent class analysis results across multiple datasets.
 To conclude; our recommendation is to inspect missingness (e.g., using \texttt{mice::MCAR()})
-and report the number of missings per variable (e.g., using \texttt{tidySEM::descriptives()}),
+and report the proportion of missingness per variable (e.g., using \texttt{tidySEM::descriptives()}),
 before proceeding with FIML.
 One minor concern is that the K-means algorithm,
 which \texttt{tidySEM} uses for determining starting values,
@@ -463,7 +492,7 @@ it is important to consider alternative model specifications.
 However, alternative model specifications may be approached differently depending on whether an analysis is data driven (exploratory), or theoretically driven (confirmatory).
 This distinction has remained underemphasized in prior writing.
 
-Prior literature on latent class analysis has emphasized exploratory applications of the method (see \textbf{nylundDecidingNumberClasses2007?}).
+Prior literature on latent class analysis has emphasized exploratory applications of the method (see Nylund, Asparouhov, \& Muthén, 2007).
 In exploratory analyses, a large number of models are typically estimated in batch,
 with varying numbers of classes and model specifications.
 The ``correct'' model specification is then determined based on a combination of fit indices,
@@ -488,13 +517,13 @@ The BIC usually applies a stronger penalty for complexity that scales logarithmi
 
 Fit indices may occasionally contradict each other, so it is important to identify a suitable strategy to reconcile them.
 One option is to select a specific fit index before analyzing the data.
-Another option is to always prefer the most parsimoneous model that has best fit according to any of the available fit indices.
-Yet another option is to incorporate information from multiple fit indices using the analytic hierarchy process (\textbf{akogulComparisonInformationCriteria2016?}).
+Another option is to always prefer the most parsimonious model that has best fit according to any of the available fit indices.
+Yet another option is to incorporate information from multiple fit indices using the analytic hierarchy process (Akogul \& Erisoglu, 2016).
 
 Confirmatory analyses typically require less comprehensive alternative model specifications.
 For example, in the context of preregistered analyses, the main models of interest may have been specified a priori.
 
-Van de Schoot and colleagues (\textbf{vandeschootGRoLTSChecklistGuidelinesReporting2017?}) argue that there are many choices to be made in the specification of latent trajectory models,
+Van de Schoot and colleagues (2017) argue that there are many choices to be made in the specification of latent trajectory models,
 and that alternative
 
 \begin{verbatim}
@@ -506,13 +535,13 @@ and that alternative
 \subsection{Software}\label{software}}
 
 Many software packages are available for the estimation of latent class analyses.
-Some of these packages have limited functionality, or implement particular innovations.
+Some of these packages have limited functionality, or implement specific innovations.
 Other packages implement latent class analyses in the context of a more flexible structural equation modeling framework.
 The most notable examples of the latter are the commercial programs Mplus and Latent GOLD,
 and the free open source R-package OpenMx.
 The commercial packages stand out because they offer relatively user-friendly interfaces
 and implement sensible defaults for complex analyses, including latent class analysis.
-This somewhat lowers the threshold for applied researchers to adopt such methods.
+This lowers the threshold for applied researchers to adopt such methods.
 Commercial software also has several downsides, however.
 One such downside is that use of the software is restricted to those individuals and institutions who can afford a license.
 A second downside is that the source code, being proprietary, cannot be audited, debugged, or enhanced by third parties.
@@ -587,7 +616,7 @@ Simulated annealing iteratively considers some ``destination'' in the landscape,
 and compares its likelihood to the current one. If the destination likelihood is higher,
 the estimator moves there.
 If the destination likelihood is \emph{lower}, the estimator still moves there occasionally, based on probability.
-This latter property allows it to escape local optima.
+This latter property allows it to escape local optima, and find the global optimum.
 
 By default, \texttt{tidySEM} employs this solution of deriving starting values using K-means clustering,
 and identifying the global optimum solution using simulated annealing.
@@ -596,47 +625,14 @@ simulated annealing is followed up with a short run of the EM algorithm,
 as EM inherently produces an asymptotic covariance matrix for the parameters that can be used to compute standard errors.
 Note that these defaults can be manually overridden.
 
-In the case of Latent Profile Analysis, it has been suggested that when tests of multivariate normality indicate a violation,
-maximum likelihood with robust standard errors should be used (Spurk et al., 2020).
-This statement is problematic for two reasons.
-Firstly, multivariate normality will always be violated in mixture models by definition.
-We assume that the population consists of several groups each characterized by its own normal distribution.
-When two or more normal distributions with different means and standard deviations comprise a mixed population distribution,
-this combined distribution is no longer normal.
-For example, you can imagine a bimodal distribution when dealing with two latent classes.
-If this were not the case and our mixed population distribution were normal,
-there would be no latent classes to extract as the population would consists of a single class only.
-For this reason, multivariate normality will always be violated when the population is comprised of several latent groups.
-Secondly, the claim that maximum likelihood with robust standard errors should be preferred
-implicitly implies that only software packages with this estimation technique can be used.
+One recent paper suggested maximum likelihood with robust standard errors should be used when the observed indicators are not normally distributed (Spurk et al., 2020).
+This statement is incorrect, and may lead readers to believe that they must use commercial software, as robust maximum likelihood is currently only implemented in Mplus and latentGOLD.
+As explained before, mixture modeling assumes that observed data are a mixture of (multivariate) normal distributions; thus, the observed indicators will likely not be normally distributed.
 
-\hypertarget{starting-values}{%
-\subsubsection{Starting values}\label{starting-values}}
+--\textgreater{}
 
-The EM algorithm needs starting values for each parameter it wants to estimate.
-If it were provided a single starting value for each parameter,
-the EM optimizer would be at risk of finding a local optimum instead of the global optimum.
-In other words, it would converge on a suboptimal solution resulting in biased parameter and model fit estimates.
-To prevent this, we should give the algorithm a sufficiently large set of random starting values for each parameter
-in order to maximize our chances of finding the deepest valley that is the global optimum (McLachlan \& Peel, 2004).
-Hipp and Bauer (2006) recommend using minimally 50-100 sets of random starting values.
-Also, we should ensure the number of initial stage iterations is large for optimization to be successful (Geiser, 2012).
-
-Furthermore, the choice of the starting values can impact the speed of the algorithm's convergence
-or in case of having poor initial values the algorithm might diverge altogether (McLachlan \& Peel, 2004).
-The key is to use a large number of starting value sets.
-Geiser (2013) recommends at least 500 sets of initial values in the first optimization step for simple models,
-and a greater number of sets for more complex models.
-A large number of starting values ensures that we find the true maximum and estimate the model parameters and fit accurately.
-
-{[}(\textbf{nylund-gibsonTenFrequentlyAsked2018?}); {]}
-
-\begin{verbatim}
-In many circumstances and especially in a cluster analysis setting, the mixture component means are expected to be different. Thus, a reasonable and largely employed way of initiating EM consists of starting from the solution of a K-means type algorithm. [@biernackiChoosingStartingValues2003]
-\end{verbatim}
-
-\hypertarget{assessing-estimation-results}{%
-\subsubsection{Assessing Estimation Results}\label{assessing-estimation-results}}
+\hypertarget{class-enumeration}{%
+\subsubsection{Class enumeration}\label{class-enumeration}}
 
 In LCA, a sequence of models is fitted to the data
 with each additional model estimating one more class than the previous model.
@@ -646,26 +642,6 @@ In addition to this, there are several statistical criteria to consider in model
 These include but are not limited to likelihood ratio tests, information criteria,
 and the Bayes factor (Weller, Bowen \& Faubert, 2020).
 
-Absolute model fit can be assessed using the likelihood ratio (LR) \(\chi^2\) goodness-of-fit test.
-It can compare two nested models when they have the same number of classes (Lanza et al., 2003).
-Typically, we compare our final class solution (a constrained model)
-to an unconstrained one (a model characterized by the perfect fit).
-The former model is a special, less complex version of the latter.
-In this case, we compare our model-based response pattern frequencies to those in the dataset.
-Therefore, we make a statement about how well our model fits the data.
-The perfect fit would be indicated by the \(\chi^2\ =\ 0\) and \(p\ =\ 1\).
-Ideally, the LR \(\chi^2\) test will be non-significant as this implies
-that while our constrained model is more parsimonious, it fits the data just as well as the unconstrained model.
-The underlying assumption of this procedure is that the test statistic is asymptotically distributed
-as a \(\chi^2\) meaning that it can be approximated using this distribution.
-This is the case when the sample size is adequate (Lanza et al., 2003).
-The dependence of the LR \(\chi^2\) test statistic on sample size has its downsides (Masyn, 2013).
-Very large samples will often effortlessly reject the null even when the final class solution is a good fit,
-and small samples will often be underpowered resulting in non-significant \(\chi^2\) statistic.
-In fact, small samples might not be well approximated using the \(\chi^2\) distribution,
-which is a problem shared with large yet sparse datasets.
-In such cases, special caution is advised when interpreting the resulting p-values (Masyn, 2013).
-
 Relative model fit can be examined using the likelihood ratio test.
 This is only appropriate when the two models we wish to compare are nested.
 The likelihood ratio test statistic is computed as the difference in maximum log likelihoods of the two models,
@@ -674,6 +650,9 @@ This statistic also follows the \(\chi^2\) distribution.
 Similar to the LR \(\chi^2\) goodness-of-fit test, we want the test statistic to be non-significant
 in order to give support to the simpler model.
 The likelihood ratio test can only compare two models at a time (Lanza et al., 2003).
+
+\hypertarget{model-fit-indices}{%
+\subsubsection{Model fit indices}\label{model-fit-indices}}
 
 If we wish to simultaneously compare multiple models based on their relative fit,
 this can be done through a comparison of multiple information criteria.
@@ -690,19 +669,6 @@ Multiple information criteria should be compared when choosing the final class s
 This can be done by means of an elbow plot (for an example see Nylund-Gibson and Choi, 2018).
 Advantages of using information criteria are that we can compare multiple models at a time,
 and these models need not be nested (Masyn, 2013).
-
-When estimators which require sets of starting values are used,
-each fitted model will have a corresponding log likelihood value.
-Ideally, the largest log likelihood value of the final class solution will be replicated a large number of times
-with each log likelihood value generated by a different starting value set.
-Successful replications of the largest log likelihood value across different starting values
-instill confidence that the estimation was successful and we indeed found the global maximum (Masyn, 2013).
-The model with the highest replicated likelihood will be chosen as our best-fit.
-If the largest log likelihood value is not replicated many times, the model may be unidentified (Geiser, 2012).
-Such a model does not have a unique solution. For a discussion on model identification for LCA, see Masyn (2013).
-Nylund-Gibson and Choi (2018) recommend that the highest log likelihood should be replicated
-in at least 3-10\% of the models initialized with different starting values in the first step of the optimization.
-This consideration does not apply in case of models which use simulated annealing since these do not have starting values.
 
 \hypertarget{classification-diagnostics}{%
 \subsubsection{Classification Diagnostics}\label{classification-diagnostics}}
@@ -729,18 +695,9 @@ The average posterior probability is a measure of classification uncertainty for
 
 The modal class assignment proportion
 
-Conditional item probabilities indicate the probability of a positive score on an item
-given that the person belongs to a particular latent class.
-However, if many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1),
-we are observing boundary parameter estimates. This can be a sign of an invalid solution,
-warn us that too many classes were extracted, or indicate a local optimum.
-Boundary parameter estimates are more likely to happen when working with sparse data
-and should be interpreted with caution (Geiser, 2012).
+\hypertarget{interpreting-the-results}{%
+\subsubsection{Interpreting the results}\label{interpreting-the-results}}
 
-An important outcome of LCA are unconditional class probabilities.
-These communicate the probability that an individual belongs to each class.
-A limitation is that our final class solution need not reflect true class membership.
-Once we do accept a particular class solution, special care also needs to be taken when naming the classes.
 Class names should be chosen to accurately reflect group membership.
 Overly simplified and generalized class names may prove misleading to both audiences and researches alike
 leading to what is known as a naming fallacy (Weller, Bowen \& Faubert, 2020).
@@ -903,8 +860,57 @@ and facilitates the adoption of the estimation and reporting guidelines describe
 --\textgreater{}
 --\textgreater{}
 
-\hypertarget{starting-values-1}{%
-\subsubsection{Starting values}\label{starting-values-1}}
+\hypertarget{starting-values}{%
+\subsubsection{Starting values}\label{starting-values}}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-akogulComparisonInformationCriteria2016}{}}%
+Akogul, S., \& Erisoglu, M. (2016). A {Comparison} of {Information Criteria} in {Clustering Based} on {Mixture} of {Multivariate Normal Distributions}. \emph{Mathematical and Computational Applications}, \emph{21}(3), 34. \url{https://doi.org/10.3390/mca21030034}
+
+\leavevmode\vadjust pre{\hypertarget{ref-baughmanMixtureModelAnalysis2006}{}}%
+Baughman, A. L., Bisgard, K. M., Lynn, F., \& Meade, B. D. (2006). Mixture model analysis for establishing a diagnostic cut-off point for pertussis antibody levels. \emph{Statistics in Medicine}, \emph{25}(17), 2994--3010. \url{https://doi.org/10.1002/sim.2442}
+
+\leavevmode\vadjust pre{\hypertarget{ref-figueiredoUnsupervisedLearningFinite2002}{}}%
+Figueiredo, M. A. T., \& Jain, A. K. (2002). Unsupervised learning of finite mixture models. \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, \emph{24}(3), 381--396. \url{https://doi.org/10.1109/34.990138}
+
+\leavevmode\vadjust pre{\hypertarget{ref-jamshidianTestsHomoscedasticityNormality2010}{}}%
+Jamshidian, M., \& Jalal, S. (2010). Tests of {Homoscedasticity}, {Normality}, and {Missing Completely} at {Random} for {Incomplete Multivariate Data}. \emph{Psychometrika}, \emph{75}(4), 649--674. \url{https://doi.org/10.1007/s11336-010-9175-3}
+
+\leavevmode\vadjust pre{\hypertarget{ref-leeComparisonFullInformation2021}{}}%
+Lee, T., \& Shi, D. (2021). A comparison of full information maximum likelihood and multiple imputation in structural equation modeling with missing data. \emph{Psychological Methods}, No Pagination Specified--No Pagination Specified. \url{https://doi.org/10.1037/met0000381}
+
+\leavevmode\vadjust pre{\hypertarget{ref-littleTestMissingCompletely1988}{}}%
+Little, R. J. A. (1988). A {Test} of {Missing Completely} at {Random} for {Multivariate Data} with {Missing Values}. \emph{Journal of the American Statistical Association}, \emph{83}(404), pp. 1198--1202. \url{https://doi.org/10.2307/2290157}
+
+\leavevmode\vadjust pre{\hypertarget{ref-normanLikertScalesLevels2010}{}}%
+Norman, G. (2010). Likert scales, levels of measurement and the {``laws''} of statistics. \emph{Advances in Health Sciences Education}, \emph{15}(5), 625--632. \url{https://doi.org/10.1007/s10459-010-9222-y}
+
+\leavevmode\vadjust pre{\hypertarget{ref-nylundDecidingNumberClasses2007}{}}%
+Nylund, K. L., Asparouhov, T., \& Muthén, B. O. (2007). Deciding on the {Number} of {Classes} in {Latent Class Analysis} and {Growth Mixture Modeling}: {A Monte Carlo Simulation Study}. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{14}(4), 535--569. \url{https://doi.org/10.1080/10705510701575396}
+
+\leavevmode\vadjust pre{\hypertarget{ref-nylund-gibsonTenFrequentlyAsked2018}{}}%
+Nylund-Gibson, K., \& Choi, A. Y. (2018). Ten frequently asked questions about latent class analysis. \emph{Translational Issues in Psychological Science}, \emph{4}(4), 440--461. \url{https://doi.org/10.1037/tps0000176}
+
+\leavevmode\vadjust pre{\hypertarget{ref-rubinInferenceMissingData1976}{}}%
+Rubin, D. B. (1976). Inference and {Missing Data}. \emph{Biometrika}, \emph{63}(3), 581--592. \url{https://doi.org/10.2307/2335739}
+
+\leavevmode\vadjust pre{\hypertarget{ref-vandeschootGRoLTSChecklistGuidelinesReporting2017}{}}%
+Van De Schoot, R., Sijbrandij, M., Winter, S. D., Depaoli, S., \& Vermunt, J. K. (2017). The {GRoLTS-Checklist}: {Guidelines} for {Reporting} on {Latent Trajectory Studies}. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{24}(3), 451--467. \url{https://doi.org/10.1080/10705511.2016.1247646}
+
+\leavevmode\vadjust pre{\hypertarget{ref-vanlissaWORCSWorkflowOpen2020}{}}%
+Van Lissa, C. J., Brandmaier, A. M., Brinkman, L., Lamprecht, A.-L., Peikert, A., Struiksma, M. E., \& Vreede, B. (2020). \emph{{WORCS}: {A Workflow} for {Open Reproducible Code} in {Science}}. \url{https://doi.org/10.17605/OSF.IO/ZCVBS}
+
+\leavevmode\vadjust pre{\hypertarget{ref-vermuntKmeansMayPerform2011}{}}%
+Vermunt, J. K. (2011). K-means may perform as well as mixture model clustering but may also be much worse: {Comment} on {Steinley} and {Brusco} (2011). \emph{Psychological Methods}, \emph{16}(1), 82--88. \url{https://doi.org/10.1037/a0020144}
+
+\leavevmode\vadjust pre{\hypertarget{ref-vermuntj.k.LatentClassAnalysis2004}{}}%
+Vermunt, J.K., Magidson, J., Lewis-Beck, M., Bryman, A., Liao, T.F., \& Department of Methodology and Statistics. (2004). Latent class analysis. In \emph{The {Sage} encyclopedia of social sciences research methods} (pp. 549--553). {Sage}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-wuAbuseDependencePrescription2011}{}}%
+Wu, L.-T., Woody, G. E., Yang, C., Pan, J.-J., \& Blazer, D. G. (2011). Abuse and dependence on prescription opioids in adults: A mixture categorical and dimensional approach to diagnostic classification. \emph{Psychological Medicine}, \emph{41}(3), 653--664. \url{https://doi.org/10.1017/S0033291710000954}
+
+\end{CSLReferences}
 
 
 \end{document}

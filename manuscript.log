@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.8.1)  1 AUG 2022 08:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.8.1)  1 AUG 2022 11:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -393,14 +393,30 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 285.
 )
 \Hy@SectionHShift=\skip74
+)
+\cslhangindent=\skip75
+\csllabelwidth=\skip76
+\cslentryspacingunit=\skip77
+(c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count298
+\calc@Bcount=\count299
+\calc@Adimen=\dimen183
+\calc@Bdimen=\dimen184
+\calc@Askip=\skip78
+\calc@Bskip=\skip79
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count300
+\calc@Cskip=\skip80
 ) (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/babel/babel.sty
 Package: babel 2022/07/20 3.78 The Babel package
-\babel@savecnt=\count298
-\U@D=\dimen183
+\babel@savecnt=\count301
+\U@D=\dimen185
 \l@unhyphenated=\language3
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/babel/txtbabel.def)
 \bbl@readstream=\read2
-\bbl@dirlevel=\count299
+\bbl@dirlevel=\count302
 Package babel Info: You haven't specified a language. I'll use 'nil'
 (babel)             as the main language. Reported on input line 4410.
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/babel/nil.ldf
@@ -410,9 +426,9 @@ Language: nil 2022/07/20 3.78 Nil language
 \everypar=\toks25
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/babel/locale/en/babel-english.tex)
 Package babel Info: Importing data for english
-(babel)             from babel-en.ini. Reported on input line 77.
+(babel)             from babel-en.ini. Reported on input line 100.
 Package babel Info: Hyphen rules for 'english' set to \l@english
-(babel)             (\language0). Reported on input line 77.
+(babel)             (\language0). Reported on input line 100.
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/was/upgreek.sty
 Package: upgreek 2003/02/12 v2.0 (WaS)
 Package upgreek Info: Using Euler Roman for upright Greek on input line 31.
@@ -421,48 +437,48 @@ LaTeX Font Info:    Overwriting symbol font `ugrf@m' in version `bold'
 (Font)                  U/eur/m/n --> U/eur/b/n on input line 38.
 ) (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty
 Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
-\LTleft=\skip75
-\LTright=\skip76
-\LTpre=\skip77
-\LTpost=\skip78
-\LTchunksize=\count300
-\LTcapwidth=\dimen184
+\LTleft=\skip81
+\LTright=\skip82
+\LTpre=\skip83
+\LTpost=\skip84
+\LTchunksize=\count303
+\LTcapwidth=\dimen186
 \LT@head=\box55
 \LT@firsthead=\box56
 \LT@foot=\box57
 \LT@lastfoot=\box58
 \LT@gbox=\box59
-\LT@cols=\count301
-\LT@rows=\count302
-\c@LT@tables=\count303
-\c@LT@chunks=\count304
+\LT@cols=\count304
+\LT@rows=\count305
+\c@LT@tables=\count306
+\c@LT@chunks=\count307
 \LT@p@ftn=\toks26
 ) (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/lscape.sty
 Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 ) (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/multirow/multirow.sty
 Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
-\multirow@colwidth=\skip79
-\multirow@cntb=\count305
-\multirow@dima=\skip80
-\bigstrutjot=\dimen185
+\multirow@colwidth=\skip85
+\multirow@cntb=\count308
+\multirow@dima=\skip86
+\bigstrutjot=\dimen187
 ) (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/tabularx.sty
 Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/array.sty
 Package: array 2022/03/10 v2.5f Tabular extension package (FMi)
-\col@sep=\dimen186
+\col@sep=\dimen188
 \ar@mcellbox=\box60
-\extrarowheight=\dimen187
+\extrarowheight=\dimen189
 \NC@list=\toks27
-\extratabsurround=\skip81
-\backup@length=\skip82
+\extratabsurround=\skip87
+\backup@length=\skip88
 \ar@cellbox=\box61
 )
-\TX@col@width=\dimen188
-\TX@old@table=\dimen189
-\TX@old@col=\dimen190
-\TX@target=\dimen191
-\TX@delta=\dimen192
-\TX@cols=\count306
+\TX@col@width=\dimen190
+\TX@old@table=\dimen191
+\TX@old@col=\dimen192
+\TX@target=\dimen193
+\TX@delta=\dimen194
+\TX@cols=\count309
 \TX@ftn=\toks28
 ) (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/threeparttablex/threeparttablex.sty
 Package: threeparttablex 2013/07/23 v0.3 by daleif
@@ -471,14 +487,14 @@ Package: environ 2014/05/04 v0.3 A new way to define environments
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/trimspaces/trimspaces.sty
 Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 ))
-\TPTL@width=\skip83
+\TPTL@width=\skip89
 )
-\longtablewidth=\skip84
+\longtablewidth=\skip90
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/xpatch/xpatch.sty (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3kernel/expl3.sty
 Package: expl3 2022-07-15 L3 programming layer (loader) 
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2022-07-01 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count307
+\l__color_backend_stack_int=\count310
 \l__pdf_internal_box=\box62
 ))
 Package: xpatch 2020/03/25 v0.3a Extending etoolbox patching commands
@@ -486,29 +502,29 @@ Package: xpatch 2020/03/25 v0.3a Extending etoolbox patching commands
 Package: xparse 2022-06-22 L3 Experimental document command parser
 )) (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lineno/lineno.sty
 Package: lineno 2005/11/02 line numbers on paragraphs v4.41
-\linenopenalty=\count308
+\linenopenalty=\count311
 \output=\toks29
-\linenoprevgraf=\count309
-\linenumbersep=\dimen193
-\linenumberwidth=\dimen194
-\c@linenumber=\count310
-\c@pagewiselinenumber=\count311
-\c@LN@truepage=\count312
-\c@internallinenumber=\count313
-\c@internallinenumbers=\count314
-\quotelinenumbersep=\dimen195
-\bframerule=\dimen196
-\bframesep=\dimen197
+\linenoprevgraf=\count312
+\linenumbersep=\dimen195
+\linenumberwidth=\dimen196
+\c@linenumber=\count313
+\c@pagewiselinenumber=\count314
+\c@LN@truepage=\count315
+\c@internallinenumber=\count316
+\c@internallinenumbers=\count317
+\quotelinenumbersep=\dimen197
+\bframerule=\dimen198
+\bframesep=\dimen199
 \bframebox=\box63
 LaTeX Info: Redefining \\ on input line 3056.
 ) (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/csquotes/csquotes.sty
 Package: csquotes 2021-02-22 v5.2l context-sensitive quotations (JAW)
-\csq@reset=\count315
-\csq@gtype=\count316
-\csq@glevel=\count317
-\csq@qlevel=\count318
-\csq@maxlvl=\count319
-\csq@tshold=\count320
+\csq@reset=\count318
+\csq@gtype=\count319
+\csq@glevel=\count320
+\csq@qlevel=\count321
+\csq@maxlvl=\count322
+\csq@tshold=\count323
 \csq@ltx@everypar=\toks30
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/csquotes/csquotes.def
 File: csquotes.def 2021-02-22 v5.2l csquotes generic definitions (JAW)
@@ -525,24 +541,24 @@ Package csquotes Info: Redefining alias 'default' -> 'english'.
 (./manuscript.aux)
 \openout1 = `manuscript.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 193.
-LaTeX Font Info:    ... okay on input line 193.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 193.
-LaTeX Font Info:    ... okay on input line 193.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 193.
-LaTeX Font Info:    ... okay on input line 193.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 193.
-LaTeX Font Info:    ... okay on input line 193.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 193.
-LaTeX Font Info:    ... okay on input line 193.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 193.
-LaTeX Font Info:    ... okay on input line 193.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 193.
-LaTeX Font Info:    ... okay on input line 193.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 193.
-LaTeX Font Info:    ... okay on input line 193.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 193.
-LaTeX Font Info:    ... okay on input line 193.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 216.
+LaTeX Font Info:    ... okay on input line 216.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 216.
+LaTeX Font Info:    ... okay on input line 216.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 216.
+LaTeX Font Info:    ... okay on input line 216.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 216.
+LaTeX Font Info:    ... okay on input line 216.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 216.
+LaTeX Font Info:    ... okay on input line 216.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 216.
+LaTeX Font Info:    ... okay on input line 216.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 216.
+LaTeX Font Info:    ... okay on input line 216.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 216.
+LaTeX Font Info:    ... okay on input line 216.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 216.
+LaTeX Font Info:    ... okay on input line 216.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -592,48 +608,48 @@ Package caption Info: longtable package is loaded.
 Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 )
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 193.
+Package hyperref Info: Link coloring OFF on input line 216.
 (./manuscript.out) (./manuscript.out)
 \@outlinefile=\write5
 \openout5 = `manuscript.out'.
 
-LaTeX Font Info:    Trying to load font information for T1+lmss on input line 195.
+LaTeX Font Info:    Trying to load font information for T1+lmss on input line 218.
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 195.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 218.
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 195.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 218.
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 195.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 218.
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 195.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 218.
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 195.
+(Font)              <12> on input line 218.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 195.
+(Font)              <8> on input line 218.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 195.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 195.
+(Font)              <6> on input line 218.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 218.
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 195.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 218.
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1{c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 ]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 195.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 218.
 (c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [2] [3]
@@ -649,52 +665,41 @@ Underfull \vbox (badness 3977) has occurred while \output is active []
 Underfull \vbox (badness 3977) has occurred while \output is active []
 
 [6]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 7649) has occurred while \output is active []
 
 [7]
 
-LaTeX Warning: Reference `tab:checkest' on page 8 undefined on input line 360.
+LaTeX Warning: Reference `tab:checkest' on page 8 undefined on input line 384.
 
 [8]
 Underfull \vbox (badness 2547) has occurred while \output is active []
 
-[9]
-Underfull \vbox (badness 2189) has occurred while \output is active []
-
-[10] [11]
+[9] [10] [11]
 Underfull \vbox (badness 7649) has occurred while \output is active []
 
 [12] [13] [14]
 Underfull \vbox (badness 7649) has occurred while \output is active []
 
-[15]
-Underfull \vbox (badness 3977) has occurred while \output is active []
-
-[16]
-Overfull \hbox (1339.52087pt too wide) in paragraph at lines 636--636
-[]\T1/lmtt/m/n/12 In many circumstances and especially in a cluster analysis setting, the mixture component means are expected to be different. Thus, a reasonable and largely employed way of initiating EM consists of starting from the solution of a K-means type algorithm. [@biernackiChoosingStartingValues2003][] 
- []
-
-[17] [18] [19] [20] [21]
-Overfull \hbox (709.67056pt too wide) in paragraph at lines 774--774
+[15] [16] [17] [18]
+Overfull \hbox (709.67056pt too wide) in paragraph at lines 731--731
 []\T1/lmtt/m/n/12 * Share code and (if possible) data. Van Lissa and colleagues suggest sharing synthetic data in case the original data cannot be shared, and provide functions to generate such synthetic data.[] 
  []
 
 
-Overfull \hbox (573.8205pt too wide) in paragraph at lines 774--774
+Overfull \hbox (573.8205pt too wide) in paragraph at lines 731--731
 []\T1/lmtt/m/n/12 * Ideally, make the entire research project reproducible so that others may download it and reproduce it with just one click; for guidance, see Van Lissa and colleagues.[] 
  []
 
-[22] AED endfloat: Processing end Figures and Tables
+[19] [20]
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 910.
+(hyperref)                than one, level fixed on input line 868.
 
-[23] (./manuscript.ttt) [24
+[21] AED endfloat: Processing end Figures and Tables [22] (./manuscript.ttt) [23
 
 
 ] (./manuscript.fff
-<shoedens.png, id=215, 505.89pt x 505.89pt>
+<shoedens.png, id=246, 505.89pt x 505.89pt>
 File: shoedens.png Graphic file (type png)
 <use shoedens.png>
 Package pdftex.def Info: shoedens.png  used on input line 4.
@@ -704,28 +709,28 @@ Overfull \hbox (36.14143pt too wide) in paragraph at lines 4--4
 [][] 
  []
 
-) [25
+) [24
 
  <./shoedens.png>] (./manuscript.aux)
 
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `manuscript.out' has not changed.
-(rerunfilecheck)             Checksum: A379E951E0E9E2D726620FA89088F117;3119.
+(rerunfilecheck)             Checksum: 1B09B69FB36D0E55BB4AEC0986554FFA;3257.
  ) 
 Here is how much of TeX's memory you used:
- 15923 strings out of 479983
- 262378 string characters out of 5886147
- 578569 words of memory out of 5000000
- 33767 multiletter control sequences out of 15000+600000
+ 16042 strings out of 479983
+ 264628 string characters out of 5886147
+ 580549 words of memory out of 5000000
+ 33866 multiletter control sequences out of 15000+600000
  512796 words of font info for 64 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 72i,11n,77p,2249b,579s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,11n,77p,2249b,589s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}<c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi12.pfb><c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi8.pfb><c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb><c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss8.pfb><c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/lissa102/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
-Output written on manuscript.pdf (25 pages, 344740 bytes).
+Output written on manuscript.pdf (24 pages, 345318 bytes).
 PDF statistics:
- 287 PDF objects out of 1000 (max. 8388607)
- 236 compressed objects within 3 object streams
- 68 named destinations out of 1000 (max. 500000)
- 158 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 321 PDF objects out of 1000 (max. 8388607)
+ 271 compressed objects within 3 object streams
+ 85 named destinations out of 1000 (max. 500000)
+ 166 words of extra memory for PDF output out of 10000 (max. 10000000)
 
