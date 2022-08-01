@@ -709,9 +709,10 @@ Three important classification diagnostic measures are entropy, the average post
 Entropy is a summary measure of posterior class probabilities across classes and individuals.
 It ranges from 0 (model classification no better than random chance) to 1 (perfect classification).
 As a rule of thumb, values above .80 are deemed acceptable and those approaching 1 are considered ideal.
-SHould not be used to select a particural class solution i fclass separability is too low
-if the group is too small to be meaningful or to calculate descriptive statistics
-could be used to disqualify certain solutions
+Entropy should not be used to select a particular class solution. 
+An appropriate use of entropy is that it can disqualify certain solutions if class separability is too low 
+or if one of the latent classes is too small to be meaningful or to calculate descriptive statistics.
+
 <!-- Masyn 2013 "entropy was never intended for, nor should it be used for, model selection during the class enumeration process" p. 570 -->
 <!-- add content about entropy -->
 
