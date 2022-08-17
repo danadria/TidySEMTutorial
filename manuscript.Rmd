@@ -56,7 +56,7 @@ library(worcs)
 run_everything = FALSE
 ```
 
-Latent class analysis is an umbrella term that refers to a number of techniques for estimating unobserved group membership
+Latent class analysis (LCA) is an umbrella term that refers to a number of techniques for estimating unobserved group membership
 based on a parametric model of one or more observed indicators of group membership.
 This method has become quite popular across scientific fields, and under a number of different names; most notably (finite Gaussian) mixture modeling and latent profile analysis.
 <!-- Vermunt and Magidson (2004) defined it more generally as virtually any statistical model where “some of the parameters … differ across unobserved subgroups” (Vermunt, J.K. and Magidson, J., 2004. Latent class analysis. In: M.S. Lewis-Beck, A. Bryman, and T.F. Liao (eds.), The Sage Encyclopedia of Social Sciences Research Methods, 549-553. Thousand Oaks, CA: Sage Publications). -->
@@ -67,7 +67,7 @@ This complicates manuscript review and assessment of the quality of published st
 and introduces a risk of misapplications of the technique.
 The present paper seeks to address this gap in the literature by suggesting updated guidelines for estimation and reporting on latent class analysis, based on current best practice.
 Importantly, in order to lower the barrier of entry and ensure reproducibility of all examples, this paper exclusively relies on free, open source software for latent class analysis in R.
-Our goal is to make best-practices latent class analysis widely accessable.
+Our goal is to make best-practices latent class analysis widely accessible.
 
 ## Defining latent class analysis
 
@@ -122,7 +122,7 @@ knitr::include_graphics("shoedens.png")
 The distribution is evidently bimodal, which bodes well for the intended mixture model.
 In this case, the number of classes is known a-priori.
 When estimating a two-class mixture model, the detective observes that the model estimates
-the mean shoesize of the two groups are equal to `r report(estparam[1], equals = FALSE)` and  `r report(estparam[2], equals = FALSE)`,
+the mean shoe size of the two groups are equal to `r report(estparam[1], equals = FALSE)` and  `r report(estparam[2], equals = FALSE)`,
 which is close to the true means of the two groups, namely `r report(obsparam[1], equals = FALSE)` and  `r report(obsparam[2], equals = FALSE)`.
 When tabulating estimated group membership against observed (known) group membership, it can be seen that women are classified with a high degree of accuracy, but men are not:
 
@@ -275,6 +275,36 @@ when the goal is to restore unobserved class membership based on observed indica
 or to classify individuals.
 For example, a mixture model can be used as a diagnostic aid when several clinical indicators can be used to distinguish between a fixed number of physical [@baughmanMixtureModelAnalysis2006] or mental [@wuAbuseDependencePrescription2011] health problems.
 The example of shoe size is a rudimentary illustration of this type of application.
+
+LCA can be used as a descriptive analysis where a researcher wishes to describe their sample 
+and identify a few prototypes based on many variables.
+<!-- add an example and elaborate -->
+
+With LCA, our goal could be to inductively identify the number of classes. 
+For instance, if we believe that a variable represents a group, 
+but don't know how many groups there are, LCA may be an appropriate technique to answer this question.
+<!-- add an example -->
+
+Another application of LCA is to classify individuals.
+<!-- add an example and elaborate -->
+
+LCA is also appropriate when we wish to identify indicators that capture classes well.
+<!-- add an example and elaborate -->
+
+An extension of LCA is that containing covariates which can be used to predict class membership.
+<!-- add an example and elaborate -->
+
+When our interest is the prediction of one or more outcomes,
+LCA can be used to construct classes as categorical predictors.
+<!-- add an example and elaborate -->
+
+In addition to these applications, LCA can be used for dimensionality reduction
+as the resulting groups summarize response patterns on a large number of indicators.
+<!-- add an example -->
+
+Finally, LCA can be used to deal with data which violate the normality assumption.
+<!-- add an example and elaborate, check with Caspar if there are other assumptions -->
+
 
 <!-- CJ: Include these use cases too: -->
 <!-- Descriptive analysis; identify few prototypes based on many variables, e.g. DJA science funding -->
@@ -622,11 +652,15 @@ As explained before, mixture modeling assumes that observed data are a mixture o
 
 ### Class enumeration
 
-In LCA, a sequence of models is fitted to the data 
+LCA can be done in an exploratory or in a confirmatory fashion.
+In exploratory LCA, a sequence of models is fitted to the data 
 with each additional model estimating one more class than the previous model.
-<!-- CJ: Not always; you may have a theory about a fixed number. -->
-<!-- CJ: Argue that, even in this case, it is useful to know if the theoretical model is markedly better than other numbers of classes -->
-The final model called the final class solution is chosen based on both theoretical and statistical criteria.
+These models are then compared and the best solution is selected as the final class solution.
+In some cases, prior theory can inform the researcher about the number of classes to expect.
+Even in such confirmatory LCA cases, it is nonetheless useful to know 
+if the theoretical model is markedly better than those with differing numbers of classes.
+
+From a sequence of models, the final class solution is chosen based on both theoretical and statistical criteria.
 Theory should drive the selection of indicator variables, inform the expectations and reflect on the findings.
 In addition to this, there are several statistical criteria to consider in model selection.
 These include but are not limited to likelihood ratio tests, information criteria, 
