@@ -3,6 +3,52 @@ title: "LCA in R"
 output: html_notebook
 ---
 
+USING TIDYSEM:
+
+see functions starting in mx
+
+```{r}
+library(tidySEM)
+df <- data_mix_ordinal
+df[1:4] <- lapply(df, ordered)
+mx_lca(data = df,
+       classes = 2) -> res
+```
+
+```{r}
+res$class1
+res$latentVars
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+USING DIFFERENT PACKAGES
+
+
 This is an example of a Latent Class Analysis (LCA).
 
 In Part 1, I use the Lazarsfeld dataset and OpenMX.
@@ -189,40 +235,15 @@ if (negativeThresholds[[1]] > 0) {
 
 Part 3: LCA using tidySEM
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Part 1: Using mclust [incomplete]
-
 ```{r}
-library(mclust)
+#adjust this code
+# The argument `classes` indicates which class solutions should be estimated (e.g., 1 through 6).
+# The argument `variances` specifies whether variances should be `"equal"` or `"varying"` across classes.
+# The argument `covariances` specifies whether covariances should be constrained to `"zero"`, `"equal"` or `"varying"` across classes.
+tidySEM::mx_profiles(classes, variances, covariances)
 ```
 
-```{r}
-# Fit 1-9 class model
-model <- Mclust(data)
-```
+After all models have been estimated, the function `tidySEM::table_fit()` can be used to obtain a model fit table suitable for determining the optimal model according to best practices.
+Note however that this table does not include the bootstrapped likelihood ratio test (BLRT) by default,
+because this test is very computationally expensive.
+It is recommended to use the function `tidySEM::BLRT()` to compare a shortlist of likely candidate models based on other fit indices.

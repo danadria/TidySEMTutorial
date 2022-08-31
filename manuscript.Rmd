@@ -31,7 +31,7 @@ abstract: |
   source alternatives have remained somewhat inaccessible. This tutorial
   describes best practices for the estimation and reporting of latent class analysis,
   using free and open source software in R. To this end, this tutorial
-  introduces new functionality for estimating and reporting mixture mixture
+  introduces new functionality for estimating and reporting mixture
   models in the `tidySEM` R-package. These functions rely on estimation using
   the OpenMx R-package.
 
@@ -138,7 +138,7 @@ kbl(tab, caption = "Observed group membership by estimated class membership.")
 One way to is to conceptualize latent class analysis is by analogy to a measurement model in structural equation modeling.
 A mixture model is like confirmatory factor analysis, except that the continuous latent variable is substituted with a categorical latent variable.
 One difference between the two techniques is that factor analysis can be considered as a way to group observed *variables* into latent constructs, with factor loadings indicating which items belong are most indicative of a construct.
-By contrast, mixture modeling groups *individuals* into classes [see @nylund-gibsonTenFrequentlyAsked2018].
+By contrast, mixture modeling groups *individuals* into classes [see @nylund-gibson_ten_2018].
 In line with this distinction, latent class analysis is sometimes referred to as a "person-centered" technique, and factor analysis as a "variable-centered" technique.
 
 When the focus is on the model parameters in each group,
@@ -152,8 +152,7 @@ The relative contribution of each case to the parameters of each group is determ
 When the focus is on each individual's estimated class membership,
 latent class analysis can be thought of as a type of clustering algorithm.
 In line with this perspective, mixture modeling is sometimes described as "model-based
-clustering" (Hennig, Meila, Murtagh, & Rocci, 2015; Scrucca, Fop, Murphy, &
-Raftery, 2017).
+clustering" [@hennig_handbook_2015; @scrucca_mclust_2016].
 Many clustering algorithms apply some recursive splitting algorithm to the data.
 By contrast "model-based" clustering refers to the fact that latent class analysis 
 estimates cluster membership based on a parametric model.
@@ -161,14 +160,14 @@ Specifically, the posterior class probability that an individual belongs to a la
 can be computed from the likelihood of that individual's observed data under given the class-specific model.
 
 Finally, in the context of machine learning, latent class analysis can be considered as an
-*unsupervised classification* problem [@figueiredoUnsupervisedLearningFinite2002].
+*unsupervised classification* problem [@figueiredo_unsupervised_2002].
 The term *unsupervised* refers to the fact that the outcome variable, true class membership,
 is not known, and the term *classification* refers to the fact that the algorithm is predicting a categorical outcome (class membership).
 
 ## A taxonomy of latent class analyses
 
 In this paper, we use the term latent class analysis to refer to techniques that estimate latent class membership based on a parametric model of observed indicators.
-From a historical perspective, the term latent class analysis was initially conceived to refer to analyses with categorical (binary) indicators [@vermuntj.k.LatentClassAnalysis2004].
+From a historical perspective, the term latent class analysis was initially conceived to refer to analyses with categorical (binary) indicators [@vermunt_jk_latent_2004].
 Nowadays, there are a number of related techniques, known by distinct names, that serve a similar purpose.
 The term "latent class analysis" seems most appropriate as an umbrella term for this broader class of models,
 as it only refers to the purpose of the analysis, and does not imply restrictions to the model used, or the level of measurement of the indicators.
@@ -220,9 +219,9 @@ If the responses are distributed 60/40, then the resulting threshold would be $t
 This paper will primarily focus on mixture models and special cases thereof,
 although most of the suggested guidelines are applicable to latent class analyses.
 
-<!-- f a multivariate mixture estimation is constrained so that measures must be uncorrelated within each distribution it is termed latent profile analysis. Modified to handle discrete data, this constrained analysis is known as LCA. Discrete latent trait models further constrain the classes to form from segments of a single dimension: essentially allocating members to classes on that dimension: an example would be assigning cases to social classes on a dimension of ability or merit. -->
+<!-- If a multivariate mixture estimation is constrained so that measures must be uncorrelated within each distribution it is termed latent profile analysis. Modified to handle discrete data, this constrained analysis is known as LCA. Discrete latent trait models further constrain the classes to form from segments of a single dimension: essentially allocating members to classes on that dimension: an example would be assigning cases to social classes on a dimension of ability or merit. -->
 
-<!-- ecause LPA is model-based, a number of different model parameterizations can be -->
+<!-- Because LPA is model-based, a number of different model parameterizations can be -->
 <!-- estimated. These models differ in terms of whether--and how--parameters are -->
 <!-- estimated across the profiles. These parameters are the means for the different -->
 <!-- profiles, which, in this approach, always are estimated freely across the -->
@@ -273,7 +272,7 @@ or that the four-class solution does not correspond to the predicted pattern of 
 Another use case is unsupervised learning;
 when the goal is to restore unobserved class membership based on observed indicators,
 or to classify individuals.
-For example, a mixture model can be used as a diagnostic aid when several clinical indicators can be used to distinguish between a fixed number of physical [@baughmanMixtureModelAnalysis2006] or mental [@wuAbuseDependencePrescription2011] health problems.
+For example, a mixture model can be used as a diagnostic aid when several clinical indicators can be used to distinguish between a fixed number of physical [@baughman_mixture_2006] or mental [@wu_abuse_2011] health problems.
 The example of shoe size is a rudimentary illustration of this type of application.
 
 LCA can be used as a descriptive analysis where a researcher wishes to describe their sample 
@@ -333,8 +332,7 @@ Finally, LCA can be used to deal with data which violate the normality assumptio
 
 
 <!--                                                1 -->
-<!-- A -->
-<!-- downside is that these models are more complex (much more parameters to be estimated). -->
+<!-- A downside is that these models are more complex (much more parameters to be estimated). -->
 <!-- Using criteria, such as the Bayesian Information criterion (BIC) helps to find a model that -->
 <!-- strikes a good balance between model-fit and model-complexity. When doing an LPA, most -->
 <!-- applied researchers will usually be most interested in the differences and/or overlap between -->
@@ -359,8 +357,8 @@ Finally, LCA can be used to deal with data which violate the normality assumptio
 The best practices in estimation, as outlined in Table \@ref(tab:checkest),
 are rooted in existing recommendations for best practices for estimating
 specific sub-types of latent class analyses,
-including latent class growth analysis [@vandeschootGRoLTSChecklistGuidelinesReporting2017]
-and latent class analysis with ordinal indicators [e.g., @nylund-gibsonTenFrequentlyAsked2018].
+including latent class growth analysis [@van_de_schoot_grolts-checklist_2017]
+and latent class analysis with ordinal indicators [e.g., @nylund-gibson_ten_2018].
 These were generalized to be more relevant to all types of latent class analyses,
 and updated to current best practices, as explained below.
 
@@ -382,17 +380,17 @@ Examining observed data is essential for any analysis,
 as it may reveal patterns and violations of assumptions that had not been considered prior to data collection.
 Pay special attention to level of measurement of the indicators.
 Mixture modeling (including LPA) is strictly speaking only suitable for continuous variables.
-Indicators with an ordinal level of measurement are likely to violate the assumption of within-class normal distributions of mixture models [see @vermuntKmeansMayPerform2011].
+Indicators with an ordinal level of measurement are likely to violate the assumption of within-class normal distributions of mixture models [see @vermunt_k-means_2011].
 Personal experience consulting on latent class analyses and moderating the `tidyLPA` Google group
-suggest that the mis-application of mixture models to ordinal (e.g., Likert-type) indicators is the most common source of user error.
-Whereas it has been argued that some parametric methods are robust when scales with 7+ indicators are treated as continuous [e.g., @normanLikertScalesLevels2010],
+suggest that the misapplication of mixture models to ordinal (e.g., Likert-type) indicators is the most common source of user error.
+Whereas it has been argued that some parametric methods are robust when scales with 7+ indicators are treated as continuous [e.g., @norman_likert_2010],
 this certainly does not imply that all methods are.
 It is certainly unlikely that such ordinal variables can be treated as a *mixture* of multiple normal distributions.
 The problem becomes egregious when the number of classes estimated equals or exceeds the number of categories; in this case, each class-specific mean could describe a single response category, and a class-specific variance component would be nonsensical.
 In sum, Likert-type scales are rarely suitable for mixture modeling;
 latent class analysis with ordinal indicators is more appropriate.
 
-Relatedly, a recent publication claimed that an assumption of mixture models is that observed indicators are normally distributed [REF SPURK].
+Relatedly, a recent publication claimed that an assumption of mixture models is that observed indicators are normally distributed [@spurk_latent_2020].
 This is incorrect.
 When the number of classes is greater than one, mixture models assume that the observed indicators are a mixture of multiple (multivariate) normal distributions.
 <!-- CJ: Expand on this here -->
@@ -401,24 +399,62 @@ Extensive descriptive statistics (including the number of unique values, varianc
 Note, however, that sample-level descriptive statistics are of limited value when the goal of a study is to identify sub-samples using latent class analysis.
 Plots (density plots for continuous variables, and bar charts for categorical ones) may be more diagnostic.
 Note that density plots can also aid in the choice of the number of classes, as further explained in the section on visualization.
-Descriptive statistics and plots can be relegated to online supplements, provided that these are readily accessible [consider using a GitHub repository as a comprehensive public research archive, as explained in @vanlissaWORCSWorkflowOpen2020].
+Descriptive statistics and plots can be relegated to online supplements, provided that these are readily accessible [consider using a GitHub repository as a comprehensive public research archive, as explained in @van_lissa_worcs_2021.
+
+<!--  Adjust the following part, it belongs here:  -->
+
+<!-- CJ: This is about model interpretation; conditional item probabilities are the analogue of mean and standard deviation, but when the observed data are binary/ordinal  -->
+<!-- Conditional item probabilities indicate the probability of a positive score on an item  -->
+<!-- given that the person belongs to a particular latent class.  -->
+
+<!-- If a particular item is endorsed by two or more classes at markedly different rates, -->
+<!-- it is said to discriminate well between classes and is consequently considered a good indicator. -->
+<!-- The classes are considered highly homogeneous with respect to an item when for a particular item -->
+<!-- there are a distinct difference in conditional item probabilities of two or more classes. -->
+<!-- If an item is endorsed below 30% for one class and above 70% for another class, 
+the classes have high homogeneity with respect to this item [@masyn_latent_2013]. -->
+<!-- However, if many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1),  -->
+<!-- we are observing boundary parameter estimates. This can be a sign of an invalid solution,  -->
+<!-- warn us that too many classes were extracted, or indicate a local optimum.  -->
+<!-- Boundary parameter estimates are more likely to happen when working with sparse data  -->
+<!-- and should be interpreted with caution (Geiser, 2012).  -->
+
+<!-- CJ: This talks about the problem of inadmissible solutions. With ordinal items, that can happen because of sparse cross-tables (e.g., some combinations of responses never occur). WIth continuous items, that could happen e.g. because you have a zero-inflated, otherwise normally distributed variable; one class would have a mean at zero and its SD would be hard to determine. Or it could happen if you model a five-category Likert scale with a five-component latent profile analysis; each response category will have its own mean, but there's no variance around that (everybody in class 3 has exactly the response value 3). These are all the same problems. -->
+
+<!-- An important outcome of LCA are unconditional class probabilities.  -->
+<!-- These communicate the probability that an individual belongs to each class.  -->
+<!-- A limitation is that our final class solution need not reflect true class membership.  -->
+<!-- Once we do accept a particular class solution, special care also needs to be taken when naming the classes.  -->
+
+A problem which can occur is that of inadmissible solutions. 
+With binary indicators, LCA is modelling a cross-table with all the predictors.
+The problem with such cross-tables is that they will often contain empty cells,
+i.e. combinations of responses that never occur together. 
+This problem is reflected by extreme conditional item probabilities (as in exactly 0 or 1).
+Such boundary parameter estimates could indicate that the solution is invalid.
+Boundary parameter estimates can also happen with continuous indicators.
+For instance, if we have a zero-inflated normal distribution and a two class solution,
+one class might have the mean of zero and its standard deviation cannot be determined 
+since there is little variance. 
+This too could be a sign of an invalid solution,
+warn us that too many classes were extracted, or indicate a local optimum [@geiser_data_2012].
 
 ### Missing data
 
-Previous work has emphasized the importance of examining the pattern of missing data and reporting how missingness was handled [@schootGRoLTSChecklistGuidelinesReporting2017].
-Three types of missingness have been distinguished in the literature [@rubinInferenceMissingData1976]:
+Previous work has emphasized the importance of examining the pattern of missing data and reporting how missingness was handled [@van_de_schoot_grolts-checklist_2017].
+Three types of missingness have been distinguished in the literature [@rubin_inference_1976]:
 Missing completely at random (MCAR), which means that missingness is random;
 missing at random (MAR), which means that missingness is contingent on the *observed* data (and can thus be accounted for);
 and finally missing not at random (MNAR), which means that missingness is related to unobserved factors.
 It is possible to conduct a so-called "MCAR" test, 
-for example the non-parametric MCAR test [@jamshidianTestsHomoscedasticityNormality2010].
+for example the non-parametric MCAR test [@jamshidian_tests_2010].
 But note that the name "MCAR test" is somewhat misleading,
 as the null-hypothesis of this test is that the data are not MAR,
 and a significant test statistic indicates that missingness is related to the observed data (MAR).
 A non-significant test statistic does not distinguish between MCAR or MNAR.
-As Little's classic MCAR test relies on the comparison of variances across groups with different patterns of missing data, it assumes normality [@littleTestMissingCompletely1988].
+As Little's classic MCAR test relies on the comparison of variances across groups with different patterns of missing data, it assumes normality [@little_test_1988].
 This assumption is tenuous in the context of latent class analysis.
-A non-parametric MCAR test, as provided by Jamshidian and Jalal, may be more suitable [-@jamshidianTestsHomoscedasticityNormality2010].
+A non-parametric MCAR test, as provided by Jamshidian and Jalal, may be more suitable [@jamshidian_tests_2010].
 Unfortunately, this test was removed from the central R-repository CRAN due to lack of maintenance.
 For this tutorial, I have re-implemented it in the `mice` package as `mice::mcar()`,
 with a fast backend in C++ and new printing and plotting methods. 
@@ -427,7 +463,7 @@ While we concur that investigating missingness is due dilligence,
 it is important to emphasize that missingness is adequately handled by default in many software packages for latent class analyses, such as `OpenMx` (and e.g., Mplus).
 These packages use Full Information Maximum Likelihood (FIML) estimation,
 which makes use of all available information without imputing missing values.
-FIML is a best-practice solution for handling missing data; on par with multiple imputation [@leeComparisonFullInformation2021].
+FIML is a best-practice solution for handling missing data; on par with multiple imputation [@lee_comparison_2021].
 FIML estimation assumes that missingness is either MCAR or MAR.
 Thus, one would typically proceed with FIML regardless of the outcome of an MCAR test.
 Although FIML does not, by default, handle missingness in exogenous variables - all indicator variables in latent class analysis are endogenous, so this is not a concern.
@@ -452,16 +488,16 @@ The different types of latent class models have different parameters.
 For example, mixture models and latent profile analyses typically have class-specific means, variances, and covariances.
 Latent growth analyses have the same parameters, but with respect to the latent growth variables.
 Latent class analyses with ordinal indicators have thresholds.
-All of these parameters can be freely estimated across classes, or constrained,
-or fixed (e.g., to zero).
+All of these parameters can be freely estimated across classes, constrained to be equal across classes,
+or fixed to a certain value (e.g., to zero).
 The total number of parameters thus scales with the number of estimated classes.
 Consequently, latent class analyses have a potentially very high number of parameters.
-As any of these parameters could be mis-specified,
+As any of these parameters could be misspecified,
 it is important to consider alternative model specifications.
 However, alternative model specifications may be approached differently depending on whether an analysis is data driven (exploratory), or theoretically driven (confirmatory).
 This distinction has remained underemphasized in prior writing.
 
-Prior literature on latent class analysis has emphasized exploratory applications of the method [see @nylundDecidingNumberClasses2007].
+Prior literature on latent class analysis has emphasized exploratory applications of the method [see @nylund_deciding_2007].
 In exploratory analyses, a large number of models are typically estimated in batch,
 with varying numbers of classes and model specifications.
 The "correct" model specification is then determined based on a combination of fit indices,
@@ -476,24 +512,14 @@ The means are free to vary across classes by default, although the more general 
 After all models have been estimated, the function `tidySEM::table_fit()` can be used to obtain a model fit table suitable for determining the optimal model according to best practices.
 Note however that this table does not include the bootstrapped likelihood ratio test (BLRT) by default,
 because this test is very computationally expensive.
-It is recommended to use the function `tidySEM::BLRT()` to compare a shortlist of likely candidate models based on other fit indices.
-Fit indices typically used for determining the optimal number of classes include
-the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC).
-Both information criteria are based on the -2 log likelihood (which is lower for better fitting models),
-and add a penalty for the number of parameters (thus incentivizing simpler models).
-This helps balance fit and model complexity.
-The BIC usually applies a stronger penalty for complexity that scales logarithmically with the sample size.
-
-Fit indices may occasionally contradict each other, so it is important to identify a suitable strategy to reconcile them.
-One option is to select a specific fit index before analyzing the data.
-Another option is to always prefer the most parsimonious model that has best fit according to any of the available fit indices.
-Yet another option is to incorporate information from multiple fit indices using the analytic hierarchy process [@akogulComparisonInformationCriteria2016].
+It is recommended to use the function `tidySEM::BLRT()` to compare a shortlist of likely candidate models based on other fit indices. More on fit indices can be found in the Model fit indices subsection of this paper.
 
 Confirmatory analyses typically require less comprehensive alternative model specifications.
 For example, in the context of preregistered analyses, the main models of interest may have been specified a priori.
+Therefore, it may not be necessary to test different model specifications when using the confirmatory approach.
 
-
-Van de Schoot and colleagues [-@vandeschootGRoLTSChecklistGuidelinesReporting2017] argue that there are many choices to be made in the specification of latent trajectory models,
+<!-- see the following article and expand on the paragraph -->
+@van_de_schoot_grolts-checklist_2017 argue that there are many choices to be made in the specification of latent trajectory models,
 and that alternative 
 
 	* Consider alternative parameterizations; e.g., free variances/covariances 
@@ -516,29 +542,26 @@ A second downside is that the source code, being proprietary, cannot be audited,
 This incurs the risk that mistakes in the source code may go unnoticed, and curbs progress as software developers cannot add new functionality.
 
 Conversely, the free open source program OpenMx is very flexible,
-but not very user-friendly.
-
-
-New functionality in the R-package `tidySEM` seeks to lower the threshold for latent class analysis using `OpenMx`.
+but not very user-friendly. We directly address this limitation using the `tidySEM` R-package.
+New functionality in `tidySEM` seeks to lower the threshold for latent class analysis using `OpenMx`.
 It adheres to best practices in estimation and reporting, as described in this paper.
 The user interface is simple, making use of the model syntax of the widely used `lavaan` R-package.
 This syntax offers a human-readable way to specify latent variable models.
 Minor enhancements are made to simplify the specification of latent class analysis.
 
-Because of the limitations in ex tools, we set out to develop a tool that a)
-provided sensible defaults and were easy to use, but provided the option to
-access and modify all of the inputs to the model (i.e., low barrier, high
-ceiling), b) interfaced to existing tools, and are able to translate between
+Because of the limitations of the aforementioned tools, we set out to develop a free tool that
+provides sensible defaults and is easy to use, but provides the option to
+access and modify all of the model inputs (i.e., low barrier, high
+ceiling). `tidySEM` interfaces with existing tools, and is able to translate between
 what existing tools are capable of and what researchers and analysts
-carrying-out person-oriented analyses would like to specify, 
-
-fully-reproducible analyses and 
+carrying-out person-oriented analyses would like to specify. 
+Furthermore,`tidySEM` facilitates fully-reproducible analyses and contributes to open science.
 
 <!-- 3. Packages -->
 <!-- 3.1 R-packages -->
 <!-- LPA models can be fit in R (version 4.0.3; R-core team, 2020), running in Rstudio (version -->
 <!-- 1.3.1093 used here). There are many R-packages that offer some form of latent class/mixture -->
-<!-- analytic functionality. However, the majority of packages is focused on analyses with discrete -->
+<!-- analytic functionality. However, the majority of packages are focused on analyses with discrete -->
 <!-- indicator variables (e.g., ‘poLCA’, Linzer & Lewis, 2011; ‘e1071::lca’, Meyer et al., 2019) -->
 <!-- or require a lot of coding to define the required models (e.g., openMX, Neale et al., 2016). -->
 <!-- For the current tutorial, two packages were selected that work with continuous indicator -->
@@ -561,7 +584,7 @@ fully-reproducible analyses and
 
 Mixture model parameters and model fit statistics can be estimated in a variety of ways.
 The choice of the estimator depends on the presence of missing values,
-sample size, number of indicators, and available computational resources (Weller, Bowen & Faubert, 2020).
+sample size, number of indicators, and available computational resources [@weller_latent_2020].
 A commonly used technique is maximum likelihood (ML) estimation
 with the expectation-maximization (EM) algorithm as a local optimizer. 
 Imagine we are estimating two parameters, e.g. the class-specific means $\mu_c$ on a continuous indicator
@@ -614,10 +637,10 @@ simulated annealing is followed up with a short run of the EM algorithm,
 as EM inherently produces an asymptotic covariance matrix for the parameters that can be used to compute standard errors.
 Note that these defaults can be manually overridden.
 
-One recent paper suggested maximum likelihood with robust standard errors should be used when the observed indicators are not normally distributed [@spurkLatentProfileAnalysis2020]. 
+One recent paper suggested maximum likelihood with robust standard errors should be used when the observed indicators are not normally distributed [@spurk_latent_2020]. 
 This statement is incorrect, and may lead readers to believe that they must use commercial software, as robust maximum likelihood is currently only implemented in Mplus and latentGOLD.
 As explained before, mixture modeling assumes that observed data are a mixture of (multivariate) normal distributions; thus, the observed indicators will likely not be normally distributed.
-<!-- CJ: Is there even any literature that says robust standard erorrs are better with latent class analysis? -->
+<!-- CJ: Is there even any literature that says robust standard errors are better with latent class analysis? -->
 
 <!-- We assume that the population consists of several groups each characterized by its own normal distribution.  -->
 <!-- When two or more normal distributions with different means and standard deviations comprise a mixed population distribution,  -->
@@ -648,8 +671,6 @@ As explained before, mixture modeling assumes that observed data are a mixture o
 <!-- and a greater number of sets for more complex models.  -->
 <!-- A large number of starting values ensures that we find the true maximum and estimate the model parameters and fit accurately. -->
 
-
-
 ### Class enumeration
 
 LCA can be done in an exploratory or in a confirmatory fashion.
@@ -659,12 +680,13 @@ These models are then compared and the best solution is selected as the final cl
 In some cases, prior theory can inform the researcher about the number of classes to expect.
 Even in such confirmatory LCA cases, it is nonetheless useful to know 
 if the theoretical model is markedly better than those with differing numbers of classes.
+Therefore, it may always be useful to compare different class solutions.
 
 From a sequence of models, the final class solution is chosen based on both theoretical and statistical criteria.
 Theory should drive the selection of indicator variables, inform the expectations and reflect on the findings.
 In addition to this, there are several statistical criteria to consider in model selection.
 These include but are not limited to likelihood ratio tests, information criteria, 
-and the Bayes factor (Weller, Bowen & Faubert, 2020).
+and the Bayes factor [@weller_latent_2020].
 
 Relative model fit can be examined using the likelihood ratio test. 
 This is only appropriate when the two models we wish to compare are nested.
@@ -673,9 +695,78 @@ with the new degrees of freedom being the difference in their degrees of freedom
 This statistic also follows the $\chi^2$ distribution.
 Similar to the LR $\chi^2$ goodness-of-fit test, we want the test statistic to be non-significant
 in order to give support to the simpler model. 
-The likelihood ratio test can only compare two models at a time (Lanza et al., 2003).
+The likelihood ratio test can only compare two nested models at a time [@lanza_introduction_2003].
+
+<!-- DA: This is just a goodness-of-fit test, and if it is significant the model fits the data poorly.  -->
+<!-- We don't get this test with `tidySEM`, so do not focus on this too much. We only provide information criteria-->
+
+<!-- DA: the bootstrap likelihood ratio test is the only one that is valid one according to Caspar, but it is not easily implemented in `tidySEM` (too computationally intensive), which is a problem, takes a lot of time to compute, maybe write about this,
+see @masyn_latent_2013 'parametric bootstrapping' it is not widely implemented. 
+Do not write about bootstrapping, too computationally intensive, we do not have a good solution for model fit tests, downplay that, MPLUS has MLR adjusted maximum likelihood test but unsure if to compare two different class solutions or just misfit, however not something we have, it is a specialized solution available only in MPLUS-->
 
 ### Model fit indices
+
+Fit indices typically used for determining the optimal number of classes include
+the Akaike Information Criterion (AIC) and the Bayesian Information Criterion (BIC).
+Both information criteria are based on the -2*log likelihood (which is lower for better fitting models),
+and add a penalty for the number of parameters (thus incentivizing simpler models).
+This helps balance fit and model complexity.
+The lower the value of an information criterion, the better the overall fit of the model.
+The BIC applies a stronger penalty for model complexity 
+that scales logarithmically with the sample size.
+The literature suggests the BIC may be the most appropriate information criterion to use for model comparison [@nylund-gibson_ten_2018].
+Both the AIC and the BIC are available in the `tidySEM` output.
+
+Information criteria may occasionally contradict each other, so it is important to identify a suitable strategy to reconcile them.
+One option is to select a specific fit index before analyzing the data.
+Another option is to always prefer the most parsimonious model that has best fit according to any of the available fit indices.
+Yet another option is to incorporate information from multiple fit indices using the analytic hierarchy process [@akogul_comparison_2016].
+Finally, one might make an elbow plot and compare multiple information criteria
+[for an example see @nylund-gibson_ten_2018].
+
+Another common test of model fit is the likelihood ratio $\chi^2$ goodness-of-fit test.
+However, this test is not implemented in `tidySEM`. 
+
+An alternative is using the bootstrapped likelihood ratio test
+which can be run using `tidySEM::BLRT()`.
+Currently, this test is computationally expensive and can be slow on most computers.
+The development of a faster version of this test is well under way.
+
+
+<!-- DA: NOTES ABOUT LRT test: It can compare two nested models when they have the same number of classes
+<!-- If we wish to simultaneously compare multiple models based on their relative fit, -->
+<!-- this can be done through a comparison of multiple information criteria. -->
+<!-- Examples include the Akaike information criterion (AIC), -->
+<!-- and the Bayesian information criterion (BIC). -->
+<!-- Information criteria are a sum of a measure of fit (usually a form of the converged maximum log likelihood value)  -->
+<!-- and a penalty for model complexity (a combination of sample size and the number of modeled parameters). -->
+<!-- As a general rule, the lower the value of an information criterion, the better the model fits the data. -->
+<!-- When examining several competing models, each with differing number of classes, -->
+<!-- we expect the information criteria values to drop with each successive model until the final class solution is reached. -->
+<!-- Further models with additional classes should show worse fit as information criteria reach an optimum  -->
+<!-- before their values rise again with an increasing number of classes. -->
+<!-- Multiple information criteria should be compared when choosing the final class solution.  -->
+<!-- This can be done by means of an elbow plot [for an example see @nylund-gibson_ten_2018]. -->
+<!-- Advantages of using information criteria are that we can compare multiple models at a time, -->
+<!-- and these models need not be nested @masyn_latent_2013. -->
+
+<!-- Add a paragraph about using the Bayes factor see @weller_latent_2020-->
+
+<!-- decide whether to keep the following paragraph, if so, where to place it -->
+<!-- When estimators which require sets of starting values are used, -->
+<!-- each fitted model will have a corresponding log likelihood value.  -->
+<!-- Ideally, the largest log likelihood value of the final class solution will be replicated a large number of times  -->
+<!-- with each log likelihood value generated by a different starting value set.  -->
+<!-- Successful replications of the largest log likelihood value across different starting values -->
+<!-- instill confidence that the estimation was successful and we indeed found the global maximum [@masyn_latent_2013].  -->
+<!-- The model with the highest replicated likelihood will be chosen as our best-fit.  -->
+<!-- If the largest log likelihood value is not replicated many times, the model may be unidentified (Geiser, 2012). -->
+<!-- Such a model does not have a unique solution. For a discussion on model identification for LCA, see @masyn_latent_2013. -->
+<!-- Nylund-Gibson and Choi (2018) recommend that the highest log likelihood should be replicated  -->
+<!-- in at least 3-10% of the models initialized with different starting values in the first step of the optimization.  -->
+<!-- This consideration does not apply in case of models which use simulated annealing since these do not have starting values. -->
+<!-- @masyn_latent_2013 claims that "replication of the likelihood value is neither a necessary nor a sufficient requirement -->
+<!-- to ensure that a global (rather than a local) maximum has been reached.". For discussion see Hipp & Bauer, 2006 -->
 
 <!-- Absolute model fit can be assessed using the likelihood ratio (LR) $\chi^2$ goodness-of-fit test.  -->
 <!-- It can compare two nested models when they have the same number of classes (Lanza et al., 2003). -->
@@ -690,61 +781,27 @@ The likelihood ratio test can only compare two models at a time (Lanza et al., 2
 <!-- The underlying assumption of this procedure is that the test statistic is asymptotically distributed -->
 <!-- as a $\chi^2$ meaning that it can be approximated using this distribution. -->
 <!-- This is the case when the sample size is adequate (Lanza et al., 2003).  -->
-<!-- The dependence of the LR $\chi^2$ test statistic on sample size has its downsides (Masyn, 2013).  -->
+<!-- The dependence of the LR $\chi^2$ test statistic on sample size has its downsides [@masyn_latent_2013].  -->
 <!-- Very large samples will often effortlessly reject the null even when the final class solution is a good fit, -->
 <!-- and small samples will often be underpowered resulting in non-significant $\chi^2$ statistic. -->
 <!-- In fact, small samples might not be well approximated using the $\chi^2$ distribution, -->
 <!-- which is a problem shared with large yet sparse datasets. -->
-<!-- In such cases, special caution is advised when interpreting the resulting p-values (Masyn, 2013). -->
+<!-- In such cases, special caution is advised when interpreting the resulting p-values [@masyn_latent_2013]. -->
 
-If we wish to simultaneously compare multiple models based on their relative fit,
-this can be done through a comparison of multiple information criteria.
-Examples include the Akaike information criterion (AIC), the Consistent Akaike Information Criterion (CAIC),
-the Bayesian information criterion (BIC), and the Sample-size Adjusted Bayesian Information Criterion (SABIC).
-Information criteria are a sum of a measure of fit (usually a form of the converged maximum log likelihood value) 
-and a penalty for model complexity (combination of sample size and number of modeled parameters).
-As a general rule, the lower the value of an information criterion, the better the model fits the data.
-When examining several competing models, each with differing number of classes,
-we expect the information criteria values to drop with each successive model until the final class solution is reached.
-Further models with additional classes should show worse fit as information criteria reach an optimum 
-before their values rise again with an increasing number of classes.
-Multiple information criteria should be compared when choosing the final class solution. 
-This can be done by means of an elbow plot (for an example see Nylund-Gibson and Choi, 2018).
-Advantages of using information criteria are that we can compare multiple models at a time,
-and these models need not be nested (Masyn, 2013).
-
-
-<!-- Add a paragraph about using the Bayes factor see Weller, Bowen & Faubert, 2020-->
-
-<!-- decide whether to keep the following paragraph, if so, where to place it -->
-<!-- When estimators which require sets of starting values are used, -->
-<!-- each fitted model will have a corresponding log likelihood value.  -->
-<!-- Ideally, the largest log likelihood value of the final class solution will be replicated a large number of times  -->
-<!-- with each log likelihood value generated by a different starting value set.  -->
-<!-- Successful replications of the largest log likelihood value across different starting values -->
-<!-- instill confidence that the estimation was successful and we indeed found the global maximum (Masyn, 2013).  -->
-<!-- The model with the highest replicated likelihood will be chosen as our best-fit.  -->
-<!-- If the largest log likelihood value is not replicated many times, the model may be unidentified (Geiser, 2012). -->
-<!-- Such a model does not have a unique solution. For a discussion on model identification for LCA, see Masyn (2013). -->
-<!-- Nylund-Gibson and Choi (2018) recommend that the highest log likelihood should be replicated  -->
-<!-- in at least 3-10% of the models initialized with different starting values in the first step of the optimization.  -->
-<!-- This consideration does not apply in case of models which use simulated annealing since these do not have starting values. -->
-<!-- Masyn 2013 claims that "replication of the likelihood value is neither a necessary nor a sufficient requirement -->
-<!-- to ensure that a global (rather than a local) maximum has been reached.". For discussion see Hipp & Bauer, 2006 -->
 
 ### Classification Diagnostics 
 
 Best models will divide the sample into subgroups which are internally homogeneous and externally distinct.
 Classification diagnostics give us a way to assess the degree to which this is the case.
-They are separate from the absolute and relative goodness-of-fit 
-as a model can fit the data well but show poor latent class separation (Masyn, 2013).
-A fundamental concept when examining classification precision and accuracy are the posterior class probabilities.
-A probability of belonging to each latent class is computed for each individual.
-The highest posterior class probability is then determined and the individual is assigned to the corresponding class.
-We want each individual's posterior class probabilities to be high for one and low for the remaining latent classes.
-This is considered a high classification accuracy and means that the classes are distinct.
-<!-- see if you find content on homogeneity of classes -->
-Three important classification diagnostic measures are entropy, the average posterior probability and the modal class assignment proportion.
+They are separate from model fit indices as a model can fit the data well 
+but show poor latent class separation [@masyn_latent_2013].
+Classification diagnostics should not be used for model selection,
+but they can be used to disqualify certain solutions because they are uninterpretable.
+Interpretability should always be a consideration when considering different class solutions [@nylund-gibson_ten_2018].
+
+Three important classification diagnostics provided by `tidySEM` are are entropy, 
+the range of the posterior classification probabilities by most likely class membership,
+and the range of the sample size.
 
 Entropy is a summary measure of posterior class probabilities across classes and individuals.
 It ranges from 0 (model classification no better than random chance) to 1 (perfect classification).
@@ -753,51 +810,55 @@ Entropy should not be used to select a particular class solution.
 An appropriate use of entropy is that it can disqualify certain solutions if class separability is too low 
 or if one of the latent classes is too small to be meaningful or to calculate descriptive statistics.
 
-<!-- Masyn 2013 "entropy was never intended for, nor should it be used for, model selection during the class enumeration process" p. 570 -->
+The range of the posterior classification probabilities by most likely class membership are 
+
+Another classification diagnostic measure is the range of the sample size. 
+
+<!-- A fundamental concept when examining classification accuracy is the posterior class probability. -->
+<!-- This concept represents the probability of belonging to each latent class computed for each individual. -->
+<!-- The highest posterior class probability is then determined and the individual is assigned to the corresponding class. -->
+<!-- We want each individual's posterior class probabilities to be high for one and low for the remaining latent classes. -->
+<!-- This is considered a high classification accuracy and means that the classes are distinct. -->
+
+<!-- @masyn_latent_2013 "entropy was never intended for, nor should it be used for, model selection during the class enumeration process" p. 570 -->
 <!-- add content about entropy -->
 
-The average posterior probability is a measure of classification uncertainty for each latent class.
+<!-- DA: Write about prob_min and prob_max (see name formatting), -->
+<!-- the posterior probability from the model, -->
+<!-- it calculates the entropy and the range of the most likely classification probability, -->
+<!-- the diagonal, lets say you have 3 classes, there is the class the person was assigned to, -->
+<!-- and the probability the person should belong to that class, -->
+<!-- what this is telling us is the range of the average classification probabilities, -->
+<!-- what you want to see is that people have a high probability of being in the class they were assigned to, -->
+<!-- and you want that to be high for all the classes,  -->
+<!-- for each class we want a high number -->
 
-The modal class assignment proportion
+<!-- n_min and n_max are the range of the proprotion of people assigned to those classes. -->
+<!-- The smallest class has XX percent of people, and the largest class has XXX percent of people. -->
+<!-- Sometimes the class is too small to be interpreted, e.g. 5% or less of people, that would be too few to estimate parameters.  -->
 
-<!-- CJ: This is about model interpretation; conditional item probabilities are the analogue of mean and standard deviation, but when the observed data are biary/ordinal  -->
-<!-- Conditional item probabilities indicate the probability of a positive score on an item  -->
-<!-- given that the person belongs to a particular latent class.  -->
+<!-- The average posterior probability is a measure of classification uncertainty for each latent class. -->
 
-<!-- If a particular item is endorsed by two or more classes at markedly different rates, -->
-<!-- it is said to discriminate well between classes and is consequently considered a good indicator. -->
-<!-- The classes are considered highly homogeneous with respect to an item when for a particular item -->
-<!-- there are a distinct difference in conditional item probabilities of two or more classes. -->
-<!-- If an item is endorsed below 30% for one class and above 70% for another class, 
-the classes have high homogeneity with respect to this item (Masyn, 2013). MY OWN WRITING BUT NOT FLOWY ENOUGH-->
-<!-- However, if many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1),  -->
-<!-- we are observing boundary parameter estimates. This can be a sign of an invalid solution,  -->
-<!-- warn us that too many classes were extracted, or indicate a local optimum.  -->
-<!-- Boundary parameter estimates are more likely to happen when working with sparse data  -->
-<!-- and should be interpreted with caution (Geiser, 2012).  -->
+<!-- The modal class assignment proportion -->
 
-<!-- CJ: THis talks about the problem of inadmissible solultions. With ordinal items, that can happen because of sparse cross-tables (e.g., some combinations of responses never occur). WIth continuous items, that could happen e.g. because you have a zero-inflated, otherwise normally distributed variable; one class would have a mean at zero and its SD would be hard to determine. Or it could happen if you model a five-category Likert scale with a five-component latent profile analysis; each response category will have its own mean, but there's no variance around that (everybody in class 3 has exactly the response value 3). These are all the same problems. -->
-
-<!-- CJ: Merge with beginning of the paper, where we explain that LCA simultaneously estimates class membership and the descriptives of those classes. -->
-<!-- An important outcome of LCA are unconditional class probabilities.  -->
-<!-- These communicate the probability that an individual belongs to each class.  -->
-<!-- A limitation is that our final class solution need not reflect true class membership.  -->
-<!-- Once we do accept a particular class solution, special care also needs to be taken when naming the classes.  -->
-
-### Interpreting the results
-
-Class names should be chosen to accurately reflect group membership. 
-Overly simplified and generalized class names may prove misleading to both audiences and researches alike
-leading to what is known as a naming fallacy (Weller, Bowen & Faubert, 2020).
-
+`tidySEM::table_prob()` returns thresholds for ordinal dependent variables in probability scale.
+These are conditional item probabilities
+which communicate item endorsement given a class
+for models with binary and ordinal variables. 
 
 ### Label switching
+<!-- optional subsection: interpreting class solutions (with class naming) -->
 
 The final class solution will usually discover and enumerate several classes. 
 The class ordering however is completely arbitrary.
 The class labeled as Class 1 in one solution may become Class 2 or Class 3 in another model,
 even when the only difference between the models is in their starting values. 
-Label switching is something to be mindful of when comparing different LCA models (Masyn, 2013).
+Label switching is something to be mindful of when comparing different LCA models [@masyn_latent_2013].
+
+The order of clusters is nondeterministic when using K-means in `tidySEM`. 
+Therefore label switching is still a consideration.
+A simple solution to this is setting a random seed number one line prior to fitting the model.
+We advise `tidySEM` users to always do so in order to circumvent label switching.
 
 <!-- Article discussing label switching: see Chung, Loken & Schafer -->
 
@@ -807,24 +868,29 @@ Label switching is something to be mindful of when comparing different LCA model
 <!-- This can work better than the hard constraint approach if reasonable initial values can be found and the labels do not switch within a Markov chain. The result is that all chains are glued to a neighborhood of a particular mode in the posterior. -->
 <!-- https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/1467-9868.00265?casa_token=Tjk8gR4w8AEAAAAA:RygJL5OgdBaVWY6oaB8XlnyMOnzQgOVDBd2EHDyQD6TH-DzxRxpmU1J4AG8N-HpL5dHHNINRybiaMl6w -->
 
+Class names should be chosen to accurately reflect group membership. 
+Overly simplified and generalized class names may prove misleading to both audiences and researches alike
+leading to what is known as a naming fallacy [@weller_latent_2020].
+
 ## Best practices in reporting
 
-Among studies using LCA, reporting practices vary significantly (Weller, Bowen & Faubert, 2020).
-Various authors have tried to better and standardize ways of reporting LCA (e.g. Masyn, 2013; Weller, Bowen & Faubert, 2020). 
+Among studies using LCA, reporting practices vary significantly [@weller_latent_2020].
+Various authors have tried to better and standardize ways of reporting LCA [e.g. @masyn_latent_2013; @weller_latent_2020]. 
 Building on their work, we provide guidelines with a strong emphasis on scientific reproducibility and transparency
-better known as the open science framework (OSF). Open science framework promotes scientific openness, reproducibility and integrity 
-through an establishment of guidelines for the scientific process (Foster & Deardorff, 2017)
-To this end, van Lissa and colleagues (2020) developed WORCS, a workflow for open reproducible code in science.
+better known as the open science framework (OSF). The OSF promotes scientific openness, reproducibility and integrity 
+through an establishment of guidelines for researchers (Foster & Deardorff, 2017)
+To this end, @van_lissa_worcs_2020 developed WORCS, a workflow for open reproducible code in science.
 WORCS consists of step-by-step guidelines for research projects based on the TOP-guidelines developed by Nosek and colleagues (2015).
 It can be easily implemented in R in form of an R package which facilitates preregistration, article drafting,
-version control, citation and formatting, among others (Van Lissa et al., 2020)
+version control, citation and formatting, among others [@van_lissa_worcs_2020].
 
+The guidelines emphasise the use of comprehensive citation (including referencing the software used in the analysis),
+as well as code and data sharing wherever possible.
+@van_lissa_worcs_2020 suggest sharing synthetic data in case the original data cannot be shared, 
+and provide functions to generate such synthetic data.
+Ideally, the entire research project is made reproducible 
+so that others may download it and reproduce it with just one click; for guidance, see @van_lissa_worcs_2020.
 
-	* Use comprehensive citation; this includes referencing the software used.
-	* Share code and (if possible) data. Van Lissa and colleagues suggest sharing synthetic data in case the original data cannot be shared, and provide functions to generate such synthetic data.
-	* Ideally, make the entire research project reproducible so that others may download it and reproduce it with just one click; for guidance, see Van Lissa and colleagues.
-
-<!-- CJ: I think this belongs here -->
 As the open science movement is gaining momentum,
 researchers are becoming increasingly aware
 how important it is that analyses can be reproduced and audited.
@@ -1344,8 +1410,7 @@ TRUE, TRUE, TRUE)), row.names = c(NA, -21L), class = "data.frame")
 <!-- EM process leads to a solution that is at a local, rather than a global maximum in the -->
 <!-- likelihood ‘landscape’. -->
 
-### Starting values
-
+<!-- ### Starting values -->
 <!-- Different methods have been developed to initialize the estimation (get starting values) in -->
 <!-- such a way as to optimize the chance of arriving at an accurate model solution (Biernacki et -->
 <!-- al., 2003; Shireman et al., 2016). Mplus and ‘mclust’ take two different approaches. Mplus -->
