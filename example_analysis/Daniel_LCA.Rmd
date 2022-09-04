@@ -1,23 +1,108 @@
 ---
-title: "LCA in R"
+title: "LCA in R using tidySEM"
 output: html_notebook
 ---
 
-USING TIDYSEM:
-
-see functions starting in mx
+# LOADING THE DATASET
 
 ```{r}
-library(tidySEM)
-df <- data_mix_ordinal
+library(tidySEM) 
+df <- data_mix_ordinal #ask Caspar to rename the dataset in documentation
 df[1:4] <- lapply(df, ordered)
-mx_lca(data = df,
-       classes = 2) -> res
+```
+
+# 2 class solution
+
+```{r}
+# fitting the model
+set.seed(123)
+mx_lca(data = df, classes = 2) -> res_2_class
 ```
 
 ```{r}
-res$class1
-res$latentVars
+# printing model fit table
+print(table_2_class <- tidySEM::table_fit(res_2_class))
+```
+
+```{r}
+# obtain latent class probabilities
+LC_Probabilities_2_class <- tidySEM::class_prob(res_2_class)
+print(LC_Probabilities_2_class[1:4])
+```
+```{r}
+# conditional item probabilities
+tidySEM::table_prob(res_2_class)
+```
+
+
+# 3 class solution
+
+```{r}
+# fitting the model
+set.seed(123)
+mx_lca(data = df, classes = 3) -> res_3_class
+```
+
+```{r}
+# printing model fit table
+print(table_3_class <- tidySEM::table_fit(res_3_class))
+```
+
+```{r}
+# obtain latent class probabilities
+LC_Probabilities_3_class <- tidySEM::class_prob(res_3_class)
+print(LC_Probabilities_3_class[1:4])
+```
+```{r}
+# conditional item probabilities
+tidySEM::table_prob(res_3_class)
+```
+
+# 4 class solution
+
+```{r}
+# fitting the model
+set.seed(123)
+mx_lca(data = df, classes = 4) -> res_4_class
+```
+
+```{r}
+# printing model fit table
+print(table_4_class <- tidySEM::table_fit(res_4_class))
+```
+
+```{r}
+# obtain latent class probabilities
+LC_Probabilities_4_class <- tidySEM::class_prob(res_4_class)
+print(LC_Probabilities_4_class[1:4])
+```
+```{r}
+# conditional item probabilities
+tidySEM::table_prob(res_4_class)
+```
+
+Comparing model fit
+
+```{r}
+print("BIC")
+print(c("2 class", table_2_class$BIC)) #lowest
+print(c("3 class", table_3_class$BIC))
+print(c("4 class", table_4_class$BIC))
+
+print("AIC")
+print(c("2 class", table_2_class$AIC))
+print(c("3 class", table_3_class$AIC))
+print(c("4 class", table_4_class$AIC)) #lowest
+
+print("Entropy")
+print(c("2 class", table_2_class$Entropy))
+print(c("3 class", table_3_class$Entropy)) #highest
+print(c("4 class", table_4_class$Entropy))
+```
+Using the Bootstrapped Likelihood Ratio Test to compare models
+
+```{r}
+tidySEM::BLRT(res_2_class)
 ```
 
 
@@ -41,10 +126,7 @@ res$latentVars
 
 
 
-
-
-
-
+# APPENDIX
 
 USING DIFFERENT PACKAGES
 
