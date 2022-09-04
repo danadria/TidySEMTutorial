@@ -11,6 +11,35 @@ df <- data_mix_ordinal #ask Caspar to rename the dataset in documentation
 df[1:4] <- lapply(df, ordered)
 ```
 
+# Exploring the data
+
+```{r}
+tidySEM::descriptives(df)
+```
+
+# 1 class solution
+
+```{r}
+# fitting the model
+set.seed(123)
+mx_lca(data = df, classes = 1) -> res_1_class
+```
+
+```{r}
+# printing model fit table
+print(table_1_class <- tidySEM::table_fit(res_1_class))
+```
+
+```{r}
+# obtain latent class probabilities
+LC_Probabilities_1_class <- tidySEM::class_prob(res_1_class)
+print(LC_Probabilities_1_class[1:4])
+```
+```{r}
+# conditional item probabilities
+tidySEM::table_prob(res_1_class)
+```
+
 # 2 class solution
 
 ```{r}
@@ -85,24 +114,32 @@ Comparing model fit
 
 ```{r}
 print("BIC")
+print(c("1 class", table_1_class$BIC))
 print(c("2 class", table_2_class$BIC)) #lowest
 print(c("3 class", table_3_class$BIC))
 print(c("4 class", table_4_class$BIC))
-
+```
+```{r}
 print("AIC")
+print(c("1 class", table_1_class$AIC))
 print(c("2 class", table_2_class$AIC))
 print(c("3 class", table_3_class$AIC))
 print(c("4 class", table_4_class$AIC)) #lowest
+```
 
+```{r}
 print("Entropy")
+print(c("1 class", table_1_class$Entropy)) # entropy = 1 
 print(c("2 class", table_2_class$Entropy))
-print(c("3 class", table_3_class$Entropy)) #highest
+print(c("3 class", table_3_class$Entropy)) # highest
 print(c("4 class", table_4_class$Entropy))
 ```
+
+
 Using the Bootstrapped Likelihood Ratio Test to compare models
 
 ```{r}
-tidySEM::BLRT(res_2_class)
+tidySEM::BLRT()
 ```
 
 
