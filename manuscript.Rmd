@@ -361,6 +361,11 @@ and LCA can discover the value of $K$, i.e. generate a $K$-class solution.
 
 <!-- check with Caspar if there are other assumptions and how to expand this paragraph -->
 
+<!-- DA: An assumption LCA has is that of conditional or local independence. -->
+<!-- LCA assumes conditional independence of indicators. -->
+<!-- This means class membership explains all the relationships between the indicators, -->
+<!-- and when the latent class is controlled for, the indicators become unrelated [@masyn_latent_2013] -->
+
 <!-- OLD: -->
 <!-- CJ: Include these use cases too: -->
 <!-- Descriptive analysis; identify few prototypes based on many variables, e.g. DJA science funding -->
@@ -433,62 +438,59 @@ kbl(tab_check[, c("#", "Item")])
 
 ### Examine observed data
 
-Examining observed data is essential for any analysis,
+Examining observed data is essential for any analysis
 as it may reveal patterns and violations of assumptions that had not been considered prior to data collection.
 Pay special attention to level of measurement of the indicators.
-Mixture modeling (including LPA) is strictly speaking only suitable for continuous variables.
+Finite Gaussian mixture models (including LPA) are strictly speaking only suitable for continuous variables.
 Indicators with an ordinal level of measurement are likely to violate the assumption of within-class normal distributions of mixture models [see @vermunt_k-means_2011].
 Personal experience consulting on latent class analyses and moderating the `tidyLPA` Google group
 suggest that the misapplication of mixture models to ordinal (e.g., Likert-type) indicators is the most common source of user error.
 Whereas it has been argued that some parametric methods are robust when scales with 7+ indicators are treated as continuous [e.g., @norman_likert_2010],
 this certainly does not imply that all methods are.
 It is certainly unlikely that such ordinal variables can be treated as a *mixture* of multiple normal distributions.
-The problem becomes egregious when the number of classes estimated equals or exceeds the number of categories; in this case, each class-specific mean could describe a single response category, and a class-specific variance component would be nonsensical.
+The problem becomes egregious when the number of classes estimated equals or exceeds the number of categories; 
+in this case, each class-specific mean could describe a single response category, 
+and a class-specific variance component would be nonsensical.
 In sum, Likert-type scales are rarely suitable for mixture modeling;
 latent class analysis with ordinal indicators is more appropriate.
 
 Relatedly, a recent publication claimed that an assumption of mixture models is that observed indicators are normally distributed [@spurk_latent_2020].
 This is incorrect.
 When the number of classes is greater than one, mixture models assume that the observed indicators are a mixture of multiple (multivariate) normal distributions.
-<!-- CJ: Expand on this here -->
+In our shoe size example, it can be seen that the population distribution comprised of two normal distributions
+is bimodal and hence not normal. 
+Yet, this is a prototypical example of a mixed population distribution where LCA can discover latent groups.
+If the population distribution were instead normal, there would be no classes to extract as the whole population would belong to a single class.
 
 Extensive descriptive statistics (including the number of unique values, variance of categorical variables, and missingness; see next paragraph) can be obtained using the function `tidySEM::descriptives(data)`.
 Note, however, that sample-level descriptive statistics are of limited value when the goal of a study is to identify sub-samples using latent class analysis.
 Plots (density plots for continuous variables, and bar charts for categorical ones) may be more diagnostic.
 Note that density plots can also aid in the choice of the number of classes, as further explained in the section on visualization.
-Descriptive statistics and plots can be relegated to online supplements, provided that these are readily accessible [consider using a GitHub repository as a comprehensive public research archive, as explained in @van_lissa_worcs_2021.
+Descriptive statistics and plots can be relegated to online supplements, provided that these are readily accessible [consider using a GitHub repository as a comprehensive public research archive, as explained in @van_lissa_worcs_2021].
 
-<!--  Adjust the following part, it belongs here:  -->
+<!-- DA: Does this following part about conditional item probabilities and inadmissible solutions belong here?  It's about model interpretation.-->
 
-<!-- CJ: This is about model interpretation; conditional item probabilities are the analogue of mean and standard deviation, but when the observed data are binary/ordinal  -->
-<!-- Conditional item probabilities indicate the probability of a positive score on an item  -->
-<!-- given that the person belongs to a particular latent class.  -->
-
-<!-- If a particular item is endorsed by two or more classes at markedly different rates, -->
-<!-- it is said to discriminate well between classes and is consequently considered a good indicator. -->
-<!-- The classes are considered highly homogeneous with respect to an item when for a particular item -->
-<!-- there are a distinct difference in conditional item probabilities of two or more classes. -->
-<!-- If an item is endorsed below 30% for one class and above 70% for another class, 
-the classes have high homogeneity with respect to this item [@masyn_latent_2013]. -->
-<!-- However, if many conditional item probabilities in estimation are found to be extreme (as in exactly 0 or 1),  -->
-<!-- we are observing boundary parameter estimates. This can be a sign of an invalid solution,  -->
-<!-- warn us that too many classes were extracted, or indicate a local optimum.  -->
-<!-- Boundary parameter estimates are more likely to happen when working with sparse data  -->
-<!-- and should be interpreted with caution (Geiser, 2012).  -->
-
-<!-- CJ: This talks about the problem of inadmissible solutions. With ordinal items, that can happen because of sparse cross-tables (e.g., some combinations of responses never occur). WIth continuous items, that could happen e.g. because you have a zero-inflated, otherwise normally distributed variable; one class would have a mean at zero and its SD would be hard to determine. Or it could happen if you model a five-category Likert scale with a five-component latent profile analysis; each response category will have its own mean, but there's no variance around that (everybody in class 3 has exactly the response value 3). These are all the same problems. -->
-
-<!-- An important outcome of LCA are unconditional class probabilities.  -->
-<!-- These communicate the probability that an individual belongs to each class.  -->
-<!-- A limitation is that our final class solution need not reflect true class membership.  -->
-<!-- Once we do accept a particular class solution, special care also needs to be taken when naming the classes.  -->
+An important outcome of LCA are conditional item probabilities,
+also known as class-specific item probabilities [@masyn_latent_2013], 
+conditional response or conditional solution probabilities [@geiser_data_2012].
+They indicate the probability of an item being endorsed
+given that the observation belongs to a particular latent class.
+Conditional item probabilities can be obtained using `tidySEM::table_prob()`
+If a particular item is endorsed by two or more classes at markedly different rates,
+it is said to discriminate well between the classes and is consequently considered a good indicator.
+Classes are considered highly homogeneous with respect to an item when for a particular item
+there is a distinct difference in conditional item probabilities for two or more classes.
+For instance, if an item is endorsed below 30% for one class and above 70% for another class,
+the classes have high homogeneity with respect to this item [@masyn_latent_2013].
+Conditional item probabilities are the analogue of mean and standard deviation
+when the indicators are binary/ordinal.
 
 A problem which can occur is that of inadmissible solutions. 
 With binary indicators, LCA is modelling a cross-table with all the predictors.
 The problem with such cross-tables is that they will often contain empty cells,
 i.e. combinations of responses that never occur together. 
 This problem is reflected by extreme conditional item probabilities (as in exactly 0 or 1).
-Such boundary parameter estimates could indicate that the solution is invalid.
+Such boundary parameter estimates could indicate that the solution is invalid [@geiser_data_2012].
 Boundary parameter estimates can also happen with continuous indicators.
 For instance, if we have a zero-inflated normal distribution and a two class solution,
 one class might have the mean of zero and its standard deviation cannot be determined 
@@ -496,7 +498,7 @@ since there is little variance.
 This too could be a sign of an invalid solution,
 warn us that too many classes were extracted, or indicate a local optimum [@geiser_data_2012].
 
-### Missing data
+### Handling missing data
 
 Previous work has emphasized the importance of examining the pattern of missing data and reporting how missingness was handled [@van_de_schoot_grolts-checklist_2017].
 Three types of missingness have been distinguished in the literature [@rubin_inference_1976]:
@@ -558,8 +560,7 @@ Prior literature on latent class analysis has emphasized exploratory application
 In exploratory analyses, a large number of models are typically estimated in batch,
 with varying numbers of classes and model specifications.
 The "correct" model specification is then determined based on a combination of fit indices,
-significance tests,
-and interpretability.
+significance tests, and interpretability.
 For latent profile analysis, the function `tidySEM::mx_profiles(classes, variances, covariances)`
 largely automates this process.
 The argument `classes` indicates which class solutions should be estimated (e.g., 1 through 6).
@@ -575,12 +576,45 @@ Confirmatory analyses typically require less comprehensive alternative model spe
 For example, in the context of preregistered analyses, the main models of interest may have been specified a priori.
 Therefore, it may not be necessary to test different model specifications when using the confirmatory approach.
 
-<!-- see the following article and expand on the paragraph -->
-@van_de_schoot_grolts-checklist_2017 argue that there are many choices to be made in the specification of latent trajectory models,
-and that alternative 
+In order to aid researchers working with latent trajectory models,
+@van_de_schoot_grolts-checklist_2017 developed a protocol called Guidelines for Reporting on Latent Trajectory Studies (GRoLTS).
+Throughout this paper, we adapt those GRoLTS protocols that are applicable to latent class analysis.
+One of the guidelines (namely, 6a) refers to considering alternative model specifications.
+In LCA, means, variances, and covariances between the indicators 
+can either be constrained across classes, or estimated freely.
+Researchers using LCA should transparently report their chosen parametrization 
+as well as discuss different parametrizations that were tested in the process.
 
-	* Consider alternative parameterizations; e.g., free variances/covariances 
-	* See Nylund
+<!-- DA: - would researchers ideally anticipate the parameterization of the within-class var/cov structure? How does preregistration connect to this?  -->
+
+
+
+```{r}
+grolts <- structure(list(Number = c("1.", "2.", "3a.", "3b.", "3c.", "4.", 
+"5.", "6a.", "6b.", "7.", "8.", "9.", "10.", "11.", "12.", "13.", 
+"14a.", "14b.", "14c.", "15.", "16."), Item = c("Is the metric of time used in the statistical model reported?", 
+"Is information presented about the mean and variance of time within a wave?", 
+"Is the missing data mechanism reported?", "Is a description provided of what variables are related to attrition/missing data?", 
+"Is a description provided of how missing data in the analyses were dealt with?", 
+"Is information about the distribution of the observed variables included?", 
+"Is the software mentioned?", "Are alternative specifications of within-class heterogeneity considered (e.g., LGCA vs. LGMM) and clearly documented? If not, was sufficient justification provided as to eliminate certain specifications from consideration?", 
+"Are alternative specifications of the between-class differences in variance–covariance matrix structure considered and clearly documented? If not, was sufficient justification provided as to eliminate certain specifications from consideration?", 
+"Are alternative shape/functional forms of the trajectories described?", 
+"If covariates have been used, can analyses still be replicated?", 
+"Is information reported about the number of random start values and final iterations included?", 
+"Are the model comparison (and selection) tools described from a statistical perspective?", 
+"Are the total number of fitted models reported, including a one-class solution?", 
+"Are the number of cases per class reported for each model (absolute sample size, or proportion)?", 
+"If classification of cases in a trajectory is the goal, is entropy reported?", 
+"Is a plot included with the estimated mean trajectories of the final solution?", 
+"Are plots included with the estimated mean trajectories for each model?", 
+"Is a plot included of the combination of estimated means of the final model and the observed individual trajectories split out for each latent class?", 
+"Are characteristics of the final class solution numerically described (i.e., means, SD/SE, n, CI, etc.)?", 
+"Are the syntax files available (either in the appendix, supplementary materials, or from the authors)?"
+), relevant = c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+TRUE, TRUE, TRUE)), row.names = c(NA, -21L), class = "data.frame")
+```
 
 
 ## Software
@@ -898,11 +932,6 @@ Another classification diagnostic measure is the range of the sample size.
 
 <!-- The modal class assignment proportion -->
 
-`tidySEM::table_prob()` returns thresholds for ordinal dependent variables in probability scale.
-These are conditional item probabilities
-which communicate item endorsement given a class
-for models with binary and ordinal variables. 
-
 ### Label switching
 <!-- optional subsection: interpreting class solutions (with class naming) -->
 
@@ -959,33 +988,6 @@ To overcome these limitations, the present paper introduces new user-friendly fu
 The reporting guidelines described in this paper are adopted in `tidySEM` by default.
 The `tidySEM` R-package thus makes advanced mixture modeling based on best practices widely accessible,
 and facilitates the adoption of the estimation and reporting guidelines described in this paper.
-
-```{r}
-grolts <- structure(list(Number = c("1.", "2.", "3a.", "3b.", "3c.", "4.", 
-"5.", "6a.", "6b.", "7.", "8.", "9.", "10.", "11.", "12.", "13.", 
-"14a.", "14b.", "14c.", "15.", "16."), Item = c("Is the metric of time used in the statistical model reported?", 
-"Is information presented about the mean and variance of time within a wave?", 
-"Is the missing data mechanism reported?", "Is a description provided of what variables are related to attrition/missing data?", 
-"Is a description provided of how missing data in the analyses were dealt with?", 
-"Is information about the distribution of the observed variables included?", 
-"Is the software mentioned?", "Are alternative specifications of within-class heterogeneity considered (e.g., LGCA vs. LGMM) and clearly documented? If not, was sufficient justification provided as to eliminate certain specifications from consideration?", 
-"Are alternative specifications of the between-class differences in variance–covariance matrix structure considered and clearly documented? If not, was sufficient justification provided as to eliminate certain specifications from consideration?", 
-"Are alternative shape/functional forms of the trajectories described?", 
-"If covariates have been used, can analyses still be replicated?", 
-"Is information reported about the number of random start values and final iterations included?", 
-"Are the model comparison (and selection) tools described from a statistical perspective?", 
-"Are the total number of fitted models reported, including a one-class solution?", 
-"Are the number of cases per class reported for each model (absolute sample size, or proportion)?", 
-"If classification of cases in a trajectory is the goal, is entropy reported?", 
-"Is a plot included with the estimated mean trajectories of the final solution?", 
-"Are plots included with the estimated mean trajectories for each model?", 
-"Is a plot included of the combination of estimated means of the final model and the observed individual trajectories split out for each latent class?", 
-"Are characteristics of the final class solution numerically described (i.e., means, SD/SE, n, CI, etc.)?", 
-"Are the syntax files available (either in the appendix, supplementary materials, or from the authors)?"
-), relevant = c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
-TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
-TRUE, TRUE, TRUE)), row.names = c(NA, -21L), class = "data.frame")
-```
 
 ## Best practices in visualization
 
