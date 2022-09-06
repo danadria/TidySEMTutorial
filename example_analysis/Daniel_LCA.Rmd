@@ -17,147 +17,36 @@ df[1:4] <- lapply(df, ordered)
 tidySEM::descriptives(df)
 ```
 
-# 1 class solution
+# Conduct latent class analysis
 
 ```{r}
 # fitting the model
 set.seed(123)
-mx_lca(data = df, classes = 1) -> res_1_class
+res <- mx_lca(data = df, classes = 1:4)
 ```
+# Class enumeration
 
 ```{r}
 # printing model fit table
-print(table_1_class <- tidySEM::table_fit(res_1_class))
+fit_table <- table_fit(res)
+fit_table[ , c("Name", "LL", "AIC", "BIC", "Entropy", "prob_min", "prob_max", "n_min", "n_max")]
 ```
+
+# Interpreting class solution
 
 ```{r}
-# obtain latent class probabilities
-LC_Probabilities_1_class <- tidySEM::class_prob(res_1_class)
-print(LC_Probabilities_1_class[1:4])
-```
-```{r}
-# conditional item probabilities
-tidySEM::table_prob(res_1_class)
+library(ggplot2)
+plot_prob(res[[3]]) + scale_fill_manual(name = "bla")
+table_prob(res[[3]])
 ```
 
-# 2 class solution
+# Extracting posterior class probabilities
 
 ```{r}
-# fitting the model
-set.seed(123)
-mx_lca(data = df, classes = 2) -> res_2_class
+probs <- class_prob(res[[3]])
+probs$mostlikely.class
+probs$individual
 ```
-
-```{r}
-# printing model fit table
-print(table_2_class <- tidySEM::table_fit(res_2_class))
-```
-
-```{r}
-# obtain latent class probabilities
-LC_Probabilities_2_class <- tidySEM::class_prob(res_2_class)
-print(LC_Probabilities_2_class[1:4])
-```
-```{r}
-# conditional item probabilities
-tidySEM::table_prob(res_2_class)
-```
-
-
-# 3 class solution
-
-```{r}
-# fitting the model
-set.seed(123)
-mx_lca(data = df, classes = 3) -> res_3_class
-```
-
-```{r}
-# printing model fit table
-print(table_3_class <- tidySEM::table_fit(res_3_class))
-```
-
-```{r}
-# obtain latent class probabilities
-LC_Probabilities_3_class <- tidySEM::class_prob(res_3_class)
-print(LC_Probabilities_3_class[1:4])
-```
-```{r}
-# conditional item probabilities
-tidySEM::table_prob(res_3_class)
-```
-
-# 4 class solution
-
-```{r}
-# fitting the model
-set.seed(123)
-mx_lca(data = df, classes = 4) -> res_4_class
-```
-
-```{r}
-# printing model fit table
-print(table_4_class <- tidySEM::table_fit(res_4_class))
-```
-
-```{r}
-# obtain latent class probabilities
-LC_Probabilities_4_class <- tidySEM::class_prob(res_4_class)
-print(LC_Probabilities_4_class[1:4])
-```
-```{r}
-# conditional item probabilities
-tidySEM::table_prob(res_4_class)
-```
-
-Comparing model fit
-
-```{r}
-print("BIC")
-print(c("1 class", table_1_class$BIC))
-print(c("2 class", table_2_class$BIC)) #lowest
-print(c("3 class", table_3_class$BIC))
-print(c("4 class", table_4_class$BIC))
-```
-```{r}
-print("AIC")
-print(c("1 class", table_1_class$AIC))
-print(c("2 class", table_2_class$AIC))
-print(c("3 class", table_3_class$AIC))
-print(c("4 class", table_4_class$AIC)) #lowest
-```
-
-```{r}
-print("Entropy")
-print(c("1 class", table_1_class$Entropy)) # entropy = 1 
-print(c("2 class", table_2_class$Entropy))
-print(c("3 class", table_3_class$Entropy)) # highest
-print(c("4 class", table_4_class$Entropy))
-```
-
-
-Using the Bootstrapped Likelihood Ratio Test to compare models
-
-```{r}
-tidySEM::BLRT()
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
