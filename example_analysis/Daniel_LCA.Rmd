@@ -39,7 +39,7 @@ hence we proceed with our analyses.
 # Conducting Latent Class Analysis
 
 Before we fit a series of LCA models, we set a random seed
-using set.seed().
+using `set.seed()`.
 The seed number can be any digit.
 This is an important step as 
 there is some inherent randomness in the LCA computations,
@@ -59,65 +59,80 @@ this might take a while.
 set.seed(123) # setting seed 
 res <- mx_lca(data = df, classes = 1:4) # fitting LCA 
 ```
-# Class enumeration
+# Class Enumeration
 
 In class enumeration, 
 we want to compare a sequence of LCA models fitted to the data.
-To do so, we use `tidySEM::table_fit()` 
+To aid the process, we create a model fit table using `tidySEM::table_fit()` 
 with the results object as the input.
-This function creates the model fit table formatted for publication.
-However, it contains a lot of information on each of the four models.
-It may be more helpful to focus on a subset of model fit indices
-and classification diagnostics which we do in the subsequent step.
+As the output contains a lot of information on each of the four fitted models,
+we select a subset of helpful model fit indices and classification diagnostics.
 
 ```{r}
 fit_table <- table_fit(res) # model fit table
-fit_table[ , c("Name", "LL", "AIC", "BIC", "Entropy", "prob_min", "prob_max", "n_min", "n_max")] # a selection from the model fit table
+fit_table[ , c("Name", "LL", "AIC", "BIC", "Entropy", "prob_min", "prob_max", "n_min", "n_max")] # our selection
 ```
-The model fit table is important for deciding on the final class solution.
-Our subset of fit indices and classification diagnostics includes:
+Our selection of fit indices and classification diagnostics includes:
 
-**Name** indicates the $K$-class solution.
-In our case, we chose to fit 1 - 4 class solutions,
-each is represented by its row in the table.
-**LL** is the -2*log-likelihood of each model.
-**AIC** and **BIC** are the Akaike 
-and the Bayesian Information Criterion, respectively.
-**prob_min** and **prob_max** are 
-the lowest and the highest posterior class probability
-by most likely class membership.
-**n_min** and **n_max** are the lowest and the highest
-class proportion based on the posterior class probabilities.
+- **Name** = the $K$-class solution
+- **LL** = the -2*log-likelihood of each model
+- **AIC** = the Akaike Information Criterion value
+- **BIC** = the Bayesian Information Criterion value
+- **prob_min** = the lowest posterior class probability
+                 by most likely class membership
+- **prob_max** = the highest posterior class probability
+                 by most likely class membership
+- **n_min**  = the lowest class proportion based on the posterior class probabilities
+- **n_max** = the highest class proportion based on the posterior class probabilities
 
-In this paper, we discussed several possible strategies 
-to select the final class solution.
-
+We discussed several possible strategies to select the final class solution. 
 Here, we apply our own. 
-First, we examine the -2*log likelihood 
-which falls successively with each added class.
 
-Then, we look at the BIC value
-which is fairly close for the one, two, and three-class solutions,
-but high for the four-class solution.
+To aid our interpretation of the results, 
+we create an elbow plot showing the trends in information criteria across four models. 
 
+```{r elbowplot, message=F, warning=F}
+library(tidyverse) # for data-wrangling
+library(ggplot2) # for plots
+
+elbow_plot <- fit_table[ , c("Name", "AIC", "BIC")] # extract ICs
+elbow_plot %<>% pivot_longer(cols = c("AIC", "BIC"), names_to = "IC", values_to = "Value") # to long format
+
+ggplot(elbow_plot, aes(x = Name, y = Value, group = IC))+
+  geom_point(aes(color = IC))+
+  geom_line(aes(color = IC))+
+  labs(title="Elbow Plot of Information Criteria per Class Solution", x = "Class Solution", y = " Value")+
+  scale_color_manual(name = "Information Criterion", values = c(AIC = 'blue', BIC = 'red'))+
+  theme_minimal()
+
+```
+From the elbow plot, we see that AIC has a lower penalty for model complexity.
+However, we are more interested in the BIC values, which are similar
+for the one, two and three-class solutions, but the four-class solution fits significantly worse.
+For this reason, we eliminate the four-class solution from the selection process.
+
+Then we examine the model fit table.
+As expected, the -2*log likelihood falls successively with each added class.
 As previously stated, classification diagnostics should not be used for model selection,
 but they can be used to disqualify certain solutions because they are uninterpretable.
 We see that prob_min for the four-class solution is low,
-therefore we disqualify this solution.
+knowing that this solution also has a high BIC, we disqualify this solution.
 
 Out of the remaining three solutions,
 we notice that entropy is the highest for the three-class solution,
 and it has a satisfactory prob_min and n_min.
-Based on this, we can retain the three class solution in model selection.
+Based on this, we retain the three class solution in model selection.
 Note that entropy for the one-class solution will always equal to one,
 as it is 100% true that every case is in that class.
 Based on the low entropy of the two-class solution,
 we eliminate this model.
 
 Finally, when comparing the one and three-class solutions,
-we consult the BIC which tells us that the added complexity
+we inspect the information criteria.
+For BIC, the one-class solution fits better, but the difference is marginal.
+AIC tells us that the added complexity
 of having three classes still explains the data better
-than a one-class solution.
+than a one-class solution. 
 Therefore, we select the three-class solution as our final-class solution.
 
 # Interpreting Final Class Solution
@@ -128,18 +143,17 @@ with the results of the three-class model as the input.
 The resulting graph shows response patterns 
 on all the indicators for each group.
 
-If we want to know the probability of each response option's endoresement 
+If we want to know the probability of each response option's endorsement 
 for each class, we can use `tidySEM::table_prob`.
 These are thresholds for ordinal dependent variables in the probability scale.
 
 ```{r}
-library(ggplot2)
 plot_prob(res[[3]]) # plotting the response patterns for the final class solution
 table_prob(res[[3]]) # tabulating the response patterns for the final class solution
 ```
-In the plot, we can see the distributions each of the response probabilities on the indicators
+In the plot, we can see the distributions of the response probabilities on the indicators
 for each of the three classes.
-For instance, we see in Class 1 the most common response to u2 is 2,
+For instance, we see that in Class 1 the most common response to u2 is 2,
 while in Class 2 and Class 3 this is 0.
 We can also see that response 1 is a rare response not forming the majority in 
 any class.
@@ -149,7 +163,7 @@ Class 3 distinguishes itself because the most common response to u3 and u4 is 3.
 
 We can also interpret the response patterns numerically.
 
-# Extracting posterior class probabilities
+# Extracting Posterior Class Probabilities
 
 Another step is to extract posterior class probabilities.
 This is done by the use of `TidySEM::class_prob`
