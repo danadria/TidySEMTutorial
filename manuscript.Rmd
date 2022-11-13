@@ -11,6 +11,11 @@ author:
     affiliation   : "3"
     corresponding : no   
     email         : "m.garniervillarreal@vu.nl"
+  - name          : "Daniel Anadria"
+    affiliation   : "1"
+    corresponding : no
+    address       : "Padualaan 14, 3584CH Utrecht, The Netherlands"
+    email         : "d.anadria@uu.nl"
 affiliation:
   - id            : "1"
     institution   : "Utrecht University, Methodology & Statistics"
@@ -64,7 +69,7 @@ of techniques for estimating unobserved group membership based on a
 parametric model of one or more observed indicators of group membership.
 The types of LCA have become quite popular across scientific fields,
 most notably finite Gaussian mixture modeling and latent profile
-analysis. @vermunt_jk_latent_2004 defined LCA more generally as
+analysis. @vermunt_latent_2004 defined LCA more generally as
 virtually any statistical model where "some of the parameters [...]
 differ across unobserved subgroups".
 
@@ -180,7 +185,7 @@ to the parameters of each group is determined by that case's posterior
 probability of belonging to that group.
 
 In factor analysis, the latent variable is continuous, so the relation
-between indicators is define by the communalities between them, and the
+between indicators is defined by the communalities between them, and the
 latent variable represents the error corrected approximation of the
 sample. While in LCA, the relation between indicators is define by how
 well they separate the classes, as a multinomial regression between
@@ -210,7 +215,7 @@ In this paper, we use the term latent class analysis to refer to a
 family of techniques that estimate latent class membership based on a
 parametric model of observed indicators. From a historical perspective,
 the term was initially conceived to refer to analyses with categorical,
-usually binary indicators [@vermunt_jk_latent_2004]. Nowadays, there are
+usually binary indicators [@vermunt_latent_2004]. Nowadays, there are
 a number of related techniques, known by distinct names, that serve a
 similar purpose. The term "latent class analysis" seems most appropriate
 as an umbrella term for this broader class of models, as it only refers
@@ -229,7 +234,7 @@ canonical example of this type of analysis. In the multivariate case,
 with more than one indicator variable, the parameters of a mixture model
 are the means, variances, and covariances between the indicators (which
 can be standardized to obtain correlations). These parameters can be
-estimated freely, or set to be constrained across classes [@collins_latent_2010].
+estimated freely, or set to be constrained across classes [@collins_latent_2009].
 
 The technique known as *latent profile analysis (LPA)* is a special case
 of the mixture model, which assumes conditional independence of the
@@ -238,7 +243,7 @@ is accounted for, the covariances/correlations between indicators are
 assumed to be zero. This can be conceived of as a restricted mixture
 model with covariances fixed to zero. Stating that the covariances/correlations are accounted by the latent variable. In some cases, such constraints
 will be inappropriate; for instance when the cohesion between indicators
-is expected to differ between classes [@collins_latent_2010]. As an example, a LPA of ocean
+is expected to differ between classes [@collins_latent_2009]. As an example, a LPA of ocean
 plastic particles found two classes of particles based on length and
 width: a class of smaller particles with a high correlation between
 length and width, meaning that these particles were approximately round
@@ -271,7 +276,7 @@ latent trajectories is due to residual error variance.
 <!-- MGV: some reference for this description -->
 
 The term latent class analysis originally referred to cases where the
-observed indicators were categorical [@collins_latent_2010]. 
+observed indicators were categorical [@collins_latent_2009]. 
 Nowadays, it is more commonly used
 as an umbrella term. To prevent ambiguity, the special case where
 indicators are of binary or ordinal measurement level might be described
@@ -499,7 +504,7 @@ comprehensive public research archive, as explained in
 Previous work has emphasized the importance of examining the pattern of
 missing data and reporting how missingness was handled
 [@van_de_schoot_grolts-checklist_2017]. Three types of missingness have
-been distinguished in the literature [@rubin_inference_1976; @enders_applied_2010]: Missing
+been distinguished in the literature [@rubin_inference_1976; @enders_applied_2022]: Missing
 completely at random (MCAR), which means that missingness is random and unrelated to any observed or unobserved variables;
 missing at random (MAR), which means that missingness is contingent on
 the *observed* data (and can thus be accounted for); and finally missing
@@ -656,13 +661,13 @@ by third parties. This incurs the risk that mistakes in the source code
 may go unnoticed, and curbs progress as software developers cannot add
 new functionality.
 
-Conversely, the free open source program OpenMx [@openmx] is very flexible, but
+Conversely, the free open source program OpenMx [@neale_openmx_2016] is very flexible, but
 not very user-friendly. We directly address this limitation using the
 `tidySEM` R-package. New functionality in `tidySEM` seeks to lower the
 threshold for latent class analysis using `OpenMx`. It adheres to best
 practices in estimation and reporting, as described in this paper. The
 user interface is simple, making use of the model syntax of the widely
-used `lavaan` R-package [@lavaan]. This syntax offers a human-readable way to
+used `lavaan` R-package [@rosseel_lavaan_2012]. This syntax offers a human-readable way to
 specify latent variable models. Minor enhancements are made to simplify
 the specification of LCA.
 

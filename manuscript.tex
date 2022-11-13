@@ -165,7 +165,7 @@
     {}{\InnerPatchFailed}%
   }
 {}{\PatchFailed}
-\keywords{latent class analysis, mixture models, best practices, free open source software, tidySEM\newline\indent Word count: 8206}
+\keywords{latent class analysis, mixture models, best practices, free open source software, tidySEM\newline\indent Word count: 9001}
 \usepackage{csquotes}
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
@@ -175,14 +175,14 @@
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
   pdftitle={Best Practices in Latent Class Analysis using Free Open Source Software},
-  pdfauthor={Caspar J. van Lissa1,2 \& Mauricio Garnier-Villarreal3},
+  pdfauthor={Caspar J. van Lissa1,2, Mauricio Garnier-Villarreal3, \& Daniel Anadria1},
   pdflang={en-EN},
   pdfkeywords={latent class analysis, mixture models, best practices, free open source software, tidySEM},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
 \title{Best Practices in Latent Class Analysis using Free Open Source Software}
-\author{Caspar J. van Lissa\textsuperscript{1,2} \& Mauricio Garnier-Villarreal\textsuperscript{3}}
+\author{Caspar J. van Lissa\textsuperscript{1,2}, Mauricio Garnier-Villarreal\textsuperscript{3}, \& Daniel Anadria\textsuperscript{1}}
 \date{}
 
 
@@ -222,7 +222,7 @@ of techniques for estimating unobserved group membership based on a
 parametric model of one or more observed indicators of group membership.
 The types of LCA have become quite popular across scientific fields,
 most notably finite Gaussian mixture modeling and latent profile
-analysis. Vermunt, J.K. et al. (2004) defined LCA more generally as
+analysis. Vermunt et al. (2004) defined LCA more generally as
 virtually any statistical model where ``some of the parameters {[}\ldots{]}
 differ across unobserved subgroups''.
 
@@ -318,7 +318,7 @@ to the parameters of each group is determined by that case's posterior
 probability of belonging to that group.
 
 In factor analysis, the latent variable is continuous, so the relation
-between indicators is define by the communalities between them, and the
+between indicators is defined by the communalities between them, and the
 latent variable represents the error corrected approximation of the
 sample. While in LCA, the relation between indicators is define by how
 well they separate the classes, as a multinomial regression between
@@ -349,7 +349,7 @@ In this paper, we use the term latent class analysis to refer to a
 family of techniques that estimate latent class membership based on a
 parametric model of observed indicators. From a historical perspective,
 the term was initially conceived to refer to analyses with categorical,
-usually binary indicators (Vermunt, J.K. et al., 2004). Nowadays, there are
+usually binary indicators (Vermunt et al., 2004). Nowadays, there are
 a number of related techniques, known by distinct names, that serve a
 similar purpose. The term ``latent class analysis'' seems most appropriate
 as an umbrella term for this broader class of models, as it only refers
@@ -368,7 +368,7 @@ canonical example of this type of analysis. In the multivariate case,
 with more than one indicator variable, the parameters of a mixture model
 are the means, variances, and covariances between the indicators (which
 can be standardized to obtain correlations). These parameters can be
-estimated freely, or set to be constrained across classes (Collins \& Lanza, 2010).
+estimated freely, or set to be constrained across classes (Collins \& Lanza, 2009).
 
 The technique known as \emph{latent profile analysis (LPA)} is a special case
 of the mixture model, which assumes conditional independence of the
@@ -377,7 +377,7 @@ is accounted for, the covariances/correlations between indicators are
 assumed to be zero. This can be conceived of as a restricted mixture
 model with covariances fixed to zero. Stating that the covariances/correlations are accounted by the latent variable. In some cases, such constraints
 will be inappropriate; for instance when the cohesion between indicators
-is expected to differ between classes (Collins \& Lanza, 2010). As an example, a LPA of ocean
+is expected to differ between classes (Collins \& Lanza, 2009). As an example, a LPA of ocean
 plastic particles found two classes of particles based on length and
 width: a class of smaller particles with a high correlation between
 length and width, meaning that these particles were approximately round
@@ -408,7 +408,7 @@ any variance in the indicators not explained by the class-specific
 latent trajectories is due to residual error variance.
 
 The term latent class analysis originally referred to cases where the
-observed indicators were categorical (Collins \& Lanza, 2010).
+observed indicators were categorical (Collins \& Lanza, 2009).
 Nowadays, it is more commonly used
 as an umbrella term. To prevent ambiguity, the special case where
 indicators are of binary or ordinal measurement level might be described
@@ -629,7 +629,7 @@ comprehensive public research archive, as explained in Van Lissa et al., 2021).
 Previous work has emphasized the importance of examining the pattern of
 missing data and reporting how missingness was handled
 (Van De Schoot et al., 2017). Three types of missingness have
-been distinguished in the literature (Enders, 2010; Rubin, 1976): Missing
+been distinguished in the literature (Enders, 2022; Rubin, 1976): Missing
 completely at random (MCAR), which means that missingness is random and unrelated to any observed or unobserved variables;
 missing at random (MAR), which means that missingness is contingent on
 the \emph{observed} data (and can thus be accounted for); and finally missing
@@ -1299,11 +1299,11 @@ Akogul, S., \& Erisoglu, M. (2016). A {Comparison} of {Information} {Criteria} i
 \leavevmode\vadjust pre{\hypertarget{ref-baughman_mixture_2006}{}}%
 Baughman, A. L., Bisgard, K. M., Lynn, F., \& Meade, B. D. (2006). Mixture model analysis for establishing a diagnostic cut-off point for pertussis antibody levels. \emph{Statistics in Medicine}, \emph{25}(17), 2994--3010. \url{https://doi.org/10.1002/sim.2442}
 
-\leavevmode\vadjust pre{\hypertarget{ref-collins_latent_2010}{}}%
-Collins, L. M., \& Lanza, S. T. (2010). \emph{Latent {Class} and {Latent} {Transition} {Analysis}: {With} {Applications} in the {Social}, {Behavioral}, and {Health} {Science}}. New Jersey, USA: John Wiley \& Sons, Inc.
+\leavevmode\vadjust pre{\hypertarget{ref-collins_latent_2009}{}}%
+Collins, L. M., \& Lanza, S. T. (2009). \emph{Latent {Class} and {Latent} {Transition} {Analysis}: {With} {Applications} in the {Social}, {Behavioral}, and {Health} {Sciences}}. John Wiley \& Sons.
 
-\leavevmode\vadjust pre{\hypertarget{ref-enders_applied_2010}{}}%
-Enders, C. K. (2010). \emph{Applied missing data analysis}. New York: Guilford Press.
+\leavevmode\vadjust pre{\hypertarget{ref-enders_applied_2022}{}}%
+Enders, C. K. (2022). \emph{Applied {Missing} {Data} {Analysis}}. Guilford Publications.
 
 \leavevmode\vadjust pre{\hypertarget{ref-figueiredo_unsupervised_2002}{}}%
 Figueiredo, M. A. T., \& Jain, A. K. (2002). Unsupervised learning of finite mixture models. \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, \emph{24}(3), 381--396. \url{https://doi.org/10.1109/34.990138}
@@ -1318,7 +1318,7 @@ Geiser, C., \& Wurpts, I. (2014). Is adding more indicators to a latent class an
 Giang, M. T., \& Graham, S. (2008). Using latent class analysis to identify aggressors and victims of peer harassment. \emph{Aggressive Behavior}, \emph{34}(2), 203--213. \url{https://doi.org/10.1002/ab.20233}
 
 \leavevmode\vadjust pre{\hypertarget{ref-hardy_exploring_2018}{}}%
-Hardy, T. M., Garnier-Villarreal, M., McCarthy, D. O., Anderson, R. A., \& Reynolds, R. M. (2018). Exploring the {Ovarian} {Reserve} {Within} {Health} {Parameters}: {A} {Latent} {Class} {Analysis}. \emph{Western Journal of Nursing Research}, 1--16. \url{https://doi.org/10.1177/0193945918792303}
+Hardy, T. M., Garnier-Villarreal, M., McCarthy, D. O., Anderson, R. A., \& Reynolds, R. M. (2018). Exploring the {Ovarian} {Reserve} {Within} {Health} {Parameters}: {A} {Latent} {Class} {Analysis}. \emph{Western Journal of Nursing Research}, \emph{40}(12), 1903--1918. \url{https://doi.org/10.1177/0193945918792303}
 
 \leavevmode\vadjust pre{\hypertarget{ref-hennig_handbook_2015}{}}%
 Hennig, C., Meila, M., Murtagh, F., \& Rocci, R. (2015). \emph{Handbook of {Cluster} {Analysis}}. 28.
@@ -1351,10 +1351,10 @@ MacGregor, A. J., Dougherty, A. L., D'Souza, E. W., McCabe, C. T., Crouch, D. J.
 Masyn, K. E. (2013). Latent {Class} {Analysis} and {Finite} {Mixture} {Modeling}. In \emph{The {Oxford} {Handbook} of {Quantitative} {Methods}}: \emph{Vol.} \emph{2: Statistical Analysis} (p. 551). Oxford University Press.
 
 \leavevmode\vadjust pre{\hypertarget{ref-mcelreath_statistical_2020}{}}%
-McElreath, R. (2020). \emph{Statistical rethinking: A {Bayesian} course with examples in {R} and {Stan}} (2nd ed.). Boca Raton: Taylor; Francis, CRC Press.
+McElreath, R. (2020). \emph{Statistical {Rethinking} {\textbar} {A} {Bayesian} {Course} with {Examples} in {R} and {STAN}} (2nd ed.). Chapman; Hall/CRC. Retrieved from \url{https://www.taylorfrancis.com/books/mono/10.1201/9780429029608/statistical-rethinking-richard-mcelreath}
 
-\leavevmode\vadjust pre{\hypertarget{ref-openmx}{}}%
-Neale, M. C., Hunter, M. D., Pritikin, J. N., Zahery, M., Brick, T. R., Kirkpatrick, R. M., \ldots{} Boker, S. M. (2016). Open{M}x 2.0: {E}xtended structural equation and statistical modeling. \emph{Psychometrika}, \emph{81}(2), 535--549. \url{https://doi.org/10.1007/s11336-014-9435-8}
+\leavevmode\vadjust pre{\hypertarget{ref-neale_openmx_2016}{}}%
+Neale, M. C., Hunter, M. D., Pritikin, J. N., Zahery, M., Brick, T. R., Kirkpatrick, R. M., \ldots{} Boker, S. M. (2016). {OpenMx} 2.0: {Extended} {Structural} {Equation} and {Statistical} {Modeling}. \emph{Psychometrika}, \emph{81}(2), 535--549. \url{https://doi.org/10.1007/s11336-014-9435-8}
 
 \leavevmode\vadjust pre{\hypertarget{ref-norman_likert_2010}{}}%
 Norman, G. (2010). Likert scales, levels of measurement and the {``laws''} of statistics. \emph{Advances in Health Sciences Education}, \emph{15}(5), 625--632. \url{https://doi.org/10.1007/s10459-010-9222-y}
@@ -1372,13 +1372,13 @@ Nylund, K. L., Asparouhov, T., \& Muthén, B. O. (2007). Deciding on the {Number
 Nylund-Gibson, K., \& Choi, A. Y. (2018). Ten frequently asked questions about latent class analysis. \emph{Translational Issues in Psychological Science}, \emph{4}(4), 440--461. \url{https://doi.org/10.1037/tps0000176}
 
 \leavevmode\vadjust pre{\hypertarget{ref-pavlopoulos_measuring_2015}{}}%
-Pavlopoulos, D., \& Vermunt, J. K. (2015). Measuring {Temporary} {Employment}. {Do} {Survey} or {Register} {Data} {Tell} the {Truth}? \emph{Survey Methodology}, \emph{41}(1), 197--214. Retrieved from \url{https://www150.statcan.gc.ca/n1/pub/12-001-x/2015001/article/14151-eng.pdf}
+Pavlopoulos, D., \& Vermunt, J. K. (2015). \emph{Measuring temporary employment. {Do} survey or register data tell the truth?} 37.
 
 \leavevmode\vadjust pre{\hypertarget{ref-rhemtulla_when_2012}{}}%
-Rhemtulla, M., Brosseau-Liard, P. É., \& Savalei, V. (2012). When can categorical variables be treated as continuous? {A} comparison of robust continuous and categorical {SEM} estimation methods under suboptimal conditions. \emph{Psychological Methods}, \emph{17}(3), 354--373. \url{https://doi.org/10.1037/a0029315}
+Rhemtulla, M., Brosseau-Liard, P. É., \& Savalei, V. (2012). When can categorical variables be treated as continuous? {A} comparison of robust continuous and categorical {SEM} estimation methods under suboptimal conditions. \emph{Psychological Methods}, \emph{17}, 354--373. \url{https://doi.org/10.1037/a0029315}
 
-\leavevmode\vadjust pre{\hypertarget{ref-lavaan}{}}%
-Rosseel, Y. (2012). {lavaan}: An {R} package for structural equation modeling. \emph{Journal of Statistical Software}, \emph{48}(2), 1--36. \url{https://doi.org/10.18637/jss.v048.i02}
+\leavevmode\vadjust pre{\hypertarget{ref-rosseel_lavaan_2012}{}}%
+Rosseel, Y. (2012). Lavaan: {An} {R} {Package} for {Structural} {Equation} {Modeling}. \emph{Journal of Statistical Software}, \emph{48}, 1--36. \url{https://doi.org/10.18637/jss.v048.i02}
 
 \leavevmode\vadjust pre{\hypertarget{ref-rubin_inference_1976}{}}%
 Rubin, D. B. (1976). Inference and {Missing} {Data}. \emph{Biometrika}, \emph{63}(3), 581--592. \url{https://doi.org/10.2307/2335739}
@@ -1404,8 +1404,8 @@ Vermunt, J. K. (2011). K-means may perform as well as mixture model clustering b
 \leavevmode\vadjust pre{\hypertarget{ref-vermunt_latent_2017}{}}%
 Vermunt, J. K. (2017). Latent {Class} {Modeling} with {Covariates}: {Two} {Improved} {Three}-{Step} {Approaches}. \emph{Political Analysis}, \emph{18}(4), 450--469. \url{https://doi.org/10.1093/pan/mpq025}
 
-\leavevmode\vadjust pre{\hypertarget{ref-vermunt_jk_latent_2004}{}}%
-Vermunt, J.K., Magidson, J., Lewis-Beck, M., Bryman, A., Liao, T.F., \& Department of Methodology and Statistics. (2004). Latent class analysis. In \emph{The {Sage} encyclopedia of social sciences research methods} (pp. 549--553). Sage. Retrieved from \url{https://research.tilburguniversity.edu/en/publications/0caedd00-27c1-42bd-bb4e-d1dcb0864956}
+\leavevmode\vadjust pre{\hypertarget{ref-vermunt_latent_2004}{}}%
+Vermunt, J. K., Magidson, J., Lewis-Beck, M., Bryman, A., Liao, T. F., \& Department of Methodology and Statistics. (2004). Latent class analysis. In \emph{The {Sage} encyclopedia of social sciences research methods} (pp. 549--553). Sage. Retrieved from \url{https://research.tilburguniversity.edu/en/publications/0caedd00-27c1-42bd-bb4e-d1dcb0864956}
 
 \leavevmode\vadjust pre{\hypertarget{ref-weller_latent_2020}{}}%
 Weller, B. E., Bowen, N. K., \& Faubert, S. J. (2020). Latent {Class} {Analysis}: {A} {Guide} to {Best} {Practice}. \emph{Journal of Black Psychology}, \emph{46}(4), 287--311. \url{https://doi.org/10.1177/0095798420930932}
