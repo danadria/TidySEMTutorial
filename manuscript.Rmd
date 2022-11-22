@@ -167,7 +167,7 @@ assume that the indicators are related, and these relations can be
 represented by the underlying latent variable. One difference between
 the two techniques is that factor analysis can be considered as a way to
 group observed *variables* into latent constructs, and LCA groups
-*individuals* into classes.While factor analysis seeks to describe the
+*individuals* into classes. While factor analysis seeks to describe the
 relations between variables, LCA seeks to describe each unobserved group
 and the differences between them. In line with this distinction, LCA
 (mixture models) is referred to as a "person-centered" technique, and
@@ -184,12 +184,12 @@ of all parameters in all groups. The relative contribution of each case
 to the parameters of each group is determined by that case's posterior
 probability of belonging to that group.
 
-In factor analysis, the latent variable is continuous, so the relation
-between indicators is defined by the communalities between them, and the
+In factor analysis, the latent variable is continuous, so the relationships
+between indicators are defined by the communalities between them. Here, the
 latent variable represents the error corrected approximation of the
-sample. While in LCA, the relation between indicators is define by how
-well they separate the classes, as a multinomial regression between
-indicators and latent variable [@masyn_latent_2013]
+sample. In LCA, by contrast, the relation between indicators is defined by how
+well they separate the classes, as a multinomial regression between the
+indicators and the latent variable [@masyn_latent_2013].
 
 When the focus is on each individual's estimated class membership, LCA
 can be thought of as a type of clustering algorithm. In line with this
@@ -200,7 +200,12 @@ contrast "model-based" clustering refers to the fact that LCA estimates
 cluster membership based on a parametric model. Specifically, the
 posterior class probability that an individual belongs to a latent class
 can be computed from the likelihood of that individual's observed data
-under given the class-specific model. For these differences, LCA is a clustering method, that corrects for (random) measurement error, while clustering algorithms do not correct for. This is something LCA has in common with factor analysis, as both model an underlying latent variable, which accounts for the communalities between indicators and correcting for measurement error. 0
+under given the class-specific model. For these differences, 
+LCA is a clustering method, that corrects for (random) measurement error, 
+while clustering algorithms do not correct for. This is something LCA has 
+in common with factor analysis, as both model an underlying latent variable, 
+which accounts for the communalities between indicators 
+and correcting for measurement error. 
 
 Finally, in the context of machine learning, LCA can be considered as an
 *unsupervised classification* problem [@figueiredo_unsupervised_2002].
@@ -233,26 +238,26 @@ distributions. The analysis of shoe sizes presented earlier is a
 canonical example of this type of analysis. In the multivariate case,
 with more than one indicator variable, the parameters of a mixture model
 are the means, variances, and covariances between the indicators (which
-can be standardized to obtain correlations). These parameters can be
-estimated freely, or set to be constrained across classes [@collins_latent_2009].
+can be standardized to obtain correlations). These parameters can be estimated 
+freely, or set to be constrained across classes [@collins_latent_2009].
 
 The technique known as *latent profile analysis (LPA)* is a special case
 of the mixture model, which assumes conditional independence of the
 indicators. Conditional independence means that, after class membership
 is accounted for, the covariances/correlations between indicators are
 assumed to be zero. This can be conceived of as a restricted mixture
-model with covariances fixed to zero. Stating that the covariances/correlations are accounted by the latent variable. In some cases, such constraints
+model with covariances fixed to zero. Stating that the covariances/correlations
+are accounted by the latent variable. In some cases, such constraints
 will be inappropriate; for instance when the cohesion between indicators
-is expected to differ between classes [@collins_latent_2009]. As an example, a LPA of ocean
-plastic particles found two classes of particles based on length and
-width: a class of smaller particles with a high correlation between
+is expected to differ between classes [@collins_latent_2009]. As an example,
+a LPA of ocean plastic particles found two classes of particles based on length
+and width: a class of smaller particles with a high correlation between
 length and width, meaning that these particles were approximately round
 or square in shape, and a class of larger particles with a low
 correlation between length and width, meaning that these particles were
-heterogenous in shape. From a theoretical perspective, this makes sense,
+heterogenous in shape [@alkema_maximizing_2022]. From a theoretical perspective, this makes sense,
 because the smaller particles have been ground down to a more uniform
 shape by the elements.
-<!-- DA: what is the source for plastic particles? -->
 
 It is also possible to estimate a mixture model based on latent
 indicators. This means that, within each class, one or more continuous
@@ -261,19 +266,18 @@ Categorical latent variable membership is then estimated based on these
 continuous latent variables. A common application of this approach is in
 longitudinal research, where the indicators reflect one construct
 assessed at different time points. Examples of this approach include
-*growth mixture models* (GMM) and *latent class growth analyses* (LCGA).
-These techniques estimate a latent growth model to describe grouped
-trajectories over time. The growth mixture model is a latent class model
-where the parameters that indicate class membership are the intercepts
-and variances, and typically covariances of the latent growth variables,
-e.g., a latent intercept and slope. This technique assumes that
+*growth mixture models* (GMM) and *latent class growth analyses* (LCGA) 
+[@jung_introduction_2008]. These techniques estimate a latent growth model 
+to describe grouped trajectories over time. The growth mixture model is a 
+latent class model where the parameters that indicate class membership are the 
+intercepts and variances, and typically covariances of the latent growth 
+variables, e.g., a latent intercept and slope. This technique assumes that
 individuals within a class can have heterogenous trajectories. If the
 variance of the growth parameters is fixed to zero, it is known as a
 latent class growth analysis. This latter approach assumes that all
 individuals within a class share the same identical trajectory, and that
 any variance in the indicators not explained by the class-specific
 latent trajectories is due to residual error variance.
-<!-- MGV: some reference for this description -->
 
 The term latent class analysis originally referred to cases where the
 observed indicators were categorical [@collins_latent_2009]. 
@@ -299,51 +303,96 @@ LCA methods.
 
 ## Use Cases for Latent Class Analysis
 
-<!-- Caspar will check if I can replace them with examples from Caspar's published papers. -->
-
 There are several use cases for which LCA methods are suitable. One
-example is to test a theory that postulates the existence of a
-categorical latent variable. For example, *identity status theory*
+such application is to test a theory that postulates the existence of a
+categorical latent variable. For instance, *identity status theory*
 posits that, at any given point in time, adolescents reside in one of
-four identity statuses. Latent class analysis can be used to identify
-these four statuses based on observed indicators (e.g., self-reported
-identity exploration and commitment). If results indicate that the data
+four identity statuses [@marcia_development_1966; @marcia_identity_1980]. 
+LCA can be used to test whether these four statuses
+can be recovered based on observed indicators (e.g., self-reported
+identity exploration and commitment). If the results indicate that the data
 are better described by a different number of classes, or that the
 four-class solution does not correspond to the predicted pattern of
 responses on the indicators, then the theory may be called into
-question.
+question. A recent study by @maene_perceived_2022 applied this principle to 
+test whether identities of Belgian adolescents with migration background can be 
+summarized as those relating to their heritage, national and regional identity.
+A LCA revealed three identity profiles: full integration (high belonging to 
+heritage, national and regional identity), national integration (high heritage
+and national identity with low regional identity), and weak separation
+(high heritage identity with neutral attitudes towards the nation and region).
 
 Another use case is unsupervised learning: when the goal is to restore
 unobserved class membership based on observed indicators, or to classify
-individuals. For example, a mixture model can be used as a diagnostic
-aid when several clinical indicators can be used to distinguish between
-a fixed number of physical [@baughman_mixture_2006], mental
-[@wu_abuse_2011] health problems, or health outcomes after recovering from cancer [@hardy_exploring_2018]. The example of shoe size is a
-rudimentary illustration of this type of application.
+individuals. For example, a mixture model can be utilized as a diagnostic
+aid when using several clinical indicators to distinguish between
+a fixed number of physical [@baughman_mixture_2006], mental health
+[@wu_abuse_2011] problems, or health outcomes after recovering from
+cancer [@hardy_exploring_2018]. The example of shoe size is a rudimentary
+illustration of this type of application. As another example, a recent study 
+identified two suicide risk profiles in military service members and veterans
+[@gromatsky_characteristics_2022].  One class was defined by higher-risk
+history and another by lower-risk history. The higher-risk group comprised of
+individuals with greater intent to die using methods with higher lethality,
+and the lower-risk group was characterized by greater ambivalence towards death
+and usage of lower lethality methods.
+
+A related use case is where class-membership is known but imperfectly measured.
+Mixture models can also be useful to evaluate the quality of measurement
+across instruments. For example, a recent study had employment status 
+information collected across register and survey data. There was disagreement 
+between the two data sources. While it might be tempting to assume that the
+register data is free of error, this has been shown to be false.
+The authors used a mixture model to evaluate the underlying factor of 
+"error corrected employment status" by using two indicators of the same question
+and identifying random and systematic measurement error in both indicators 
+[@pavlopoulos_measuring_2015].
+
 
 LCA can be used as a descriptive analysis where a researcher wishes to
 describe their sample and identify a few prototypes based on many
 variables. As an example, if a survey among all Dutch academics was
 carried out with the goal of bringing about a funding reform, LCA could
 be used to discover the types of publications that get funding.
+Recently, @alkema_maximizing_2022 studied plastic debris in the Atlantic Ocean.
+Prior to this study, ways to categorize ocean microplastics in terms of length,
+width and polymer type were rather arbitrary, and assumed that these properties
+were independent. Also, there was a lack of information regarding variability 
+within these categories. The authors used finite Gaussian mixture modeling to 
+build a classification system for ocean microplastic particles based on a set 
+of measured characteristics. With regards to particle dimensions, two classes
+emerged: one with smaller fragments whose width and height were highly 
+correlated, and another consisting of larger fragments with low correlation 
+between particle width and height.
 
-With LCA, our goal could be to inductively identify the number of
-classes. For instance, if we believe that a variable represents a group,
-but don't know how many groups there are, LCA may be an appropriate
+With LCA, our goal could be to inductively identify the number of classes. 
+For instance, if we believe that a variable represents a group,
+but do not know how many groups there are, LCA may be an appropriate
 technique to answer this question. For example, @hopfer_social_2014
 studied substance use, sexual behavior, and mental health status of
 urban population in Winnipeg, Canada. The underlying assumption was that
-there were different risk profiles, but their number was not known. From
-a collection of indicators, LCA provided evidence that there are four
-distinct risk profiles in the Winnipeg area.
+there were different risk profiles, but their number was not known. 
+From a collection of indicators, LCA provided evidence that there are four
+distinct risk profiles in the Winnipeg area. Another study investigated 
+adolescent empathy development and its influence on parent-child conflict 
+[@van_lissa_divergence_2015]. The data was collected over six years. 
+Using LCGA, adolescents with similar empathy development trajectories 
+were grouped into: high-, average-, and low-empathy classes.
 
-Another application of LCA is to classify individuals. In a peer
-harassment study, @giang_using_2008 used LCA to classify over 2,000
-sixth grade students into aggressor and victim latent classes. The
-five-class solution comprised of classes of victims, aggressors, and
-socially adjusted students. For instance, it revealed that there were
-two types of victims: highly-victimized aggressive-victims and
-highly-aggressive aggressive-victims.
+Another application of LCA is to classify individuals. In a peer harassment 
+study, @giang_using_2008 used LCA to classify over 2,000 sixth grade students 
+into aggressor and victim classes. The five-class solution comprised of 
+classes of victims, aggressors, and socially adjusted students. 
+The study revealed that there were two types of victims: highly-victimized 
+aggressive-victims and highly-aggressive aggressive-victims.
+Another example is the "Well-being compass" study by van Lissa, currently 
+a preprint. The study was conducted in collaboration with a mental health care
+facility and focused on care providers. Latent class analysis has identified 
+four different risk profiles for care providers. Not only was class membership 
+estimated for the participants of the original study, but the class solution 
+was used as a risk assessment aid for new care providers, 
+so they could be more adequately supported by mental health care professionals.
+<!-- DA: this study is not in zotero yet, I lack information (title, authors, etc.) to enter it, @Caspar could you enter this to Zotero and adjust the in-text citation-->
 
 LCA is also appropriate when we wish to identify indicators that capture
 classes well. High quality indicators will be strongly related to the
@@ -355,6 +404,15 @@ LCA, see @geiser_is_2014. Therefore, one could use conditional response
 probabilities for each item to assess its quality with regards to how
 well it helps separate the latent classes. From this, a theory about the
 selection of indicators could be informed.
+An example of such use of LCA is a study by @tsaousis_measurement_2020 who
+studied differential item functioning using LCA. The study focused 
+on university admission tests of Saudi Arabian students. LCA has revealed three
+latent classes: high-, average-, and low-scorers. Subsequently, the authors
+used the Multiple Indicator Multiple Causes model to identify both uniform
+and non-uniform differential item functioning. The main finding was that gender
+was a potential source of differential item functioning for latent class
+indicators. Therefore, gender should be included as a covariate when fitting 
+a LCA model in order to obtain unbiased estimates.
 
 An extension of LCA is that containing covariates which can be used to
 predict class membership. In this approach, we not only model the latent
@@ -368,16 +426,23 @@ be related to the children's latent class membership, hence these
 covariates were excluded from the analysis. Accuracy scores, however,
 were related to probabilities of being in anxiety and attention-anxiety
 classes. Therefore this covariate was kept as a valuable predictor.
+Another example comes from @van_lissa_divergence_2015 who included sex 
+as a predictor of the developmental trajectories and class membership in 
+the previously discussed adolescent empathy development study. The rationale
+was that adding sex as a covariate would account for known sex differences 
+in empathy development, and lead to a model with lower bias.
 
-When our interest is the prediction of one or more outcomes, LCA can be
-used to construct latent classes as categorical predictors.
-@lanza_latent_2013 demonstrated how LCA can be used to classify
-adolescents into depression classes, and subsequently these classes can
-be used to predict smoking, grades, and delinquency. The study showed
-that the outcomes predicted by class membership can be binary (regular
-smoking), continuous (grades) or count (delinquency).
-
-These mixture models can also be useful to evaluate quality of measurement across instrument. For example, employment status was collected across register and survey data, and there is disagreement between them. You could think that register data is without error, but it has been shown that is victim of measurement error as well. In this case mixture models was used to evaluate the underlying factor of "error corrected employment status", by using two indicators of the same question and identify random and systamtic measurement error in either indicator [@pavlopoulos_measuring_2015].
+When our interest is the prediction of one or more outcomes, LCA can be used 
+to construct latent classes as categorical predictors. @lanza_latent_2013 
+demonstrated how LCA can be used to classify adolescents into depression 
+classes, and subsequently these classes can be used to predict smoking, grades,
+and delinquency. The study showed that the outcomes predicted by class 
+membership can be binary (regular smoking), continuous (grades) or 
+count (delinquency). In the previously discussed study of Belgian adolescent
+identities, @maene_perceived_2022 first constructed the latent variable
+representing different multiple identification strategies. Subsequently, 
+the most likely class membership based on posterior class probability was
+used as an "observed" categorical variable for prediction of depressive symptoms.
 
 In addition to these applications, LCA can be used for dimensionality
 reduction as the resulting groups summarize response patterns on a large
@@ -389,32 +454,27 @@ dichotomous items have $2^{15}$ or $32,768$ unique symptom combinations.
 Perhaps for this reason, @macgregor_symptom_2021 incorporated LCA as a
 method of dimensionality reduction. A five class solution was found to
 have the best fit according to both statistical criteria and clinical
-interpretability.
-
-<!-- CJ: (on the next paragraph)  -->
-
-<!-- the multilevel LCA addresses violations of the assumptions of LCA. -->
-
-<!-- That is not what this paragraph is about.  -->
-
-<!-- This paragraph is about motivations for using LCA. -->
-
-<!-- One motivation is if your data violates multivariate normality -->
-
-<!-- because violating multivariate normality means that you have multiple groups -->
-
-<!-- and you can use LCA to extract those. That is the only assumption  -->
-
-<!-- we have to discuss here, we just need to explain it. -->
+interpretability. In the longitudinal adolescent empathy development study, 
+@van_lissa_divergence_2015 first investigated heterogeneity in empathy 
+development. This was done through identification of classes of individuals 
+characterized by similar developmental trajectories. The authors used LCGA
+as a dimensionality reduction technique where 467 individual trajectories
+were summarized into three empathy classes. Such reduction can help researchers 
+gain a better perspective of the grand patterns in the data.
 
 Finally, LCA can be used to deal with data which violate certain
 assumptions. As discussed in the shoe size example, LCA can deal with
 violations of normality. In fact, LCA assumes the population
 distribution is a non-normal mixture of $K$ normal distributions, and it
-can discover the value of $K$, i.e. generate a $K$-class solution.
+can recover the value of $K$, i.e. generate a $K$-class solution.
+For instance, @alkema_maximizing_2022 studied ocean plastic debris. 
+Plastic particle width and height are non-normally distributed. The authors 
+demonstrate that the non-normal distributions of particle dimensions are
+due to the measurements being a mixture composed of several particle types, 
+each with its own normal distribution.
 
-LCA and factor analysis share the approximation of an unobserved latent variable, the difference being if that variable is continuous of categorical. We encourage researchers to be agnostic about the **true** nature of the latent variable. And focus on the approach that fits the research question.
-
+<!-- LCA and factor analysis share the approximation of an unobserved latent variable, the difference being if that variable is continuous or categorical. We encourage researchers to be agnostic about the **true** nature of the latent variable. And focus on the approach that fits the research question. -->
+<!-- CJ: Why would we encourage researchers to be agnostic about the true...? -->
 # Best Practices
 
 ## Best Practices in Estimation
@@ -473,8 +533,8 @@ latent class analysis with ordinal indicators is more appropriate.
 Relatedly, a recent publication claimed that an assumption of mixture
 models is that observed indicators are normally distributed
 [@spurk_latent_2020]. This is incorrect. When the number of classes is
-greater than one, Gaussian mixture models assume that the observed indicators are
-a mixture of multiple (multivariate) normal distributions. In our shoe
+greater than one, Gaussian mixture models assume that the observed indicators 
+are a mixture of multiple (multivariate) normal distributions. In our shoe
 size example, it can be seen that the population distribution is
 comprised of two normal distributions. When examined visually, the
 population distribution is evidently bimodal. The Shapiro-Wilk normality
@@ -504,8 +564,9 @@ comprehensive public research archive, as explained in
 Previous work has emphasized the importance of examining the pattern of
 missing data and reporting how missingness was handled
 [@van_de_schoot_grolts-checklist_2017]. Three types of missingness have
-been distinguished in the literature [@rubin_inference_1976; @enders_applied_2022]: Missing
-completely at random (MCAR), which means that missingness is random and unrelated to any observed or unobserved variables;
+been distinguished in the literature [@rubin_inference_1976; 
+@enders_applied_2022]: Missing completely at random (MCAR), which means that 
+missingness is random and unrelated to any observed or unobserved variables;
 missing at random (MAR), which means that missingness is contingent on
 the *observed* data (and can thus be accounted for); and finally missing
 not at random (MNAR), which means that missingness is related to
@@ -527,17 +588,19 @@ fast backend in C++ and new printing and plotting methods.
 
 While we concur that investigating missingness is due diligence, it is
 important to emphasize that missingness is adequately handled by default
-in many software packages for LCA, such as Mplus, Latet GOLD, and `OpenMx` which is
-the backend of `tidySEM`. These packages use Full Information Maximum
+in many software packages for LCA, such as Mplus, Latet GOLD, and `OpenMx` 
+which is the backend of `tidySEM`. These packages use Full Information Maximum
 Likelihood (FIML) estimation, which makes use of all available
 information without imputing missing values. FIML is a best-practice
-solution for handling missing data; on par with multiple imputation when the estimation model includes the same variables as the imputation model
+solution for handling missing data; on par with multiple imputation when the 
+estimation model includes the same variables as the imputation model
 [@lee_comparison_2021]. FIML estimation assumes that missingness is
 either MCAR or MAR. Thus, one would typically proceed with FIML,
 regardless of the outcome of an MCAR test. Although FIML does not, by
 default, handle missingness in exogenous variables -- all indicator
 variables in LCA are endogenous, so this is not a concern.
 <!-- are you sure Mplus accounts for missing data automatically when the indicators are categorical? I know that is not the case with CFA/SEM models -->
+<!-- CJ: yes, it does -->
 
 Multiple imputation is less suitable to LCA for two reasons. First,
 because LCA methods are often computationally expensive, and conducting
@@ -787,19 +850,32 @@ models at a time [@lanza_introduction_2003].
 Fit indices typically used for determining the optimal number of classes
 include the Akaike Information Criterion (AIC) and the Bayesian
 Information Criterion (BIC). Both information criteria are based on the
--2\*log-likelihood (which is lower for better fitting models), and add a
-penalty for the number of parameters (thus incentivizing simpler
+-2\*log-likelihood (which is lower for better fitting models), and a
+penalty term for the number of parameters (thus incentivizing simpler
 models). This helps balance model fit and model complexity. The lower
 the value of an information criterion, the better the overall fit of the
 model. 
-
-The general objective of the Information Criteria (IC) is to evaluate the model's out-of-sample predictive accuracy, so adjusting for over fitting. Fit measures like $R^2$ evaluate the in-sample predictive accuracy, meaning that they evaluate the models ability to predict the observed outcomes based on the same data that was use to build up the model. These metrics are positively bias, meaning that will present better model fit than it has in reality. While IC corrects for this positive bias by evaluating the models accuracy approximating the out-of-sample predictive accuracy, meaning that it is the ability to predict the outcome for observations that are not part of the training model. Ideally we would estimate the model a lot of time with less observations and predict their scores, but IC's approximate this by their different penalty metrics. For example $R^2$ will increase even if an added predictors are unnecessary, while IC's will show worst fit when a predictor (complexity) is unnecessary [@mcelreath_statistical_2020] 
+XXXXXX
+The general objective of information criteria (ICs) is to evaluate the model's 
+out-of-sample predictive accuracy, thus adjusting it for overfitting. 
+Fit measures such as $R^2$ evaluate the in-sample predictive accuracy, 
+i.e. the model's ability to predict the observed outcomes based on the same 
+data that was used to fit the model. In-sample metrics are positively biased, 
+meaning that they overestimate the fit the model has in reality, i.e. when 
+presented with new data. While common ways to overcome this bias is through
+resampling methods such as cross-validation, or use of out-of-sample data such
+as a test set, ICs correct for this positive bias by evaluating the model's 
+accuracy in a way which approximates the out-of-sample predictive accuracy. 
+ICs achieve this by applying different penalty metrics. For example, $R^2$ will 
+increase even if an added predictor is fully redundant. ICs show preference for
+simpler models and indicate worse fit when a predictor, or its added complexity 
+is unnecessary [@mcelreath_statistical_2020]. 
 
 The BIC applies a stronger penalty for model complexity that
 scales logarithmically with the sample size. The literature suggests the
 BIC may be the most appropriate information criterion to use for model
-comparison [@nylund-gibson_ten_2018; @masyn_latent_2013]. Both the AIC and the BIC are
-available in the `tidySEM` output.
+comparison [@nylund-gibson_ten_2018; @masyn_latent_2013]. 
+Both the AIC and the BIC are available in the `tidySEM` output.
 
 Information criteria may occasionally contradict each other, so it is
 important to identify a suitable strategy to reconcile them. One option
@@ -815,7 +891,12 @@ Another common test of model fit is the likelihood ratio $\chi^2$
 goodness-of-fit test. However, this test is not implemented in
 `tidySEM`.
 
-A disadvantage of the IC's is that we do not have standard errors for them, so we only have the absolute values without a measure of their variability. So, the difference between models IC can be very small. Still indicating that the model with the lower value is "better", but if this difference is  very small can considered them "functionally equal", and you should take into consideration the interpretability of the model. 
+A disadvantage of ICs is that they are not accompanied by standard errors or 
+any measure of variability, only their absolute value. The difference between 
+two models' ICs can be rather small. The lower information criterion would 
+still indicate the better model, but if the ICs difference is very small, 
+two models can be considered "functionally equal". In such situations, the 
+interpretability of the model should take priority. 
 
 LCA studies commonly report -2\*log likelihood of the final class
 solution. This is a basic fit measure used to compute most information
@@ -841,9 +922,10 @@ Interpretability should always be a consideration when considering
 different class solutions [@nylund-gibson_ten_2018].
 
 Three important classification diagnostics provided by `tidySEM` are:
-(1) the *minimum* and *maximum* percentage of the sample assigned to a
-particular *class*, (2) the *range of the posterior class probabilities* by most likely class membership, and (3) *entropy*. All three are based
-on posterior class probabilities.
+(1) the *minimum* and *maximum* percentage of the sample assigned to a 
+particular *class*, (2) the *range of the posterior class probabilities* by most
+likely class membership, and (3) *entropy*. All three are based on posterior 
+class probabilities.
 <!-- MGV: I will work on adding average posterior class probability (AvePP) as well-->
 
 The posterior class probability is a measure of classification
@@ -897,8 +979,10 @@ class, for the subset of observations with most likely class of 1:k,
 where k is the number of classes.
 
 `$individual` is the individual posterior probability matrix, with
-dimensions n (number of cases in the data) x k (number of classes). Additionally it includes the `predicted` class in function of the highest predicted probability.
-Individual class probabilities and/or predicted class are often useful for researchers who wish to do follow up analyses. 
+dimensions n (number of cases in the data) x k (number of classes). 
+Additionally, it includes the `predicted` class as a function of the highest 
+predicted probability. Individual class probabilities and/or predicted class 
+are often useful to researchers who wish to carry out follow up analyses. 
 
 Entropy is a summary measure of posterior class probabilities across
 classes and individuals. It ranges from 0 (model classification no
@@ -932,7 +1016,7 @@ classes have high homogeneity with respect to this item
 mean and standard deviation when the indicators are binary or ordinal.
 
 A problem which can occur is that of inadmissible solutions. With binary
-indicators, LCA is modelling a cross-table with all the predictors. The
+indicators, LCA is modeling a cross-table with all the predictors. The
 problem with such cross-tables is that they will often contain empty
 cells, i.e. combinations of responses that never occur together. This
 problem is reflected by extreme conditional item probabilities (as in
@@ -960,9 +1044,10 @@ solution to this is setting a random seed number one line prior to
 fitting the model. We advise `tidySEM` users to always do so in order to
 circumvent label switching.
 
-Class names should be chosen to accurately reflect group membership, as theoretically relevant names according to the interpretation of the class solutions.
-Overly simplified and generalized class names may prove misleading to
-both audiences and researches alike leading to what is known as a naming
+Class names should be chosen to accurately reflect group membership,
+as theoretically relevant names according to the interpretation of the class 
+solutions. Overly simplified and generalized class names may prove misleading 
+to both audiences and researches alike leading to what is known as a naming
 fallacy [@weller_latent_2020].
 
 ## Best Practices in Reporting
@@ -999,10 +1084,10 @@ reproduce analyses to license holders, and prevents auditing research
 because the underlying source code is proprietary. To overcome these
 limitations, the present paper introduces new user-friendly functions in
 the `tidySEM` R-package that can be used to estimate a wide range of LCA
-models using the free, open-source R-package `OpenMx` as the backend. The reporting
-guidelines described in this paper are adopted in `tidySEM` by default.
-The `tidySEM` R-package thus makes advanced mixture modeling based on
-best practices widely accessible, and facilitates the adoption of the
+models using the free, open-source R-package `OpenMx` as the backend. The 
+reporting guidelines described in this paper are adopted in `tidySEM` by 
+default. The `tidySEM` R-package thus makes advanced mixture modeling based 
+on best practices widely accessible, and facilitates the adoption of the
 estimation and reporting guidelines described in this paper.
 
 ### Visualization
@@ -1013,11 +1098,9 @@ several stages where this is an important consideration.
 First, in class enumeration, we want to compare several competing class
 solutions. This can be done by means of the AIC and BIC. Here, we
 suggest using an elbow plot with the $K-class\ solution$ on the X-axis,
-and information criteria value on the Y-axis. We show an implementation
-of such an elbow plot in our Tutorial subsection.
-<!-- For continuous variables, density plots can aid class enumeration. -->
-<!-- DA: Do we have density plots implemented in tidySEM?, yes, it is plot_density  -->
-<!-- If so, we should add this example to the tutorial. -->
+and information criteria value on the Y-axis. For continuous variables, 
+density plots can aid class enumeration. We demonstrate how to implement 
+both elbow and density plots in the Tutorial subsection of this paper.
 
 Second, once we have decided on the final class solution, we want to
 interpret the response patterns on the indicators for each latent class.
@@ -1035,7 +1118,7 @@ This is an example of an exploratory LCA using `tidySEM`.
 ## Loading the Dataset
 
 In this example, we use *data_mix_ordinal*, a simulated data for mixture
-modelling with ordinal indicators. This dataset is built-in to
+modeling with ordinal indicators. This dataset is built-in to
 `tidySEM`. For more information about the dataset, type
 `?tidySEM::data_mix_ordinal` into the R console after loading the
 `tidySEM` using library().
@@ -1073,25 +1156,32 @@ having the same seed number ensures that two separate researcher obtain
 exactly the same results when fitting LCA models.
 
 Finally, we reach the step of fitting LCA models. To do so, we use
-`tidySEM::mx_lca()` which takes data and number of classes as inputs. Notice that the analysis will be done on all the variable in the data set, so you have to make sure it only includes the relevant variables. In
-our example, we want to fit 1 to 4 class solutions and compare their
-output. Depending on your computer's computational power, this might
-take a while.
+`tidySEM::mx_lca()` which takes data and number of classes as inputs. 
+Notice that the analysis will be done on all the variable in the data set, 
+so you have to make sure it only includes the relevant variables. 
+In our example, we want to fit 1 to 4 class solutions and compare 
+their output. Depending on your computer's computational power, 
+this might take a while.
 
 ```{r fitting_LCA, include = TRUE, eval=F}
 set.seed(123) # setting seed 
-res <- mx_lca(data = df, classes = 1:4) # fitting LCA - 1 to 4 classes
+res <- mx_lca(data = df, classes = 1:4) # fitting LCA 1 to 4 class solutions
 ```
 
-Notice that the model was run 10 times for each $K$ class solution. This because the functions runs a total of 10 **extra** times the model. This way we can choose the best fitting model across all the solutions. In this examples we see that all models converged without issues. 
+Notice that the model run 10 times for each $K$ class solution. 
+This way we can choose the best fitting model across all the solutions. 
+In this example, we see that all models converged without issues. 
 
+We can inspect the class of resulting objects.
 
 ```{r, include = TRUE, eval=F}
 is(res)
 is(res[[1]])
 ```
 
-As `tidySEM::mx_lca()` was run for several models at the same time, the resulting object `res` is a `mixture_list` class where each $K$ class solution is an object in the list, and each of them are `OpenMx` models (`MxModel`).
+As `tidySEM::mx_lca()` run several models at a time, the resulting object `res` 
+is a `mixture_list` class where each $K$ class solution is a list element, or
+more specifically an `OpenMx` model (`MxModel`).
 
 ## Class Enumeration
 
@@ -1104,26 +1194,38 @@ diagnostics.
 
 ```{r fit_table, include = TRUE, eval=F}
 fit_table <- table_fit(res) # model fit table
-fit_table[ , c("Name", "LL", "Parameters", "AIC", "BIC", "Entropy", "prob_min", "prob_max", "n_min", "n_max")] # our selection
+fit_table[ , c("Name", "LL", "Parameters", 
+               "AIC", "BIC", "Entropy", 
+               "prob_min", "prob_max", 
+               "n_min", "n_max")] # our selection
 ```
 
 Our selection of fit indices and classification diagnostics includes:
 
 ```{r, echo=F}
-Selection <- c("Name", "LL", "Parameters", "AIC", "BIC", "prob_min", "prob_max",
-          "n_min", "n_max")
-Description <- c("the $K$-class solution",
-                 "the -2*log-likelihood of each model",
-                 "Number of estimated parameters in each model",
-                 "the Akaike Information Criterion value",
-                 "the Bayesian Information Criterion value",
-                 "the lowest posterior class probability by most likely class membership",
-                 "the highest posterior class probability by most likely class membership",
-                 "the lowest class proportion based on the posterior class probabilities",
-                 "the highest class proportion based on the posterior class probabilities")
+Selection <- c(
+    "Name", "LL", "Parameters", 
+    "AIC", "BIC", "prob_min", 
+    "prob_max", "n_min", "n_max")
+
+Description <- c(
+    "the $K$-class solution",
+    "the -2*log-likelihood of each model",
+    "Number of estimated parameters in each model",
+    "the Akaike Information Criterion value",
+    "the Bayesian Information Criterion value",
+    "the lowest posterior class probability by most likely class membership",
+    "the highest posterior class probability by most likely class membership",
+    "the lowest class proportion based on the posterior class probabilities",
+    "the highest class proportion based on the posterior class probabilities")
+
 selection <- cbind(Selection, Description)
-knitr::kable(selection, format = 'pipe', caption = "Selection of Fit Indices and Classification Diagnostics")
+
+knitr::kable(selection, format = 'pipe', 
+             caption = "Selection of Fit Indices and 
+                        Classification Diagnostics")
 ```
+
 
 We discussed several possible strategies to select the final class
 solution. Here, we apply our own.
@@ -1136,13 +1238,16 @@ library(tidyverse) # for data-wrangling
 library(ggplot2) # for plots
 
 elbow_plot <- fit_table[ , c("Name", "AIC", "BIC")] # extract ICs
-elbow_plot <- pivot_longer(elbow_plot, cols = c("AIC", "BIC"), names_to = "IC", values_to = "Value") # to long format
+elbow_plot <- pivot_longer(elbow_plot, cols = c("AIC", "BIC"), 
+                           names_to = "IC", values_to = "Value") # to long format
 
 ggplot(elbow_plot, aes(x = Name, y = Value, group = IC))+
   geom_point(aes(color = IC))+
   geom_line(aes(color = IC))+
-  labs(title="Elbow Plot of Information Criteria per Class Solution", x = "Class Solution", y = " Value")+
-  scale_color_manual(name = "Information Criterion", values = c(AIC = 'blue', BIC = 'red'))+
+  labs(title="Elbow Plot of Information Criteria per Class Solution", 
+       x = "Class Solution", y = " Value")+
+  scale_color_manual(name = "Information Criterion", 
+                     values = c(AIC = 'blue', BIC = 'red'))+
   theme_minimal()
 
 ```
@@ -1187,8 +1292,8 @@ for each class, we can use `tidySEM::table_prob`. These are thresholds
 for ordinal dependent variables in the probability scale.
 
 ```{r plot_prob, include = TRUE, eval=F}
-plot_prob(res[[3]]) # visualizing the response patterns for the final class solution
-table_prob(res[[3]]) # tabulating the response patterns for the final class solution
+plot_prob(res[[3]]) # visualizing the response patterns for the final model
+table_prob(res[[3]]) # tabulating the response patterns for the final model
 ```
 
 In the plot, we can see the distributions of the response probabilities
@@ -1200,7 +1305,9 @@ itself because the majority scores the response 0 category of u3 and u4,
 while in Class 1 and 2 this is not the case. Class 3 distinguishes
 itself because the most common response to u3 and u4 is 3.
 
-We can also interpret the response patterns numerically. It is a matter of preferences on how to interpret these probabilities. Here is where you would **name** each class, such that each response pattern is theoretically meaningful.
+We can also interpret the response patterns numerically. It is a matter of 
+preferences on how to interpret these probabilities. Here is where you would
+**name** each class, such that each response pattern is theoretically meaningful.
 
 ## Extracting Posterior Class Probabilities
 
@@ -1209,8 +1316,8 @@ by the use of `tidySEM::class_prob` with the results of the final class
 solution as the input.
 
 ```{r extract_Post_Class_Prob, include = TRUE, eval=F}
-probs <- class_prob(res[[3]]) # extracting the posterior class probabilities of the final class solution
-probs$mostlikely.class # posterior class probabilities by most likely class membership
+probs <- class_prob(res[[3]]) # extracting the posterior class probabilities
+probs$mostlikely.class # posterior probabilities by most likely class membership
 probs$individual # individual posterior class probabilities
 ```
 

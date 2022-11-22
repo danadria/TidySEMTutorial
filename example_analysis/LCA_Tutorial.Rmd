@@ -1,0 +1,208 @@
+---
+title: "LCA in R using tidySEM"
+output: html_notebook
+---
+# Tutorial
+
+This is an example of an exploratory LCA using `tidySEM`.
+
+## Loading the Dataset
+
+In this example, we use *data_mix_ordinal*, a simulated data for mixture
+modeling with ordinal indicators. This dataset is built-in to
+`tidySEM`. For more information about the dataset, type
+`?tidySEM::data_mix_ordinal` into the R console after loading the
+`tidySEM` using library().
+
+We load the dataset and convert the indicators into ordered factors.
+
+```{r, include = TRUE, eval=F}
+library(tidySEM) # loading tidySEM
+df <- data_mix_ordinal  # dataset
+df[1:4] <- lapply(df, ordered) # indicators as ordered factors
+```
+
+## Exploring the Data
+
+An important step to preceding any statistical analysis is data
+exploration. Here we use `tidySEM::descriptives()` to describe the
+dataset we are using.
+
+```{r, include = TRUE, eval=F}
+tidySEM::descriptives(df) # descriptives
+```
+
+As we can see, the output includes various descriptives of our dataset.
+Special attention should be paid to examining the pattern of
+missingness, as discussed in the *Handling missing data* section of this
+paper. In our example, we see that there are no missing values, hence we
+proceed with our analysis.
+
+## Conducting Latent Class Analysis
+
+Before we fit a series of LCA models, we set a random seed using
+`set.seed()`. The seed number can be any digit. This is an important
+step as there is some inherent randomness in the LCA computations, and
+having the same seed number ensures that two separate researcher obtain
+exactly the same results when fitting LCA models.
+
+Finally, we reach the step of fitting LCA models. To do so, we use
+`tidySEM::mx_lca()` which takes data and number of classes as inputs. 
+Notice that the analysis will be done on all the variable in the data set, 
+so you have to make sure it only includes the relevant variables. 
+In our example, we want to fit 1 to 4 class solutions and compare 
+their output. Depending on your computer's computational power, 
+this might take a while.
+
+```{r fitting_LCA, include = TRUE, eval=F}
+set.seed(123) # setting seed 
+res <- mx_lca(data = df, classes = 1:4) # fitting LCA 1 to 4 class solutions
+```
+
+Notice that the model run 10 times for each $K$ class solution. 
+This way we can choose the best fitting model across all the solutions. 
+In this example, we see that all models converged without issues. 
+
+We can inspect the class of resulting objects.
+
+```{r, include = TRUE, eval=F}
+is(res)
+is(res[[1]])
+```
+
+As `tidySEM::mx_lca()` run several models at a time, the resulting object `res` 
+is a `mixture_list` class where each $K$ class solution is a list element, or
+more specifically an `OpenMx` model (`MxModel`).
+
+## Class Enumeration
+
+In class enumeration, we want to compare a sequence of LCA models fitted
+to the data. To aid the process, we create a model fit table using
+`tidySEM::table_fit()` with the results object as the input. As the
+output contains a lot of information on each of the four fitted models,
+we select a subset of helpful model fit indices and classification
+diagnostics.
+
+```{r fit_table, include = TRUE, eval=F}
+fit_table <- table_fit(res) # model fit table
+fit_table[ , c("Name", "LL", "Parameters", 
+               "AIC", "BIC", "Entropy", 
+               "prob_min", "prob_max", 
+               "n_min", "n_max")] # our selection
+```
+
+Our selection of fit indices and classification diagnostics includes:
+
+```{r, echo=F}
+Selection <- c(
+    "Name", "LL", "Parameters", 
+    "AIC", "BIC", "prob_min", 
+    "prob_max", "n_min", "n_max")
+
+Description <- c(
+    "the $K$-class solution",
+    "the -2*log-likelihood of each model",
+    "Number of estimated parameters in each model",
+    "the Akaike Information Criterion value",
+    "the Bayesian Information Criterion value",
+    "the lowest posterior class probability by most likely class membership",
+    "the highest posterior class probability by most likely class membership",
+    "the lowest class proportion based on the posterior class probabilities",
+    "the highest class proportion based on the posterior class probabilities")
+
+selection <- cbind(Selection, Description)
+
+knitr::kable(selection, format = 'pipe', 
+             caption = "Selection of Fit Indices and 
+                        Classification Diagnostics")
+```
+
+
+We discussed several possible strategies to select the final class
+solution. Here, we apply our own.
+
+To aid our interpretation of the results, we create an elbow plot
+showing the trends in information criteria across four models.
+
+```{r elbow_plot, include = TRUE, message=F, warning=F, eval=F}
+library(tidyverse) # for data-wrangling
+library(ggplot2) # for plots
+
+elbow_plot <- fit_table[ , c("Name", "AIC", "BIC")] # extract ICs
+elbow_plot <- pivot_longer(elbow_plot, cols = c("AIC", "BIC"), names_to = "IC", values_to = "Value") # to long format
+
+ggplot(elbow_plot, aes(x = Name, y = Value, group = IC))+
+  geom_point(aes(color = IC))+
+  geom_line(aes(color = IC))+
+  labs(title="Elbow Plot of Information Criteria per Class Solution", x = "Class Solution", y = " Value")+
+  scale_color_manual(name = "Information Criterion", values = c(AIC = 'blue', BIC = 'red'))+
+  theme_minimal()
+
+```
+
+From the elbow plot, we see that AIC has a lower penalty for model
+complexity. However, we are more interested in the BIC values, which are
+similar for the one, two and three-class solutions, but the four-class
+solution fits significantly worse. For this reason, we eliminate the
+four-class solution from the selection process.
+
+Then we examine the model fit table. As expected, the -2\*log likelihood
+falls successively with each added class. As previously stated,
+classification diagnostics should not be used for model selection, but
+they can be used to disqualify certain solutions because they are
+uninterpretable. We see that prob_min and n_min for the four-class solution is
+low, knowing that this solution also has a high BIC, we disqualify this
+solution.
+
+Out of the remaining three solutions, we notice that entropy is the
+highest for the three-class solution, and it has a satisfactory prob_min
+and n_min. Based on this, we retain the three class solution in model
+selection. Note that entropy for the one-class solution will always
+equal to one, as it is 100% true that every case is in that class. Based
+on the low entropy of the two-class solution, we eliminate this model.
+
+Finally, when comparing the one and three-class solutions, we inspect
+the information criteria. For BIC, the one-class solution fits better,
+but the difference is marginal. AIC tells us that the added complexity
+of having three classes still explains the data better than a one-class
+solution. Therefore, we select the three-class solution as our
+final-class solution.
+
+## Interpreting the Final Class Solution
+
+To aid our understanding of the final class solution, we use
+`ggplot2::plot_prob()` with the results of the three-class model as the
+input. The resulting graph shows response patterns on all the indicators
+for each group.
+
+If we want to know the probability of each response option's endorsement
+for each class, we can use `tidySEM::table_prob`. These are thresholds
+for ordinal dependent variables in the probability scale.
+
+```{r plot_prob, include = TRUE, eval=F}
+plot_prob(res[[3]]) # visualizing the response patterns for the final class solution
+table_prob(res[[3]]) # tabulating the response patterns for the final class solution
+```
+
+In the plot, we can see the distributions of the response probabilities
+on the indicators for each of the three classes. For instance, we see
+that in Class 1 the most common response to u2 is 2, while in Class 2
+and Class 3 this is 0. We can also see that response 1 is a rare
+response not forming the majority in any class. Class 2 distinguishes
+itself because the majority scores the response 0 category of u3 and u4,
+while in Class 1 and 2 this is not the case. Class 3 distinguishes
+itself because the most common response to u3 and u4 is 3.
+
+We can also interpret the response patterns numerically. It is a matter of preferences on how to interpret these probabilities. Here is where you would **name** each class, such that each response pattern is theoretically meaningful.
+
+## Extracting Posterior Class Probabilities
+
+Another step is to extract posterior class probabilities. This is done
+by the use of `tidySEM::class_prob` with the results of the final class
+solution as the input.
+
+```{r extract_Post_Class_Prob, include = TRUE, eval=F}
+probs <- class_prob(res[[3]]) # extracting the posterior class probabilities of the final class solution
+probs$mostlikely.class # posterior class probabilities by most likely class membership
+probs$individual # individual posterior class probabilities
+```
