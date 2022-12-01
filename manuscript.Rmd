@@ -322,55 +322,55 @@ A recent study by @maene_perceived_2022 applied this principle to
 test whether identities of Belgian adolescents with migration background can be 
 summarized as those relating to their heritage, national and regional identity.
 
-### Unsupervised learning
-
-Another use case is unsupervised learning: when the goal is to restore
-unobserved class membership based on observed indicators, or to classify
-individuals. For example, a mixture model can be utilized as a diagnostic
-aid when using several clinical indicators to distinguish between
-a fixed number of physical [@baughman_mixture_2006], mental health
-[@wu_abuse_2011] problems. The shoe size example in Figure \@ref(fig:shoedens)
-is a rudimentary illustration of this use case.
-As another example, a recent study identified latent profiles of high versus low suicide risk in military service members and veterans,
-based on self-reported suicidal ideation and information about prior attempted methods and severity
-[@gromatsky_characteristics_2022].
-Applications like these can aid the clinical decision making process,
-and help decide whether additional support is warranted,
-or what type of intervention is appropriate.
-
 ### Measurement model
 
 Another use case relies on LCA's similarity to confirmatory factor analysis.
 This approach is useful when class membership is measured imperfectly by several indicators.
-It can be used to partial out measurement error and restore most likely class membership,
-and to evaluate the reliability of different indicators.
-For example, a recent study had employment status 
-information collected across register and survey data. There was disagreement 
-between the two data sources. While it might be tempting to assume that the
+This approach can be used to partial out measurement error and restore most likely class membership.
+For example, a recent study found descrepancies between self-reported employment status and official register data. 
+While it might be tempting to assume that the
 register data is free of error, this has been shown to be false.
 The authors used a mixture model to estimate the
 "error corrected employment status" by using two indicators of the same question
 and identifying random and systematic measurement error in both indicators 
 [@pavlopoulos_measuring_2015].
 
+This example also illustrates that LCA allows us to evaluate the reliability of different indicators [@geiser_is_2014].
+High quality indicators will be strongly related to the
+latent variable and will lead to good class separation.
+A continuous indicator that discriminates well between classes will show large differences in class-specific means;
+an ordinal indicator will show very high or very low conditional response probabilities for some classes but not for others.
+This information can be used to select the indicators that are most diagnostic of class membership.
+For an example of research on differential item functioning,
+consider a study on university admission tests of Saudi Arabian students [@tsaousis_measurement_2020].
+LCA revealed three
+latent classes: high-, average-, and low-scorers. Subsequently, the authors
+used the Multiple Indicator Multiple Causes model to identify both uniform
+and non-uniform differential item functioning. The main finding was that gender
+was a potential source of differential item functioning for latent class
+indicators. Therefore, gender should be included as a covariate when fitting 
+a LCA model in order to obtain unbiased estimates.
+
 ### Dimension reduction
 
 LCA can also be used to reduce the dimensionality of data,
 by reducing many variables to a few prototypes.
-This is similar to the use of factor analysis for dimension reduction,
-with the key distinction that factor analysis merely accounts for linear covariance between indicators, whereas LCA can accommodate more complex patterns.
+This is similar to the use of factor analysis,
+with the key distinction that factor analysis accounts for linear covariance between indicators,
+whereas LCA can accommodate complex - but discrete - patterns.
 As this is a pragmatic application of LCA,
 the existence of a true categorical latent variable is questionable (cf. the section on Testing theory).
-Consequently, the results of this use case should be treated as descriptive and not reified (i.e., treating the found classes as evidence of the existence of a categorical latent variable) or straightforwardly generalized.
-A common use of LCA for dimension reduction is in longitudinal research:
-Often, one developmental process is summarized using latent class growth analysis (LCGA), and the resulting categories are then used as a moderator of another developmental process in a multi-group model.
+Consequently, the results of this use case should be treated as descriptive and not "reified": i.e., the found classes should not be treated as evidence of the existence of a categorical latent variable.
+The use of LCA for dimension reduction is common in longitudinal research,
+where one developmental process is summarized using latent class growth analysis (LCGA),
+and the resulting categories are then used as a moderator of another developmental process in a multi-group model.
 For example, one study conducted a LCGA of adolescent empathy development on two dimensions of empathy and found three groups: high, average, and low empathy [@van_lissa_divergence_2015].
 These groups were then used as moderator of a latent growth analysis of adolescent- and parent-reported conflict.
 Results showed that the high-empathy group evidenced greater adolescent-parent agreement about the incidence of conflict than the other groups,
 and that the low empathy group had more conflict with parents than the other groups.
-Note that both these key findings are non-linear.
-Modeling them in a single-group model would be difficult;
-using LCGA greatly simplifies model specification and interpretation,
+Note that both these key findings are non-linear;
+modeling them in a single-group model would be difficult.
+LCGA greatly simplifies model specification and interpretation,
 albeit at a cost of some loss of information and, potentially, generalizability.
 <!-- Recently, @alkema_maximizing_2022 studied plastic debris in the Atlantic Ocean. -->
 <!-- Prior to this study, ways to categorize ocean microplastics in terms of length, -->
@@ -383,53 +383,41 @@ albeit at a cost of some loss of information and, potentially, generalizability.
 <!-- correlated, and another consisting of larger fragments with low correlation  -->
 <!-- between particle width and height. -->
 
+When using ordinal indicators,
+the need for dimension reduction can be especially pertinent.
+For example, one study measured
+fifteen dichotomous health indicators among injured military personnel [@macgregor_symptom_2021]. 
+Combinatorics informs us that fifteen
+dichotomous items have $2^{15}$ or $32,768$ unique symptom combinations.
+However, LCA was able to reduce response patterns to five clinically meaningful latent classes.
+
 ### Class enumeration
 
-With LCA, our goal could be to inductively identify the number of classes. 
-For instance, if we believe that a variable represents a group,
-but do not know how many groups there are, LCA may be an appropriate
-technique to answer this question. For example, @hopfer_social_2014
-studied substance use, sexual behavior, and mental health status of
-urban population in Winnipeg, Canada. The underlying assumption was that
-there were different risk profiles, but their number was not known. 
-From a collection of indicators, LCA provided evidence that there are four
-distinct risk profiles in the Winnipeg area. 
+Another use case is to explore potential heterogeneity in a population,
+and to determine whether it is comprised of latent subpopulations.
+For example, researchers suspected the existence of different risk profiles of substance use, sexual behavior, and mental health outcomes, and used LCA to determine how many such risk profiles could be distinguished [@hopfer_social_2014].
+Another explored heterogeneity in the population of military service members and veterans with prior suicide attempts,
+and identified two latent profiles characterized by high versus low suicide risk based on self-reported suicidal ideation and information about prior attempted methods and severity
+[@gromatsky_characteristics_2022].
 
-Another application of LCA is to classify individuals. In a peer harassment 
-study, @giang_using_2008 used LCA to classify over 2,000 sixth grade students 
-into aggressor and victim classes. The five-class solution comprised of 
-classes of victims, aggressors, and socially adjusted students. 
-The study revealed that there were two types of victims: highly-victimized 
-aggressive-victims and highly-aggressive aggressive-victims.
-Another example is the "Well-being compass" study by van Lissa, currently 
-a preprint. The study was conducted in collaboration with a mental health care
-facility and focused on care providers. Latent class analysis has identified 
-four different risk profiles for care providers. Not only was class membership 
-estimated for the participants of the original study, but the class solution 
-was used as a risk assessment aid for new care providers, 
-so they could be more adequately supported by mental health care professionals.
+### Classification
+
+Another use case is to estimate individuals' unobserved class membership based on observed indicators.
+The shoe size example in Figure \@ref(fig:shoedens)
+is a rudimentary illustration of this application.
+In applied research, LCA is often used for classification in clinical contexts.
+For example, LCA was used to determine clinical cut-off scores for diagnosing whooping cough [@baughman_mixture_2006].
+Another study used LCA to not only classify the sample used to estimate the model, but also future cases [Zegwaard et al, in prep].
+The study identified four types of care providers among those who supported close kin with mental health problems.
+Importantly, the LCA model was embedded in an interactive app that could be used by healthcare professionals to determine the most likely class membership for new care providers, to provide more targeted support.
+To obtain predicted class membership based on an existing LCA model,
+the authors computed the likelihood of data from a new participant under the multivariate normal distributions estimated within all latent classes.
 <!-- DA: this study is not in zotero yet, I lack information (title, authors, etc.) to enter it, @Caspar could you enter this to Zotero and adjust the in-text citation-->
+These applications of LCA aid the clinical decision making process,
+and help decide whether additional support is warranted,
+or what type of intervention is appropriate.
 
-LCA is also appropriate when we wish to identify indicators that capture
-classes well. High quality indicators will be strongly related to the
-latent variable and will lead to good class separation. This
-relationship of high quality indicators to the latent variable is
-reflected in very high or very low conditional response probabilities.
-For a simulation study exploring the effects of indicator quality on
-LCA, see @geiser_is_2014. Therefore, one could use conditional response
-probabilities for each item to assess its quality with regards to how
-well it helps separate the latent classes. From this, a theory about the
-selection of indicators could be informed.
-An example of such use of LCA is a study by @tsaousis_measurement_2020 who
-studied differential item functioning using LCA. The study focused 
-on university admission tests of Saudi Arabian students. LCA has revealed three
-latent classes: high-, average-, and low-scorers. Subsequently, the authors
-used the Multiple Indicator Multiple Causes model to identify both uniform
-and non-uniform differential item functioning. The main finding was that gender
-was a potential source of differential item functioning for latent class
-indicators. Therefore, gender should be included as a covariate when fitting 
-a LCA model in order to obtain unbiased estimates.
-
+### 
 An extension of LCA is that containing covariates which can be used to
 predict class membership. In this approach, we not only model the latent
 class variable based on indicators, but we also relate the class
@@ -460,23 +448,6 @@ representing different multiple identification strategies. Subsequently,
 the most likely class membership based on posterior class probability was
 used as an "observed" categorical variable for prediction of depressive symptoms.
 
-In addition to these applications, LCA can be used for dimensionality
-reduction as the resulting groups summarize response patterns on a large
-number of indicators. For example, @macgregor_symptom_2021 investigated
-symptom profiles among injured U.S. military personnel. They used
-fifteen dichotomous items from the Post-Deployment Health Assessment
-survey as LCA indicators. Combinatorics informs us that fifteen
-dichotomous items have $2^{15}$ or $32,768$ unique symptom combinations.
-Perhaps for this reason, @macgregor_symptom_2021 incorporated LCA as a
-method of dimensionality reduction. A five class solution was found to
-have the best fit according to both statistical criteria and clinical
-interpretability. In the longitudinal adolescent empathy development study, 
-@van_lissa_divergence_2015 first investigated heterogeneity in empathy 
-development. This was done through identification of classes of individuals 
-characterized by similar developmental trajectories. The authors used LCGA
-as a dimensionality reduction technique where 467 individual trajectories
-were summarized into three empathy classes. Such reduction can help researchers 
-gain a better perspective of the grand patterns in the data.
 
 Finally, LCA can be used to deal with data which violate certain
 assumptions. As discussed in the shoe size example, LCA can deal with
