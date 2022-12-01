@@ -302,6 +302,9 @@ most of the suggested guidelines are equally applicable to ordinal indicators.
 ## Use Cases for Latent Class Analysis
 
 There are several use cases for which LCA methods are suitable. 
+
+### Testing theory
+
 Although latent class analysis is often discussed as an exploratory analysis technique,
 it can also be used in a confirmatory manner.
 Given that latent class analysis is similar to confirmatory factor analysis,
@@ -319,48 +322,68 @@ A recent study by @maene_perceived_2022 applied this principle to
 test whether identities of Belgian adolescents with migration background can be 
 summarized as those relating to their heritage, national and regional identity.
 
+### Unsupervised learning
+
 Another use case is unsupervised learning: when the goal is to restore
 unobserved class membership based on observed indicators, or to classify
 individuals. For example, a mixture model can be utilized as a diagnostic
 aid when using several clinical indicators to distinguish between
 a fixed number of physical [@baughman_mixture_2006], mental health
-[@wu_abuse_2011] problems, or health outcomes after recovering from
-cancer [@hardy_exploring_2018]. The example of shoe size is a rudimentary
-illustration of this type of application. As another example, a recent study 
-identified two suicide risk profiles in military service members and veterans
-[@gromatsky_characteristics_2022].  One class was defined by higher-risk
-history and another by lower-risk history. The higher-risk group comprised of
-individuals with greater intent to die using methods with higher lethality,
-and the lower-risk group was characterized by greater ambivalence towards death
-and usage of lower lethality methods.
+[@wu_abuse_2011] problems. The shoe size example in Figure \@ref(fig:shoedens)
+is a rudimentary illustration of this use case.
+As another example, a recent study identified latent profiles of high versus low suicide risk in military service members and veterans,
+based on self-reported suicidal ideation and information about prior attempted methods and severity
+[@gromatsky_characteristics_2022].
+Applications like these can aid the clinical decision making process,
+and help decide whether additional support is warranted,
+or what type of intervention is appropriate.
 
-A related use case is where class-membership is known but imperfectly measured.
-Mixture models can also be useful to evaluate the quality of measurement
-across instruments. For example, a recent study had employment status 
+### Measurement model
+
+Another use case relies on LCA's similarity to confirmatory factor analysis.
+This approach is useful when class membership is measured imperfectly by several indicators.
+It can be used to partial out measurement error and restore most likely class membership,
+and to evaluate the reliability of different indicators.
+For example, a recent study had employment status 
 information collected across register and survey data. There was disagreement 
 between the two data sources. While it might be tempting to assume that the
 register data is free of error, this has been shown to be false.
-The authors used a mixture model to evaluate the underlying factor of 
+The authors used a mixture model to estimate the
 "error corrected employment status" by using two indicators of the same question
 and identifying random and systematic measurement error in both indicators 
 [@pavlopoulos_measuring_2015].
 
+### Dimension reduction
 
-LCA can be used as a descriptive analysis where a researcher wishes to
-describe their sample and identify a few prototypes based on many
-variables. As an example, if a survey among all Dutch academics was
-carried out with the goal of bringing about a funding reform, LCA could
-be used to discover the types of publications that get funding.
-Recently, @alkema_maximizing_2022 studied plastic debris in the Atlantic Ocean.
-Prior to this study, ways to categorize ocean microplastics in terms of length,
-width and polymer type were rather arbitrary, and assumed that these properties
-were independent. Also, there was a lack of information regarding variability 
-within these categories. The authors used finite Gaussian mixture modeling to 
-build a classification system for ocean microplastic particles based on a set 
-of measured characteristics. With regards to particle dimensions, two classes
-emerged: one with smaller fragments whose width and height were highly 
-correlated, and another consisting of larger fragments with low correlation 
-between particle width and height.
+LCA can also be used to reduce the dimensionality of data,
+by reducing many variables to a few prototypes.
+This is similar to the use of factor analysis for dimension reduction,
+with the key distinction that factor analysis merely accounts for linear covariance between indicators, whereas LCA can accommodate more complex patterns.
+As this is a pragmatic application of LCA,
+the existence of a true categorical latent variable is questionable (cf. the section on Testing theory).
+Consequently, the results of this use case should be treated as descriptive and not reified (i.e., treating the found classes as evidence of the existence of a categorical latent variable) or straightforwardly generalized.
+A common use of LCA for dimension reduction is in longitudinal research:
+Often, one developmental process is summarized using latent class growth analysis (LCGA), and the resulting categories are then used as a moderator of another developmental process in a multi-group model.
+For example, one study conducted a LCGA of adolescent empathy development on two dimensions of empathy and found three groups: high, average, and low empathy [@van_lissa_divergence_2015].
+These groups were then used as moderator of a latent growth analysis of adolescent- and parent-reported conflict.
+Results showed that the high-empathy group evidenced greater adolescent-parent agreement about the incidence of conflict than the other groups,
+and that the low empathy group had more conflict with parents than the other groups.
+Note that both these key findings are non-linear.
+Modeling them in a single-group model would be difficult;
+using LCGA greatly simplifies model specification and interpretation,
+albeit at a cost of some loss of information and, potentially, generalizability.
+<!-- Recently, @alkema_maximizing_2022 studied plastic debris in the Atlantic Ocean. -->
+<!-- Prior to this study, ways to categorize ocean microplastics in terms of length, -->
+<!-- width and polymer type were rather arbitrary, and assumed that these properties -->
+<!-- were independent. Also, there was a lack of information regarding variability  -->
+<!-- within these categories. The authors used finite Gaussian mixture modeling to  -->
+<!-- build a classification system for ocean microplastic particles based on a set  -->
+<!-- of measured characteristics. With regards to particle dimensions, two classes -->
+<!-- emerged: one with smaller fragments whose width and height were highly  -->
+<!-- correlated, and another consisting of larger fragments with low correlation  -->
+<!-- between particle width and height. -->
+
+### Class enumeration
 
 With LCA, our goal could be to inductively identify the number of classes. 
 For instance, if we believe that a variable represents a group,
@@ -370,11 +393,7 @@ studied substance use, sexual behavior, and mental health status of
 urban population in Winnipeg, Canada. The underlying assumption was that
 there were different risk profiles, but their number was not known. 
 From a collection of indicators, LCA provided evidence that there are four
-distinct risk profiles in the Winnipeg area. Another study investigated 
-adolescent empathy development and its influence on parent-child conflict 
-[@van_lissa_divergence_2015]. The data was collected over six years. 
-Using LCGA, adolescents with similar empathy development trajectories 
-were grouped into: high-, average-, and low-empathy classes.
+distinct risk profiles in the Winnipeg area. 
 
 Another application of LCA is to classify individuals. In a peer harassment 
 study, @giang_using_2008 used LCA to classify over 2,000 sixth grade students 
@@ -472,6 +491,7 @@ each with its own normal distribution.
 
 <!-- LCA and factor analysis share the approximation of an unobserved latent variable, the difference being if that variable is continuous or categorical. We encourage researchers to be agnostic about the **true** nature of the latent variable. And focus on the approach that fits the research question. -->
 <!-- CJ: Why would we encourage researchers to be agnostic about the true...? -->
+
 # Best Practices
 
 ## Best Practices in Estimation
@@ -516,10 +536,10 @@ and moderating the `tidyLPA` Google group suggest that the
 misapplication of mixture models to ordinal (e.g., Likert-type)
 indicators is the most common source of user error. Whereas it has been
 argued that some parametric methods are robust when scales with 7+
-indicators are treated as continuous [e.g., @norman_likert_2010] or 
-with 5+ categories [@rhemtulla_when_2012], this
-certainly does not imply that all methods are. It is certainly unlikely
-that such ordinal variables can be treated as a *mixture* of multiple
+indicators are treated as continuous [e.g., @norman_likert_2010],
+this certainly does not imply that all methods are.
+It is very unlikely
+that an ordinal variable can be modeled as a *mixture* of multiple
 normal distributions. The problem becomes egregious when the number of
 classes estimated equals or exceeds the number of categories; in this
 case, each class-specific mean could describe a single response
@@ -535,7 +555,7 @@ are a mixture of multiple (multivariate) normal distributions. In our shoe
 size example, it can be seen that the population distribution is
 comprised of two normal distributions. When examined visually, the
 population distribution is evidently bimodal. The Shapiro-Wilk normality
-test ($W = 0.971$, $p < 0.05$ ) rejects the null hypothesis that the
+test ($W `r report(shoesize_shapiro[["statistic"]])`$, $p `r report(shoesize_shapiro[["p.value"]])`$ ) rejects the null hypothesis that the
 sample comes from a normally distributed population. Yet, this is a
 prototypical example of a mixed population distribution where LCA can
 discover latent groups. If the population distribution were instead
