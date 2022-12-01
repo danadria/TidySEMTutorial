@@ -417,7 +417,24 @@ These applications of LCA aid the clinical decision making process,
 and help decide whether additional support is warranted,
 or what type of intervention is appropriate.
 
-### 
+### Violations of normality
+
+Finally, LCA can be used to deal with data which violate certain
+assumptions. As discussed in the shoe size example, LCA can deal with
+violations of normality. In fact, LCA assumes the population
+distribution is a non-normal mixture of $K$ normal distributions, and it
+can recover the value of $K$, i.e. generate a $K$-class solution.
+For instance, @alkema_maximizing_2022 studied ocean plastic debris. 
+Plastic particle width and height are non-normally distributed. The authors 
+demonstrate that the non-normal distributions of particle dimensions are
+due to the measurements being a mixture composed of several particle types, 
+each with its own normal distribution.
+
+<!-- LCA and factor analysis share the approximation of an unobserved latent variable, the difference being if that variable is continuous or categorical. We encourage researchers to be agnostic about the **true** nature of the latent variable. And focus on the approach that fits the research question. -->
+<!-- CJ: Why would we encourage researchers to be agnostic about the true...? -->
+
+### Controlling for covariates
+
 An extension of LCA is that containing covariates which can be used to
 predict class membership. In this approach, we not only model the latent
 class variable based on indicators, but we also relate the class
@@ -436,6 +453,8 @@ the previously discussed adolescent empathy development study. The rationale
 was that adding sex as a covariate would account for known sex differences 
 in empathy development, and lead to a model with lower bias.
 
+### Distal outcomes
+
 When our interest is the prediction of one or more outcomes, LCA can be used 
 to construct latent classes as categorical predictors. @lanza_latent_2013 
 demonstrated how LCA can be used to classify adolescents into depression 
@@ -447,21 +466,6 @@ identities, @maene_perceived_2022 first constructed the latent variable
 representing different multiple identification strategies. Subsequently, 
 the most likely class membership based on posterior class probability was
 used as an "observed" categorical variable for prediction of depressive symptoms.
-
-
-Finally, LCA can be used to deal with data which violate certain
-assumptions. As discussed in the shoe size example, LCA can deal with
-violations of normality. In fact, LCA assumes the population
-distribution is a non-normal mixture of $K$ normal distributions, and it
-can recover the value of $K$, i.e. generate a $K$-class solution.
-For instance, @alkema_maximizing_2022 studied ocean plastic debris. 
-Plastic particle width and height are non-normally distributed. The authors 
-demonstrate that the non-normal distributions of particle dimensions are
-due to the measurements being a mixture composed of several particle types, 
-each with its own normal distribution.
-
-<!-- LCA and factor analysis share the approximation of an unobserved latent variable, the difference being if that variable is continuous or categorical. We encourage researchers to be agnostic about the **true** nature of the latent variable. And focus on the approach that fits the research question. -->
-<!-- CJ: Why would we encourage researchers to be agnostic about the true...? -->
 
 # Best Practices
 
@@ -518,20 +522,7 @@ category, and a class-specific variance component would be nonsensical.
 In sum, Likert-type scales are rarely suitable for Gaussian mixture modeling;
 latent class analysis with ordinal indicators is more appropriate.
 
-Relatedly, a recent publication claimed that an assumption of mixture
-models is that observed indicators are normally distributed
-[@spurk_latent_2020]. This is incorrect. When the number of classes is
-greater than one, Gaussian mixture models assume that the observed indicators 
-are a mixture of multiple (multivariate) normal distributions. In our shoe
-size example, it can be seen that the population distribution is
-comprised of two normal distributions. When examined visually, the
-population distribution is evidently bimodal. The Shapiro-Wilk normality
-test ($W `r report(shoesize_shapiro[["statistic"]])`$, $p `r report(shoesize_shapiro[["p.value"]])`$ ) rejects the null hypothesis that the
-sample comes from a normally distributed population. Yet, this is a
-prototypical example of a mixed population distribution where LCA can
-discover latent groups. If the population distribution were instead
-normal, there would be no classes to extract as the whole population
-would belong to a single (homogeneous) class.
+
 
 Extensive descriptive statistics (including the number of unique values,
 variance of categorical variables, and missingness; see next subsection)
@@ -1098,6 +1089,26 @@ easier to inspect these probabilities visually. For this reason, we
 created `ggplot2::plot_prob()`. The resulting shows response patterns on
 all indicators for each group. We give an example of this plot in the
 Tutorial subsection.
+
+## Myths and misunderstandings
+
+Relatedly, a recent publication claimed that an assumption of mixture
+models is that observed indicators are normally distributed
+[@spurk_latent_2020]. This is incorrect. When the number of classes is
+greater than one, Gaussian mixture models assume that the observed indicators 
+are a mixture of multiple (multivariate) normal distributions. In our shoe
+size example, it can be seen that the population distribution is
+comprised of two normal distributions. When examined visually, the
+population distribution is evidently bimodal. The Shapiro-Wilk normality
+test ($W `r report(shoesize_shapiro[["statistic"]])`$, $p `r report(shoesize_shapiro[["p.value"]])`$ ) rejects the null hypothesis that the
+sample comes from a normally distributed population. Yet, this is a
+prototypical example of a mixed population distribution where LCA can
+discover latent groups. If the population distribution were instead
+normal, there would be no classes to extract as the whole population
+would belong to a single (homogeneous) class.
+
+<!-- Treating ordinal data as continuous -->
+<!-- People omitting the 1-class solution in class enumeration -->
 
 # Tutorial
 
