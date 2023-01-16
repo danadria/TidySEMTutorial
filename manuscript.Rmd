@@ -1190,35 +1190,14 @@ except when class separation is very high - as indicated by high (near 1) entrop
 It is therefore important to account for classification error.
 
 There are several different ways to do follow-up analyses in latent class analysis (LCA) while accounting for classification error.
-At present, the so-called BCH method is considered one of the best approaches [after its creators, ].
+At present, the so-called BCH method is considered one of the best approaches [after its creators, REF].
 It has been implemented in `tidySEM`.
 The advantage of the BCH method is that it not only allows for the comparison of individual variables, but also entire auxiliary models across latent classes.
 
 
-Using posterior class probabilities: In LCA, individuals are assigned to classes based on their maximum posterior class probabilities. However, posterior class probabilities can be used to assess the degree of uncertainty in class assignment. By using posterior class probabilities rather than discrete class assignments, follow-up analyses can account for classification error.
+<!-- Using posterior class probabilities: In LCA, individuals are assigned to classes based on their maximum posterior class probabilities. However, posterior class probabilities can be used to assess the degree of uncertainty in class assignment. By using posterior class probabilities rather than discrete class assignments, follow-up analyses can account for classification error. -->
 
-Using sensitivity and specificity: In LCA, one can calculate sensitivity and specificity statistics to assess the accuracy of class assignment. These statistics can be used to adjust follow-up analyses, such as prevalence estimates or regression coefficients, to account for classification error.
-
-Using bootstrap methods: Bootstrap methods can be used to estimate the distribution of parameter estimates and classification error. This can be used to construct confidence intervals or to assess the stability of results across different samples.
-
-Using Bayesian model averaging: In Bayesian LCA, one can use Bayesian model averaging to account for model uncertainty. This can be used to account for the uncertainty in class assignments, resulting from different models fitting the data.
-
-In summary these methods are based on accounting the probability of the individual being classified in a specific group rather than a hard classification and adjusting the anlysis based on that, also taking uncertainty into account by bootstrapping, or Bayesian model averaging.
-
-
-
-
-c.j.vanlissa@tilburguniversity.edu
-What about the three-step method?
-The three-step method is another way to perform follow-up analyses in latent class analysis while accounting for classification error. The method consists of three steps:
-
-Estimate the latent class model: The first step is to estimate the latent class model using data on observed variables. This step produces estimates of the class-specific probabilities for each observed variable and the class membership probabilities for each individual.
-
-Use the estimated latent class model to classify individuals: The second step is to use the estimated model to classify each individual into the class that maximizes their posterior class probability. This results in a set of discrete class assignments.
-
-Adjust the analyses for classification error: The third step is to adjust the follow-up analyses for classification error. This can be done by using techniques such as weighting, matching, or regression adjustment, which take into account the posterior class probabilities and the uncertainty of class assignment.
-
-This method is based on a three-step process that allows the researcher to classify individuals, consider the uncertainty in the classification, and adjust the analysis accordingly. This can produce more accurate results and increase the robustness of the analysis.
+<!-- One way to account for classification error in follow-up analyses is using the three-step method. The first step is to estimate the latent class model using data on observed variables. This step produces estimates of the class-specific probabilities for each observed variable and the class membership probabilities for each individual. The second step is to use the estimated model to classify each individual into the class that maximizes their posterior class probability. This results in a set of discrete class assignments. The third step is to adjust the follow-up analyses for classification error. This can be done by using techniques such as weighting, matching, or regression adjustment, which take into account the posterior class probabilities and the uncertainty of class assignment. -->
 
 ## Best Practices in Reporting
 
