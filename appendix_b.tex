@@ -1,0 +1,598 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  man,floatsintext]{apa6}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{english}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+% Manuscript styling
+\usepackage{upgreek}
+\captionsetup{font=singlespacing,justification=justified}
+
+% Table formatting
+\usepackage{longtable}
+\usepackage{lscape}
+% \usepackage[counterclockwise]{rotating}   % Landscape page setup for large tables
+\usepackage{multirow}		% Table styling
+\usepackage{tabularx}		% Control Column width
+\usepackage[flushleft]{threeparttable}	% Allows for three part tables with a specified notes section
+\usepackage{threeparttablex}            % Lets threeparttable work with longtable
+
+% Create new environments so endfloat can handle them
+% \newenvironment{ltable}
+%   {\begin{landscape}\centering\begin{threeparttable}}
+%   {\end{threeparttable}\end{landscape}}
+\newenvironment{lltable}{\begin{landscape}\centering\begin{ThreePartTable}}{\end{ThreePartTable}\end{landscape}}
+
+% Enables adjusting longtable caption width to table width
+% Solution found at http://golatex.de/longtable-mit-caption-so-breit-wie-die-tabelle-t15767.html
+\makeatletter
+\newcommand\LastLTentrywidth{1em}
+\newlength\longtablewidth
+\setlength{\longtablewidth}{1in}
+\newcommand{\getlongtablewidth}{\begingroup \ifcsname LT@\roman{LT@tables}\endcsname \global\longtablewidth=0pt \renewcommand{\LT@entry}[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}\@nameuse{LT@\roman{LT@tables}} \fi \endgroup}
+
+% \setlength{\parindent}{0.5in}
+% \setlength{\parskip}{0pt plus 0pt minus 0pt}
+
+% Overwrite redefinition of paragraph and subparagraph by the default LaTeX template
+% See https://github.com/crsh/papaja/issues/292
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries\itshape\typesectitle}}
+
+\renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-\z@\relax}%
+  {\normalfont\normalsize\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+\makeatother
+
+% \usepackage{etoolbox}
+\makeatletter
+\patchcmd{\HyOrg@maketitle}
+  {\section{\normalfont\normalsize\abstractname}}
+  {\section*{\normalfont\normalsize\abstractname}}
+  {}{\typeout{Failed to patch abstract.}}
+\patchcmd{\HyOrg@maketitle}
+  {\section{\protect\normalfont{\@title}}}
+  {\section*{\protect\normalfont{\@title}}}
+  {}{\typeout{Failed to patch title.}}
+\makeatother
+
+\usepackage{xpatch}
+\makeatletter
+\xapptocmd\appendix
+  {\xapptocmd\section
+    {\addcontentsline{toc}{section}{\appendixname\ifoneappendix\else~\theappendix\fi\\: #1}}
+    {}{\InnerPatchFailed}%
+  }
+{}{\PatchFailed}
+\usepackage{csquotes}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Appendix B: Exploratory LPA for Ocean Microplastics},
+  pdflang={en-EN},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Appendix B: Exploratory LPA for Ocean Microplastics}
+\author{\phantom{0}}
+\date{}
+
+
+\shorttitle{BEST PRACTICES LATENT CLASS ANALYSIS}
+
+\affiliation{\phantom{0}}
+
+\begin{document}
+\maketitle
+
+This is an example of exploratory latent class analysis (LCA) with continuous indicators,
+otherwise known as latent profile analysis (LPA) or finite Gaussian mixture modeling, using \texttt{tidySEM}.
+The present example uses data collected by Alkema as part of a study on ocean microplastics.
+The purpose of this study was to provide a more nuanced model for the distribution of different sizes of ocean microplastics than the commonly used normal distribution.
+To this end, a mixture of normals was used.
+Since there is no theoretical reason to expect a certain number of classes, this is an exploratory LCA.
+To view its documentation,
+run the command \texttt{?tidySEM::alkema\_microplastics} in the R console.
+The original analyses are available at \url{https://github.com/cjvanlissa/lise_microplastics};
+in this vignette, we take a different approach to the analysis to showcase other possibilities.
+
+\hypertarget{loading-the-data}{%
+\subsection{Loading the Data}\label{loading-the-data}}
+
+To load the data, simply attach the \texttt{tidySEM} package.
+For convenience, we assign the variables used for analysis to an object called \texttt{df}.
+As explained in the paper, the classes are quite different for lines, films, and fragments.
+For this reason, we here only use data from fragments.
+The indicators are fragments' length and width.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load required packages}
+\FunctionTok{library}\NormalTok{(tidySEM)}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\CommentTok{\# Load data}
+\NormalTok{df\_analyze }\OtherTok{\textless{}{-}}\NormalTok{ alkema\_microplastics[alkema\_microplastics}\SpecialCharTok{$}\NormalTok{category }\SpecialCharTok{==}
+    \StringTok{"Fragment"}\NormalTok{, ]}
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ df\_analyze[, }\FunctionTok{c}\NormalTok{(}\StringTok{"length"}\NormalTok{, }\StringTok{"width"}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{examining-the-data}{%
+\subsection{Examining the Data}\label{examining-the-data}}
+
+As per the best practices,
+the first step in LCA is examining the observed data.
+We use \texttt{tidySEM::descriptives()} to describe the data numerically.
+Because all items are categorical,
+we remove columns for continuous data to de-clutter the table:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{desc }\OtherTok{\textless{}{-}}\NormalTok{ tidySEM}\SpecialCharTok{::}\FunctionTok{descriptives}\NormalTok{(df)}
+\NormalTok{desc }\OtherTok{\textless{}{-}}\NormalTok{ desc[, }\FunctionTok{c}\NormalTok{(}\StringTok{"name"}\NormalTok{, }\StringTok{"type"}\NormalTok{, }\StringTok{"n"}\NormalTok{, }\StringTok{"missing"}\NormalTok{, }\StringTok{"unique"}\NormalTok{, }\StringTok{"mean"}\NormalTok{,}
+    \StringTok{"median"}\NormalTok{, }\StringTok{"sd"}\NormalTok{, }\StringTok{"min"}\NormalTok{, }\StringTok{"max"}\NormalTok{, }\StringTok{"skew\_2se"}\NormalTok{, }\StringTok{"kurt\_2se"}\NormalTok{)]}
+\NormalTok{papaja}\SpecialCharTok{::}\FunctionTok{apa\_table}\NormalTok{(desc, }\AttributeTok{caption =} \StringTok{"Descriptive statistics"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:tabdesc}Descriptive statistics}
+
+\begin{tabular}{llllllllllll}
+\toprule
+name & \multicolumn{1}{c}{type} & \multicolumn{1}{c}{n} & \multicolumn{1}{c}{missing} & \multicolumn{1}{c}{unique} & \multicolumn{1}{c}{mean} & \multicolumn{1}{c}{median} & \multicolumn{1}{c}{sd} & \multicolumn{1}{c}{min} & \multicolumn{1}{c}{max} & \multicolumn{1}{c}{skew\_2se} & \multicolumn{1}{c}{kurt\_2se}\\
+\midrule
+length & numeric & 5605 & 0.00 & 2086 & 2.94 & 2.37 & 1.89 & 1.00 & 69.16 & 137.38 & 2,116.43\\
+width & numeric & 5605 & 0.00 & 2079 & 2.00 & 1.62 & 1.11 & 0.20 & 6.76 & 22.23 & 37.08\\
+\bottomrule
+\end{tabular}
+
+\end{threeparttable}
+\end{center}
+
+\end{table}
+
+Additionally, we can plot the data.
+The \texttt{ggplot2} function \texttt{geom\_density()} is useful to visualize continuous data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df\_plot }\OtherTok{\textless{}{-}}\NormalTok{ df}
+\FunctionTok{names}\NormalTok{(df\_plot) }\OtherTok{\textless{}{-}} \FunctionTok{paste0}\NormalTok{(}\StringTok{"Value."}\NormalTok{, }\FunctionTok{names}\NormalTok{(df\_plot))}
+\NormalTok{df\_plot }\OtherTok{\textless{}{-}} \FunctionTok{reshape}\NormalTok{(df\_plot, }\AttributeTok{varying =} \FunctionTok{names}\NormalTok{(df\_plot), }\AttributeTok{direction =} \StringTok{"long"}\NormalTok{,}
+    \AttributeTok{timevar =} \StringTok{"Variable"}\NormalTok{)}
+\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Value)) }\SpecialCharTok{+} \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Variable) }\SpecialCharTok{+}
+    \FunctionTok{theme\_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{appendices/plot_gmm_desc.pdf}
+
+The data are correctly coded as \texttt{numeric}.
+There are no missing values; if any variables had missing values, we would report an MCAR test with \texttt{mice::mcar()},
+and explain that missing data are accounted for using FIML.
+Both the table above and the density plot indicate that the data are extremely right-skewed and kurtotic.
+With this in mind, it can be useful to transform and rescale the data.
+We will use a log transformation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df\_plot}\SpecialCharTok{$}\NormalTok{Value }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(df\_plot}\SpecialCharTok{$}\NormalTok{Value)}
+\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Value)) }\SpecialCharTok{+} \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Variable) }\SpecialCharTok{+}
+    \FunctionTok{theme\_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{appendices/plot_gmm_desc_log.pdf}
+
+The log transformation addresses the aforementioned concerns regarding skew and kurtosis.
+To confirm this, reshape the data to wide format
+and examine a scatterplot:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{reshape}\NormalTok{(df\_plot, }\AttributeTok{direction =} \StringTok{"wide"}\NormalTok{, }\AttributeTok{v.names =} \StringTok{"Value"}\NormalTok{)[,}
+    \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+\FunctionTok{names}\NormalTok{(df) }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"Value."}\NormalTok{, }\StringTok{""}\NormalTok{, }\FunctionTok{names}\NormalTok{(df), }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ length, }\AttributeTok{y =}\NormalTok{ width)) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.1}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{theme\_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{appendices/plot_gmm_scatter.pdf}
+
+\hypertarget{conducting-latent-profile-analysis}{%
+\subsection{Conducting Latent Profile Analysis}\label{conducting-latent-profile-analysis}}
+
+As all variables are continuous, we can use the convenience function
+\texttt{tidySEM::mx\_profiles()},
+which is a wrapper for the generic function \texttt{mx\_mixture()} optimized for continuous indicators.
+Its default settings are appropriate for LPA, assuming fixed variances across classes and zero covariances.
+Its arguments are \texttt{data} and number of \texttt{classes}.
+All variables in \texttt{data} are included in the analysis,
+which is why we first selected the indicator variables.
+
+As this is an exploratory LCA,
+we will conduct a rather extensive search across model specifications and number of classes.
+We will set the maximum number of classes \(K\) to four; depending on the results, we can always choose to increase it later.
+We set a seed to ensure replicable results.
+
+As the analysis takes a long time to compute,
+it is prudent to save the results to disk immediately, so as not to lose them.
+For this, we use the function \texttt{saveRDS()}.
+We can later use \texttt{res\ \textless{}-\ readRDS("res\_gmm.RData")} to load the analysis from the file.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{res }\OtherTok{\textless{}{-}} \FunctionTok{mx\_profiles}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df, }\AttributeTok{classes =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{, }\AttributeTok{variances =} \FunctionTok{c}\NormalTok{(}\StringTok{"equal"}\NormalTok{,}
+    \StringTok{"varying"}\NormalTok{), }\AttributeTok{covariances =} \FunctionTok{c}\NormalTok{(}\StringTok{"zero"}\NormalTok{, }\StringTok{"equal"}\NormalTok{, }\StringTok{"varying"}\NormalTok{),}
+    \AttributeTok{expand\_grid =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{saveRDS}\NormalTok{(res, }\StringTok{"res\_gmm.RData"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{class-enumeration}{%
+\subsection{Class Enumeration}\label{class-enumeration}}
+
+To compare the fit of the estimated models,
+we create a model fit table using
+\texttt{table\_fit()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit }\OtherTok{\textless{}{-}} \FunctionTok{table\_fit}\NormalTok{(res)}
+\end{Highlighting}
+\end{Shaded}
+
+First, we determine whether any models can be disqualified.
+There were no indications of convergence problems during estimation,
+so this is not a reason to disqualify solutions.
+Next, we check for local identifiability.
+The sample size is \texttt{5605}.
+We can calculate the ratio of observations to parameters and append it to the fit table:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit}\SpecialCharTok{$}\NormalTok{par\_ratio }\OtherTok{\textless{}{-}}\NormalTok{ (}\DecValTok{5605} \SpecialCharTok{*}\NormalTok{ fit}\SpecialCharTok{$}\NormalTok{n\_min)}\SpecialCharTok{/}\NormalTok{(fit}\SpecialCharTok{$}\NormalTok{Parameters}\SpecialCharTok{/}\NormalTok{fit}\SpecialCharTok{$}\NormalTok{Classes)}
+\NormalTok{fit[, }\FunctionTok{c}\NormalTok{(}\StringTok{"Name"}\NormalTok{, }\StringTok{"LL"}\NormalTok{, }\StringTok{"Parameters"}\NormalTok{, }\StringTok{"par\_ratio"}\NormalTok{, }\StringTok{"BIC"}\NormalTok{, }\StringTok{"Entropy"}\NormalTok{,}
+    \StringTok{"prob\_min"}\NormalTok{, }\StringTok{"prob\_max"}\NormalTok{, }\StringTok{"n\_min"}\NormalTok{, }\StringTok{"n\_max"}\NormalTok{, }\StringTok{"lmr\_p"}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:tabfit}Model fit table. Some columns removed to fit page.}
+
+\begin{tabular}{lllllllll}
+\toprule
+Name & \multicolumn{1}{c}{LL} & \multicolumn{1}{c}{p} & \multicolumn{1}{c}{par\_ratio} & \multicolumn{1}{c}{BIC} & \multicolumn{1}{c}{Ent.} & \multicolumn{1}{c}{p\_min} & \multicolumn{1}{c}{n\_min} & \multicolumn{1}{c}{lmr\_p}\\
+\midrule
+equal var 1 & -8,107.31 & 4 & 1,401.25 & 16,249.14 & 1.00 & 1.00 & 1.00 & NA\\
+equal var 2 & -5,211.25 & 7 & 564.00 & 10,482.91 & 0.87 & 0.94 & 0.35 & 0.00\\
+equal var 3 & -4,138.27 & 10 & 341.70 & 8,362.85 & 0.83 & 0.88 & 0.20 & 0.00\\
+equal var 4 & -3,500.42 & 13 & 246.15 & 7,113.04 & 0.83 & 0.89 & 0.14 & 0.00\\
+free var 1 & -8,107.31 & 4 & 1,401.25 & 16,249.14 & 1.00 & 1.00 & 1.00 & NA\\
+free var 2 & -5,137.90 & 9 & 501.33 & 10,353.49 & 0.85 & 0.94 & 0.40 & 0.00\\
+free var 3 & -4,005.10 & 14 & 374.36 & 8,131.04 & 0.83 & 0.89 & 0.31 & 0.00\\
+free var 4 & -3,330.87 & 19 & 245.05 & 6,825.74 & 0.84 & 0.88 & 0.21 & 0.00\\
+equal var, equal cov 1 & -3,388.56 & 5 & 1,121.00 & 6,820.28 & 1.00 & 1.00 & 1.00 & NA\\
+equal var, equal cov 2 & -3,082.31 & 8 & 432.25 & 6,233.66 & 0.72 & 0.86 & 0.31 & 0.00\\
+equal var, equal cov 3 & -3,030.10 & 11 & 256.36 & 6,155.14 & 0.67 & 0.71 & 0.17 & 0.00\\
+equal var, equal cov 4 & -3,020.67 & 14 & 220.29 & 6,162.19 & 0.61 & 0.68 & 0.14 & 0.00\\
+free var, equal cov 1 & -3,388.56 & 5 & 1,121.00 & 6,820.28 & 1.00 & 1.00 & 1.00 & NA\\
+free var, equal cov 2 & -2,544.74 & 10 & 97.00 & 5,175.79 & 0.64 & 0.51 & 0.09 & 0.00\\
+free var, equal cov 3 & -2,256.95 & 15 & 71.80 & 4,643.36 & 0.68 & 0.54 & 0.06 & 0.00\\
+free var, equal cov 4 & -2,068.70 & 20 & 26.00 & 4,310.02 & 0.63 & 0.52 & 0.02 & 0.00\\
+equal var, free cov 1 & -3,388.56 & 5 & 1,121.00 & 6,820.28 & 1.00 & 1.00 & 1.00 & NA\\
+equal var, free cov 2 & -2,551.86 & 9 & 107.78 & 5,181.40 & 0.65 & 0.52 & 0.09 & 0.00\\
+equal var, free cov 3 & -2,359.39 & 13 & 84.23 & 4,830.99 & 0.68 & 0.56 & 0.07 & 0.00\\
+equal var, free cov 4 & -2,173.85 & 17 & 27.53 & 4,494.44 & 0.63 & 0.60 & 0.02 & 0.00\\
+free var, free cov 1 & -3,388.56 & 5 & 1,121.00 & 6,820.28 & 1.00 & 1.00 & 1.00 & NA\\
+free var, free cov 2 & -2,574.87 & 11 & 406.91 & 5,244.69 & 0.56 & 0.81 & 0.40 & 0.00\\
+free var, free cov 3 & -2,111.38 & 17 & 36.00 & 4,369.50 & 0.65 & 0.51 & 0.04 & 0.00\\
+free var, free cov 4 & -2,024.10 & 23 & 15.48 & 4,246.73 & 0.62 & 0.50 & 0.02 & 0.00\\
+\bottomrule
+\end{tabular}
+
+\end{threeparttable}
+\end{center}
+
+\end{table}
+
+As can be seen from the fit table,
+the lowest ratio of observations to parameters is 18, which is no cause for concern.
+
+However, note that we have a very large sample, and for many models, the smallest class comprises only a very small percentage of the total sample.
+Since the purpose of this analysis is to better represent the distribution of ocean microplastics, we can wonder whether it makes sense to allow for classes that only describe a small percentage of the cases.
+We therefore set a lower bound for class size and only consider solutions that capture at least 10\% of the sample.
+
+An interesting characteristic of this data is that
+the BIC and the entropy are strongly correlated.
+The raw correlation between these two metrics is .66, \texttt{cor(fit\$BIC,\ fit\$Entropy)}.
+If we omit the 1-class models, for which entropy is technically not defined,
+the correlation is even as high as .85, \texttt{cor(fit\$BIC{[}!fit\$Classes\ ==\ 1{]},\ fit\$Entropy{[}!fit\$Classes\ ==\ 1{]})}.
+
+This strong correlation indicates that an increase in fit comes with a decrease in class separability.
+This illustrates why entropy should not be treated as a model fit criterion.
+It also illustrates that criteria for class enumeration should be explicit,
+because we will likely come to a different decision depending on which criteria are used.
+
+As mentioned before, we drop models with \textless{} 10\% of cases in the smallest class:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit }\OtherTok{\textless{}{-}}\NormalTok{ fit[}\SpecialCharTok{!}\NormalTok{fit}\SpecialCharTok{$}\NormalTok{n\_min }\SpecialCharTok{\textless{}} \FloatTok{0.1}\NormalTok{, ]}
+\end{Highlighting}
+\end{Shaded}
+
+If our strategy is to optimize fit,
+we can examine the fit table above,
+or plot a scree plot for the BIC by calling \texttt{plot(fit)}.
+Note that, due to the large sample size, all ICs give identical conclusions.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(fit) }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{90}\NormalTok{, }\AttributeTok{vjust =} \FloatTok{0.5}\NormalTok{,}
+    \AttributeTok{hjust =} \DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{appendices/gmm_plotfit} \caption{Bivariate profile plot}\label{fig:unnamed-chunk-16}
+\end{figure}
+
+Looking at the blocks of 1-4 class models for each model specification,
+it appears that the BIC keeps decreasing with the addition of more classes.
+Across the blocks, the BIC keeps decreasing with increasingly complex model specifications.
+Similarly, all LMR tests are significant, indicating a preference for more complex models.
+
+Out of the 16 models that remain after removing those with \textless{} 10\% of cases in the smallest class,
+one model stands out:
+The 2-class model with free (co)variances.
+We thus select this as our final model.
+
+\hypertarget{interpreting-the-final-class-solution}{%
+\subsection{Interpreting the Final Class Solution}\label{interpreting-the-final-class-solution}}
+
+and extract the classification probabilities and model results.
+We here request the estimates (\texttt{est}) and standardized estimates \texttt{std\_est}, because the latter allows us to interpret the correlations between length and width.
+Note that there is little sense in requesting the standard errors and p-values: With a sample size of 5606, every parameter is significantly different from zero.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res\_bic }\OtherTok{\textless{}{-}}\NormalTok{ res[[}\StringTok{"free var, free cov 2"}\NormalTok{]]}
+\NormalTok{cp }\OtherTok{\textless{}{-}} \FunctionTok{class\_prob}\NormalTok{(res\_bic)}
+\NormalTok{results }\OtherTok{\textless{}{-}} \FunctionTok{table\_results}\NormalTok{(res\_bic, }\AttributeTok{columns =} \FunctionTok{c}\NormalTok{(}\StringTok{"label"}\NormalTok{, }\StringTok{"est"}\NormalTok{,}
+    \StringTok{"std\_est"}\NormalTok{))}
+\NormalTok{results}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:unnamed-chunk-19}Results of a 2-class model with free (co)variances}
+
+\begin{tabular}{lll}
+\toprule
+label & \multicolumn{1}{c}{est} & \multicolumn{1}{c}{std\_est}\\
+\midrule
+Means.length & 0.65 & 2.04\\
+Means.width & 0.34 & 1.07\\
+Variances.length & 0.10 & 1.00\\
+Covariances.length.WITH.width & 0.09 & 0.92\\
+Variances.width & 0.10 & 1.00\\
+Means.length & 1.33 & 3.03\\
+Means.width & 0.86 & 1.64\\
+Variances.length & 0.19 & 1.00\\
+Covariances.length.WITH.width & 0.20 & 0.85\\
+Variances.width & 0.28 & 1.00\\
+mix2.weights[1,2] & 0.75 & NA\\
+\bottomrule
+\end{tabular}
+
+\end{threeparttable}
+\end{center}
+
+\end{table}
+
+Interpreting the results is facilitated by examining a plot of the model and data.
+Relevant plot functions are \texttt{plot\_bivariate()}, \texttt{plot\_density()}, and \texttt{plot\_profiles()}.
+However, we omit the density plots, because \texttt{plot\_bivariate()} also includes them.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot\_bivariate}\NormalTok{(res\_bic)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{appendices/gmm_bivariate_bic} \caption{Bivariate profile plot}\label{fig:unnamed-chunk-22}
+\end{figure}
+
+On the diagonal of the bivariate plot are weighted density plots:
+normal approximations of the density function of observed data,
+weighed by class probability.
+On the off-diagonal are plots for each pair of indicators,
+with the class means indicated by a point,
+class standard deviations indicated by lines,
+and covariances indicated by circles.
+
+The bivariate and marginal plots show that the classes are not clearly separable, as also evident from the low entropy.
+At the same time however, it is clear that the distributions are non-normal, and the second class accounts for some of this non-normality (there is a smaller `bump' to the right of the mode, which could be the mean of a second normal distribution).
+The first class (57\%) accounts for smaller fragments, and the second class (43\%) accounts for some of the right-skew in fragments' length and width.
+We can simply label class 1 as \emph{small fragments},
+and class 2 as \emph{larger fragments}.
+
+It also appears that the correlation between length and width is stronger for small fragments than for large fragments.
+To test the difference, use \texttt{wald\_test(res\_bic,\ hypothesis\ =\ "c11\ =\ c21")}.
+Results indicate that the correlation is indeed significantly larger for small fragments (\(r = .92\)) than for larger fragments (\(r = .85\)), \(\chi^2(1) = 11.56, p < .001\).
+Thus, small fragments are more coextensive than large fragments.
+
+There are, however,
+concerns about the interpretability of this solutions:
+the entropy is \texttt{.56} and the minimum classification probability is\texttt{.81}.
+This is because of substantial overlap in the distributions of the two classes.
+
+\hypertarget{auxiliary-analyses}{%
+\subsection{Auxiliary Analyses}\label{auxiliary-analyses}}
+
+Finally, we may want to compare the different classes on auxiliary variables or models.
+The \texttt{BCH()} function applies three-step analysis,
+which compares the classes using a multi-group model,
+controlling for classification error.
+For example, we can test whether polymer type differs between the two classes:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df\_pt }\OtherTok{\textless{}{-}} \FunctionTok{mx\_dummies}\NormalTok{(df\_analyze}\SpecialCharTok{$}\NormalTok{poly\_type)}
+\NormalTok{aux\_pt }\OtherTok{\textless{}{-}} \FunctionTok{BCH}\NormalTok{(res\_bic, mo}
+\AttributeTok{l =} \StringTok{"poly\_typeOther | t1}
+\StringTok{                                poly\_typePE | t1}
+\StringTok{                                poly\_typePP | t1"}\NormalTok{,}
+    \AttributeTok{data =}\NormalTok{ df\_pt)}
+\NormalTok{aux\_pt }\OtherTok{\textless{}{-}} \FunctionTok{mxTryHardOrdinal}\NormalTok{(aux\_pt)}
+\end{Highlighting}
+\end{Shaded}
+
+To obtain an omnibus likelihood ratio test of the significance of the differences in polymer type across classes,
+use \texttt{lr\_test(aux\_pt)}.
+The results indicate that there are significant differences in polymer types across classes, \(\Delta LL(3) = 17.14, p < .001\).
+The results can be reported in probability scale using \texttt{table\_prob(aux\_pt)}.
+To test differences for specific polymer types, we can use Wald tests:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{wald\_test}\NormalTok{(aux\_pt, }\StringTok{"class1.Thresholds[1,1] = class2.Thresholds[1,1];}
+\StringTok{          class1.Thresholds[1,2] = class2.Thresholds[1,2];}
+\StringTok{          class1.Thresholds[1,3] = class2.Thresholds[1,3]"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The results indicate that there is no significant difference in the prevalence of ``Other'' polymer types across classes.
+However, PE is significantly more prevalent in class 1, and PP is significantly more prevalent in class 2.
+
+
+\end{document}
