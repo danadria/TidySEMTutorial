@@ -28,16 +28,16 @@ author_note: |
   Padualaan 14
   3582CH Utrecht, The Netherlands
 abstract: |
-  Latent class analysis refers to a family of techniques for identifying groups
+  Latent class analysis (LCA) refers to a family of techniques for identifying groups
   in data based on a parametric model.
-  Examples include mixture models, latent class analysis with ordinal
+  Examples include mixture models, LCA with ordinal
   indicators, and latent class growth analysis.
   Despite the popularity of this technique, there is limited
   guidance with respect to best practices in estimating and reporting mixture
   models. Moreover, although user-friendly interfaces for advanced mixture
   modeling have long been available in commercial software packages, open
   source alternatives have remained somewhat inaccessible. This tutorial
-  describes best practices for the estimation and reporting of latent class analysis,
+  describes best practices for the estimation and reporting of LCA,
   using free and open source software in R. To this end, this tutorial
   introduces new functionality for estimating and reporting mixture
   models in the `tidySEM` R-package whose backend relies on `OpenMx`.
@@ -73,26 +73,65 @@ analysis. @vermunt_latent_2004 defined LCA more generally as
 virtually any statistical model where "some of the parameters [...]
 differ across unobserved subgroups".
 
-Despite its popularity, there is a lack of standards for estimating and
-reporting LCA. While @van_de_schoot_grolts-checklist_2017 developed
-reporting guidelines for a specific type of LCA known as latent growth
-models, general reporting guidelines for best practices in LCA are still
-lacking.
+Despite the popularity of LCA,
+two challenges impede broader adoption and correct application of the method.
+The first challenge is that most existing software that implements these models is commercial and closed-source.
+The second challenge is that there is a lack of standards for estimating and reporting LCA, and some myths and misunderstandings have been perpetuated in prior literature.
 This introduces a risk of misapplications of the technique,
 and complicates manuscript review and assessment of the quality of published studies.
-The present paper seeks to address this gap in the literature by introducing updated guidelines for estimation and reporting on latent class analysis,
+The present paper seeks to address these challenges by introducing updated guidelines for estimatin and reporting LCA,
 based on current best practice. 
-Importantly, in order to lower the barrier of entry to latent class analysis
-and ensure reproducibility of all examples,
-this paper exclusively uses free, open source software for latent class analysis in R.
-To this end, new functionality was developed in the R-package `tidySEM` [@vanlissaTidySEMTidyStructural2022].
+Furthermore, meeting the increasing demand for open source research software,
+this paper introduces new functionality in the R-package `tidySEM` [@vanlissaTidySEMTidyStructural2022] to perform LCA using free open source software (FOSS).
+
+## The Argument for Free Open Source Software
+
+Despite the popularity of LCA,
+most existing software is commercial and closed-source,
+for example, Mplus [@muthenMplusUserGuide1998], for which the R-package `MplusAutomation` offers augmented LCA functionality [@hallquistMplusAutomationPackageFacilitating2018], and LatentGOLD [REF].
+<!-- software that implements these models. -->
+<!-- One important limitation is that the most fully-features -->
+A downside of commercial software is that its use is restricted to individuals and institutions who can afford a license.
+Another downside is that the proprietary source code cannot be audited, debugged, or enhanced by third parties.
+This goes against open science principles [@lamprechtFAIRPrinciplesResearch2019],
+incurs a risk that mistakes in the source code go unnoticed,
+and curbs progress as independent developers cannot fix bugs or add functionality.
+
+There are several compelling reasons to prefer free open source software (FOSS) instead.
+FOSS is freely available for anyone to use, modify, and distribute, which means that scientists can access and use a wide range of powerful tools without financial impediments.
+This is invaluable for reducing gatekeeping of researchers with limited budgets, such as those from developing countries.
+Furthermore, FOSS promotes collaboration within the scientific community,
+as its users can contribute to the development, maintenance, and support of the software.
+Finally, FOSS promotes tranparency and reproducibility: Because the source code for FOSS is accessible,
+researchers can review and verify the methods and algorithms used,
+which helps to ensure the integrity and reliability of research findings.
+Overall, FOSS has the potential to significantly improve the efficiency and effectiveness of scientific research, while also promoting transparency, collaboration, and inclusivity within the scientific community.
+
+Notable FOSS for LCA includes Mclust [REF], depmixS4 [REF], and OpenMx [@neale_openmx_2016].
+A crucial limitation of these existing packages is that some have limited functionality (e.g., Mclust),
+or implement specific innovations (e.g., depmixS4).
+OpenMx is unique in that, like Mplus, it implement LCA in the context of a fully featured structural equation modeling framework.
+Remaining obstacles to the use of `OpenMx` is that it is not very user-friendly and its functionality for LCA is poorly documented.
+
+These limitations are addressed by the `tidySEM` package,
+which provide a user-friendly interface for LCA in `OpenMx`.
+The package also includes convenience functions to obtain relevant statistics, tests and plots in accordance with best practices in estimation and reporting LCA, as described in this paper.
+The primary purpose of the `tidySEM` package is to provide a tidy workflow for generating, estimating, reporting, and plotting structural equation models in a software-agnostic way.
+The user interface is simple, as models can be specified using the widely used `lavaan` syntax [@rosseel_lavaan_2012].
+The package contains user-friendly wrapper functions to conduct LCA with sensible defaults,
+but the resulting models can still be fully customized (low barrier, high ceiling).
+Specifically, LCA models constructed in `tidySEM` inherit from `OpenMx`' format `MxModel`, and remain compatible with downstream functions that process such models.
+Being FOSS, `tidySEM` facilitates fully-reproducible analyses and contributes to open science.
+It was developed with open science in mind,
+and adheres to the FAIR software principles [Findable, Accessible, Interoperable, and Reusable, @lamprechtFAIRPrinciplesResearch2019],
+and the [OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/en/criteria) for FOSS software.
 
 ## Defining Latent Class Analysis
 
-Latent class analysis is a group of methods for estimating unobserved
+LCA refers to methods for estimating unobserved
 groups based on a parametric model of observed indicators of group
 membership [@vermuntLatentClassAnalysis2004].
-This method has become quite popular across scientific fields,
+It has become popular across scientific fields,
 under a number of different names;
 most notably (finite Gaussian) mixture modeling and latent profile analysis.
 The concept of LCA can be understood in different ways.
@@ -177,6 +216,13 @@ group observed *variables* into latent constructs, and LCA groups
 *individuals* into classes.
 While factor analysis seeks to describe the relations between variables,
 LCA seeks to describe unobserved groups and classify individual observations to those groups.
+<!-- In factor analysis, the latent variable is continuous, so the relationships -->
+<!-- between indicators are defined by their communalities. -->
+<!-- Here, the -->
+<!-- latent variable represents the error corrected approximation of the -->
+<!-- sample. In LCA, by contrast, the relation between indicators is defined by how -->
+<!-- well they separate the classes, as a multinomial regression between the -->
+<!-- indicators and the latent variable [@masyn_latent_2013]. -->
 In line with this distinction, LCA
 (mixture models) is referred to as a "person-centered" technique, and
 factor analysis as a "variable-centered" technique
@@ -184,20 +230,12 @@ factor analysis as a "variable-centered" technique
 
 When the focus is on the model parameters in each group, LCA can be
 thought of as similar to a multi-group structural equation model. The
-main distinction is that group membership is not known a-priori, but is
-instead estimated -- with measurement error -- based on the data.
+main distinction is that group membership is not known a-priori, but estimated from the data.
 Whereas in a multi-group model, the data are split by group and treated
 as independent samples, in LCA, all cases contribute to the estimation
 of all parameters in all groups. The relative contribution of each case
 to the parameters of each group is determined by that case's posterior
 probability of belonging to that group.
-
-In factor analysis, the latent variable is continuous, so the relationships
-between indicators are defined by the communalities between them. Here, the
-latent variable represents the error corrected approximation of the
-sample. In LCA, by contrast, the relation between indicators is defined by how
-well they separate the classes, as a multinomial regression between the
-indicators and the latent variable [@masyn_latent_2013].
 
 When the focus is on each individual's estimated class membership,
 LCA can be thought of as a type of clustering algorithm that corrects for (random) measurement error.
@@ -215,26 +253,23 @@ Since a parametric model estimates only a fixed number of parameters,
 it can be a relatively parsimonious solution compared to non-parametric techniques.
 
 Finally, in the context of machine learning, LCA can be considered as an
-*unsupervised classification* method [@figueiredo_unsupervised_2002].
+*unsupervised* learning method for *classification* [@figueiredo_unsupervised_2002].
 The term *unsupervised* refers to the fact that the outcome variable --
 true class membership -- is not known, and the term *classification*
 refers to the fact that the algorithm is predicting a categorical
-outcome -- class membership.
+outcome: class membership.
 
 ## A Taxonomy of Latent Class Analysis Methods
 
-In this paper, we use the term latent class analysis to refer to a
-family of techniques that estimate latent class membership based on a
-parametric model of observed indicators. From a historical perspective,
-the term was initially conceived to refer to analyses with categorical,
-usually binary indicators [@vermunt_latent_2004]. Nowadays, there are
-a number of related techniques, known by distinct names, that serve a
-similar purpose. The term "latent class analysis" seems most appropriate
-as an umbrella term for this broader class of models, as it only refers
+The term LCA was initially conceived to refer to analyses with categorical,
+usually binary indicators [@collins_latent_2009].
+It was later generalized to refer to any technique that estimates a categorical latent variable based on a
+parametric model of observed indicators, as it only refers
 to the purpose of the analysis, and does not imply restrictions to the
-model used, or the level of measurement of the indicators. Given the
-abundance of terms in use for closely related classes of models, we will
-provide a rudimentary taxonomy of LCA methods.
+model used, or the level of measurement of the indicators [@vermunt_latent_2004].
+To prevent ambiguity, we refer to LCA with binary or ordinal indicators as *LCA with ordinal indicators*.
+Given the abundance of redundant terms in use for closely related types of LCA models,
+we here provide a rudimentary taxonomy.
 
 A common type of LCA is the *finite Gaussian mixture model*; a
 univariate analysis where the observed distribution of a single variable
@@ -264,33 +299,21 @@ The reason for this difference in correlations makes theoretical sense:
 the large particles were heterogenous in shape,
 whereas the smaller particles had been polished to a more uniform (rounded) shape by the elements [@alkema_maximizing_2022].
 
-It is also possible to estimate a mixture model based on latent
-indicators. This means that, within each class, one or more continuous
-latent variables are estimated based on the observed indicators.
-Categorical latent variable membership is then estimated based on these
-continuous latent variables. A common application of this approach is in
-longitudinal research, where the indicators reflect one construct
-assessed at different time points. Examples of this approach include
+Finally, some LCA models use latent variables as indicators.
+A common application of this approach is in
+longitudinal research with repeated measures of a construct.
+Examples of this approach include
 *growth mixture models* (GMM) and *latent class growth analyses* (LCGA) 
-[@jung_introduction_2008]. These techniques estimate a latent growth model 
-to describe grouped trajectories over time. The growth mixture model is a 
-latent class model where the parameters that indicate class membership are the 
-intercepts and variances, and typically covariances of the latent growth 
-variables, e.g., a latent intercept and slope. This technique assumes that
-individuals within a class can have heterogenous trajectories. If the
-variance of the growth parameters is fixed to zero, it is known as a
-latent class growth analysis. This latter approach assumes that all
-individuals within a class share the same identical trajectory, and that
-any variance in the indicators not explained by the class-specific
-latent trajectories is due to residual error variance.
-
-The term latent class analysis originally referred to cases where the
-observed indicators were ordinal (ordered categorical) [@collins_latent_2009]. 
-Nowadays, it is more commonly used
-as an umbrella term. To prevent ambiguity, the special case where
-indicators are of binary or ordinal measurement level might be described
-as *latent class analysis with ordinal indicators*.
-
+[@jung_introduction_2008].
+These techniques estimate a latent growth model 
+to describe grouped trajectories over time.
+The indicators of class membership in a GMM are the 
+intercepts, and variances, and covariances of the latent growth variables that describe individual trajectories on the observed variables.
+For linear trajectories, these latent variables are an intercept and slope.
+The free variances allow trajectories to vary within classes. The LCGA differs from the GMM in that it assumes homogeneity of trajectories within classes.
+This is achieved by restricting the (co)variances of the growth parameters to zero.
+Any variance in the indicators not explained by the class-specific
+latent trajectories is assumed to be error variance.
 <!-- Although this paper primarily focuses on latent class analysis with continuous indicators, -->
 <!-- most of the suggested guidelines are equally applicable to ordinal indicators. -->
 
@@ -300,62 +323,79 @@ There are several use cases for which LCA methods are suitable.
 
 ### Testing theory
 
-Although latent class analysis is often discussed as an exploratory analysis technique,
+Although LCA is often discussed as an exploratory analysis technique,
 it can also be used in a confirmatory manner.
-Given that latent class analysis is similar to confirmatory factor analysis,
-but with a categorical latent variable, it can be used to similar ends:
+Given that LCA is similar to confirmatory factor analysis,
+it can be used to similar ends:
 To assess whether a theoretical measurement model holds.
 This use case is relevant when testing a theory that postulates the existence of a categorical latent variable.
 For example, *identity status theory* posits that, at any given point in time, adolescents reside in one of four identity statuses [@marcia_development_1966].
 LCA can be used to identify these four statuses based on observed indicators (e.g., self-reported identity exploration and commitment) [@luyckxDevelopmentalTypologiesIdentity2008].
 Similarly, *personality type theory* states that dimensional differences in personality can largely be explained by an undercontrolled, overcontrolled, and resilient type, which could also be restored using LCA [@donnellanResilientOvercontrolledUndercontrolled2010].
-One challenge is that, unlike confirmatory factor analysis, LCA does not provide absolute fit indices.
+
+One challenge is that, unlike confirmatory factor analysis, LCA does not provide absolute fit indices (see Model Fit Indices).
 Thus, to test a theory, one can ascertain that the data are better described by the number of classes dictated by theory than by a different number of classes.
 Furthermore, it would be possible to test whether the observed pattern of class-specific means corresponds to a hypothesized pattern;
-either qualitatively or quantitatively, using significance tests for pre-specified values.
-A recent study by @maene_perceived_2022 applied this principle to 
-test whether identities of Belgian adolescents with migration background can be 
-summarized as those relating to their heritage, national and regional identity.
+either qualitatively or quantitatively, using significance tests for pre-specified values (see Inference).
+
+Appendix A is a tutorial to confirmatory LCA in `tidySEM`,
+based on a recent study that tested the theory that identities of Belgian adolescents with migration backgrounds could be summarized as those relating to their heritage, national and regional identity [@maene_perceived_2022].
+
+### Exploring Heterogeneity
+
+Another use case is to explore whether a population is comprised of latent subpopulations, and if so, how many.
+The primary focus in this use case is on class enumeration.
+For example, 
+<!-- researchers suspected the existence of different risk profiles of substance use, sexual behavior, and mental health outcomes, and used LCA to determine how many such risk profiles could be distinguished [@hopfer_social_2014]. -->
+<!-- Another  -->
+one study explored heterogeneity in the population of military service members and veterans with prior suicide attempts,
+and identified two latent profiles characterized by high versus low suicide risk based on self-reported suicidal ideation and information about prior attempted methods and severity
+[@gromatsky_characteristics_2022].
+Knowing that the population of suicidal service members is heterogeneous can inform future research, policy, and care provided.
+Appendix B offers a tutorial for exploratory LCA,
+based on the aforementioned study of the distribution of ocean microplastics [@alkema_maximizing_2022].
 
 ### Measurement model
 
-Another use case relies on LCA's similarity to confirmatory factor analysis.
-This approach is useful when class membership is measured imperfectly by several indicators.
-This approach can be used to partial out measurement error and restore most likely class membership.
-For example, a recent study found descrepancies between self-reported employment status and official register data. 
-While it might be tempting to assume that the
-register data is free of error, this has been shown to be false.
-The authors used a mixture model to estimate the
-"error corrected employment status" by using two indicators of the same question
-and identifying random and systematic measurement error in both indicators 
-[@pavlopoulos_measuring_2015].
+LCA can also be used as a measurement model, similar to confirmatory factor analysis.
+This is useful when class membership is measured imperfectly by several indicators:
+LCA can partial out measurement error and restore most likely class membership.
+For example, one study found discrepancies between self-reported employment status and official register data [@pavlopoulos_measuring_2015]. 
+While it might be tempting to assume that register data is free of error, this assumption was shown to be false.
+A mixture model was used to estimate employment status, correcting for measurement error, from both  self-report and registry data.
+The study investigated random and systematic measurement error in both indicators,
+which reveal strengths and weaknesses of both types of assessment.
 
 This example also illustrates that LCA allows us to evaluate the reliability of different indicators [@geiser_is_2014].
-High quality indicators will be strongly related to the
-latent variable and will lead to good class separation.
+<!-- High quality indicators will be strongly related to the -->
+<!-- latent variable and will lead to good class separation. -->
 A continuous indicator that discriminates well between classes will show large differences in class-specific means;
 an ordinal indicator will show very high or very low conditional response probabilities for some classes but not for others.
 This information can be used to select the indicators that are most diagnostic of class membership.
-For an example of research on differential item functioning,
+For an example of LCA with a focus on differential item functioning,
 consider a study on university admission tests of Saudi Arabian students [@tsaousis_measurement_2020].
-LCA revealed three
-latent classes: high-, average-, and low-scorers. Subsequently, the authors
-used the Multiple Indicator Multiple Causes model to identify both uniform
-and non-uniform differential item functioning. The main finding was that gender
-was a potential source of differential item functioning for latent class
-indicators. Therefore, gender should be included as a covariate when fitting 
-a LCA model in order to obtain unbiased estimates.
+<!-- LCA revealed three -->
+<!-- latent classes: high-, average-, and low-scorers. Subsequently, the authors -->
+<!-- used the Multiple Indicator Multiple Causes model to identify both uniform -->
+<!-- and non-uniform differential item functioning. The main finding was that gender -->
+<!-- was a potential source of differential item functioning for latent class -->
+<!-- indicators. Therefore, gender should be included as a covariate when fitting  -->
+<!-- a LCA model in order to obtain unbiased estimates. -->
 
 ### Dimension reduction
 
-LCA can also be used to reduce the dimensionality of data,
-by reducing many variables to a few prototypes.
-This is similar to the use of factor analysis,
-with the key distinction that factor analysis accounts for linear covariance between indicators,
+LCA can also be used to reduce high-dimensional data
+to just a few prototypes.
+Factor analysis is also sometimes used for dimension reduction,
+but only accounts for linear covariance between indicators,
 whereas LCA can accommodate complex - but discrete - patterns.
-As this is a pragmatic application of LCA,
-the existence of a true categorical latent variable is questionable (cf. the section on Testing theory).
-Consequently, the results of this use case should be treated as descriptive and not "reified": i.e., the found classes should not be treated as evidence of the existence of a categorical latent variable.
+For example, imagine that there exist two indicators - $x$ and $y$, and some individuals score high on both, some score low on both, and some score high on $x$ but low on $y$.
+Factor analysis would only be able to capture the differences between the first two groups well; LCA captures differences between all three.
+Note that this is a pragmatic use of LCA;
+there is no theory about the existence of a categorical latent variable (cf. Testing theory).
+Consequently, the class solution should be treated as descriptive of the sample,
+and not be "reified" - treated as evidence of the existence of a categorical latent variable.
+
 The use of LCA for dimension reduction is common in longitudinal research,
 where one developmental process is summarized using latent class growth analysis (LCGA),
 and the resulting categories are then used as a moderator of another developmental process in a multi-group model.
@@ -367,6 +407,8 @@ Note that both these key findings are non-linear;
 modeling them in a single-group model would be difficult.
 LCGA greatly simplifies model specification and interpretation,
 albeit at a cost of some loss of information and, potentially, generalizability.
+Appendix C is a tutorial on LCGA,
+based on ongoing research on trajectories of depressive symptoms in military service members after deployment.
 <!-- Recently, @alkema_maximizing_2022 studied plastic debris in the Atlantic Ocean. -->
 <!-- Prior to this study, ways to categorize ocean microplastics in terms of length, -->
 <!-- width and polymer type were rather arbitrary, and assumed that these properties -->
@@ -378,23 +420,13 @@ albeit at a cost of some loss of information and, potentially, generalizability.
 <!-- correlated, and another consisting of larger fragments with low correlation  -->
 <!-- between particle width and height. -->
 
-When using ordinal indicators,
-the need for dimension reduction can be especially pertinent.
+The need for dimension reduction can be especially pertinent when using ordinal indicators.
 For example, one study measured
 fifteen dichotomous health indicators among injured military personnel [@macgregor_symptom_2021]. 
 Combinatorics informs us that fifteen
 dichotomous items have $2^{15}$ or $32,768$ unique symptom combinations.
 However, LCA was able to reduce response patterns to five clinically meaningful latent classes.
 
-### Class enumeration
-
-Another use case is to explore potential heterogeneity in a population,
-and to determine whether the population is comprised of latent subpopulations, and if so, how many.
-The primary focus in this use case is on class enumeration.
-For example, researchers suspected the existence of different risk profiles of substance use, sexual behavior, and mental health outcomes, and used LCA to determine how many such risk profiles could be distinguished [@hopfer_social_2014].
-Another explored heterogeneity in the population of military service members and veterans with prior suicide attempts,
-and identified two latent profiles characterized by high versus low suicide risk based on self-reported suicidal ideation and information about prior attempted methods and severity
-[@gromatsky_characteristics_2022].
 
 ### Classification
 
@@ -403,7 +435,7 @@ The shoe size example in Figure \@ref(fig:shoedens)
 is a rudimentary illustration of this application.
 In applied research, LCA is often used for classification in clinical contexts.
 For example, LCA was used to determine clinical cut-off scores for diagnosing whooping cough [@baughman_mixture_2006].
-Another study used LCA to not only classify the sample used to estimate the model, but also future cases [Zegwaard et al, in prep].
+Another study used LCA to not only classify the sample used to estimate the model, but also future cases [REF Zegwaard et al, in prep].
 The study identified four types of care providers among those who supported close kin with mental health problems.
 Importantly, the LCA model was embedded in an interactive app that could be used by healthcare professionals to determine the most likely class membership for new care providers, to provide more targeted support.
 To obtain predicted class membership based on an existing LCA model,
@@ -415,17 +447,19 @@ or what type of intervention is appropriate.
 
 ### Violations of normality
 
-Finally, LCA can be used to deal with data which violate certain
-assumptions. As discussed in the shoe size example, LCA can deal with
-violations of normality. In fact, LCA assumes the population
-distribution is a non-normal mixture of $K$ normal distributions, and it
-can recover the value of $K$, i.e. generate a $K$-class solution.
-For instance, @alkema_maximizing_2022 studied ocean plastic debris. 
-Plastic particle width and height are non-normally distributed. The authors 
-demonstrate that the non-normal distributions of particle dimensions are
-due to the measurements being a mixture composed of several particle types, 
-each with its own normal distribution.
-
+Finally, LCA can be used to deal with data which violate certain assumptions.
+For example, zero-inflated and hurdle models are special cases of LCA for dealing data with a very high proportion of zeros (extreme right skew) [@baughmanMixtureModelFramework2007].
+These models estimate one class to explain the "true zeros",
+and another class with a different distribution to explain all oter values, which can include zero.
+Note that this LCA has different models for both classes,
+and thus falls beyond the scope of this paper.
+<!-- CJ: This has been said elsewhere: -->
+<!-- In fact, LCA assumes the population -->
+<!-- distribution is a non-normal mixture of $K$ normal distributions, and it -->
+<!-- can recover the value of $K$, i.e. generate a $K$-class solution. -->
+<!-- CJ: This example is not perfect, we need another example still.. -->
+For instance, the aforementioned study on marine plastic noted that many prior studies had treated the distribution of particles as (multivariate) normal, despite clear deviations from normality [@alkema_maximizing_2022].
+A mixture of two normal distributions with distinct variances described the observed distribution better.
 <!-- LCA and factor analysis share the approximation of an unobserved latent variable, the difference being if that variable is continuous or categorical. We encourage researchers to be agnostic about the **true** nature of the latent variable. And focus on the approach that fits the research question. -->
 <!-- CJ: Why would we encourage researchers to be agnostic about the true...? -->
 
@@ -473,11 +507,10 @@ practices for estimating specific subtypes of LCA,
 including latent
 class growth analysis [@van_de_schoot_grolts-checklist_2017] and latent
 class analysis with ordinal indicators [e.g., @nylund-gibson_ten_2018].
-These were generalized to be relevant to all types of LCA, and updated
-to current best practices, as explained below.
-In order to aid researchers working with latent trajectory models,
-@van_de_schoot_grolts-checklist_2017 developed a protocol called
-Guidelines for Reporting on Latent Trajectory Studies (GRoLTS).
+These were generalized to be relevant to all types of LCA, and updated to current best practices, as explained below.
+<!-- In order to aid researchers working with latent trajectory models, -->
+<!-- @van_de_schoot_grolts-checklist_2017 developed a protocol called -->
+<!-- Guidelines for Reporting on Latent Trajectory Studies (GRoLTS). -->
 
 ## Best Practices in Estimation
 
@@ -503,15 +536,22 @@ kbl(tab_check[, c("#", "Item")])
 
 Examining observed data is essential for any analysis as it may reveal
 patterns and violations of assumptions that had not been considered
-prior to data collection. Special attention should be paid to level of
-measurement of the indicators.
-Finite Gaussian mixture models (including
-LPA) are only suitable for continuous variables.
-Indicators with an
-ordinal level of measurement are likely to violate the assumption of
-within-class normal distributions of mixture models [see
-@vermunt_k-means_2011].
-Personal experience consulting on LCA methods
+prior to data collection.
+The function `descriptives(data)` provides extensive descriptive statistics,
+including the number of unique values,
+variance of continuous and categorical variables,
+missingness, skew and kurtosis (peakedness of the distribution). 
+However, sample-level descriptive statistics are of limited value when the goal of a study is to identify subsamples using LCA.
+Plots convey additional information; specifically, density plots for continuous variables, and bar charts
+for categorical ones.
+Density plots can also aid in the choice of the number of classes, as explained in the section on visualization.
+
+Particular points of attention include measurement level of the indicators.
+Recall that `tidySEM` can estimate mixture models with either numeric (type `numeric` and `integer`) or `ordered` indicators.
+The column `type` should thus only contain these types.
+Also check that the number of `unique` values match the intended measurement level.
+Numeric variables with few unique values are typically better modeled as ordinal.
+Our experience consulting on LCA methods
 and moderating the `tidyLPA` Google group suggest that the
 misapplication of mixture models to ordinal (e.g., Likert-type)
 indicators is the most common source of user error. Whereas it has been
@@ -520,42 +560,34 @@ response categories are treated as continuous [e.g., @norman_likert_2010],
 it is very unlikely
 that an ordinal variable can be modeled as a *mixture* of multiple
 normal distributions.
-To illustrate the problem, consider what happens when estimating a 5-class solution on a 5-point Likert scale.
-Each class-specific mean could describe a single response
+To illustrate the problem, consider what happens when estimating a 5-class solution on a single 5-point Likert scale indicator.
+Each class-specific mean would describe a single response
 category,
-and a class-specific variance component would be nonsensical.
-In sum, Likert-type scales are rarely suitable for Gaussian mixture modeling;
-latent class analysis with ordinal indicators is more appropriate.
-
-Extensive descriptive statistics (including the number of unique values,
-variance of categorical variables, and missingness; see next subsection)
-can be obtained using `tidySEM::descriptives(data)`. Note,
-however, that sample-level descriptive statistics are of limited value
-when the goal of a study is to identify subsamples using latent class
-analysis. Plots (density plots for continuous variables, and bar charts
-for categorical ones) may be more diagnostic. Note that density plots
-can also aid in the choice of the number of classes, as further
-explained in the section on visualization. Descriptive statistics and
-plots can be relegated to online supplements, provided that these are
-readily accessible [consider using a GitHub repository as a
-comprehensive public research archive, as explained in
-@van_lissa_worcs_2021].
+and a class-specific variance component would be empirically underidentified.
+In sum, variables with few unique values might not be suitable for Gaussian mixture modeling;
+LCA with ordinal indicators is more appropriate.
+<!-- Descriptive statistics and -->
+<!-- plots can be relegated to online supplements, provided that these are -->
+<!-- readily accessible [consider using a GitHub repository as a -->
+<!-- comprehensive public research archive, as explained in -->
+<!-- @van_lissa_worcs_2021]. -->
 
 ### Data preprocessing
- 
+
+<!-- Any variables that of class `character` or `factor` must be recoded to ordinal. -->
+<!-- Nominal variables must be recoded to multiple ordinal dummy variables, e.g., using the function `mx_dummies()`.  -->
 LCA can accommodate variables of different measurement levels: continuous, binary, nominal, and ordinal.
 Numeric variables should have an interval measurement level,
 such that it is sensible to estimate means and (co)variances.
-Note that this assumption is likely violated for Likert-type scales.
 For the remaining three measurement levels,
-some data preprocessing is required.
+some preprocessing is required.
 The exact data types accepted by `tidySEM` at the time of writing are `numeric` and `ordered`.
-To correctly specify ordered variables,
-such as Likert scales
+To correctly specify ordered variables
+such as Likert scales,
 use the function `OpenMx::mxFactor()`.
 Binary variables,
-such as presence or absence of some symptom, are also treated as ordinal.
-Finally, nominal variables are converted to binary indicators of group membership via dummy coding, for example, using `mx_dummies()`.
+such as presence or absence of some symptom, are also treated as ordinal, with one category coded as zero and the other as one.
+Nominal variables are converted to binary indicators of group membership via dummy coding, for example, using `mx_dummies()`.
 
 A second consideration in data preprocessing is that models with indicators on different scales may present with convergence issues.
 The reason for this is that the parameter space is high-dimensional with many potential local optima.
@@ -568,6 +600,18 @@ and model parameters can be transformed back to the original scale of the indica
 The transformed variable has a mean of zero and a standard deviation of one.
 Note that standardization is typically not necessary if indicators are already on the same, or similar, scales.
 
+A third consideration in preprocessing relates to the univariate distributions of indicators.
+For example, the `plas_depression` data show extreme right skew in depressive symptoms:
+most respondents report few symptoms,
+and few respondents report many symptoms.
+Similarly, the `alkema_microplastics` data are extremely right-skewed: Very small plastic fragments abound in the oceans, and large pieces are rare.
+These distributional characteristics must be taken into account either in preprocessing, or model specification.
+In preprocessing, the data can be transformed to reduce skew.
+After reducing skew, a simpler LCA model may fit the data well.
+Alternatively,
+one can specify a model that accommodates the distributional idiosyncrasies.
+For example, allowing free variances across classes might result in one class with a near-zero mean and small variance to account for the fact that most respondents have few depressive symptoms,
+and one class with an elevated mean and large variance to account for all respondents with non-zero symptoms.
 
 ### Handling Missing Data
 
@@ -581,19 +625,18 @@ information without imputing missing values [@endersRelativePerformanceFull2001]
 FIML is a best-practice solution for handling missing data;
 at least on par with multiple imputation [@lee_comparison_2021].
 Multiple imputation is less suitable to LCA for two reasons. First,
-because LCA methods are often computationally expensive,
-and conducting them on multiple imputed datasets may be unfeasible.
-Second, because many multiple imputation methods have some assumption of normality, which is likely to be violated when it is assumed that the data come from a heterogenous population.
-FIML is not suitable for cases with complete missing data.
+because LCA methods are often computationally intensive,
+and conducting them on several imputed datasets multiplies the load.
+Second, because many multiple imputation methods assume normality; an assumption likely to be violated when data come from a heterogeneous population.
 
 Three types of missingness have
 been distinguished in the literature [@rubin_inference_1976; 
 @enders_applied_2022]: random missingness (MCAR);
-missingness contingent on *observed* variables that can thus be known and controlled for (MAR);
-and missingness related to unobserved variables, which can neither be known nor controlled for (MNAR).
-A so-called "MCAR" test is often reported in relation to missingness
-[@jamshidian_tests_2010].
-But note that this name is somewhat misleading,
+missingness contingent on *observed* variables that can be known and controlled for (MAR);
+and missingness related to unobserved variables,
+which can be neither known nor controlled for (MNAR).
+A so-called "MCAR" test is often reported [@jamshidian_tests_2010],
+but note that this name is somewhat misleading,
 as a significant test indicates that missingness is MAR,
 but a non-significant test statistic does not distinguish between MCAR or MNAR.
 As the classic MCAR test relies on the comparison of variances across groups with different patterns of missing data, it assumes normality [@little_test_1988].
@@ -601,30 +644,29 @@ This assumption is tenuous in the context of LCA.
 A non-parametric MCAR test may be more suitable [@jamshidian_tests_2010].
 For this tutorial,
 the lead author has implemented this test in the `mice` package as `mice::mcar()`.
-
-To conclude; our recommendation is to inspect and report the proportion of missingness per variable (e.g., using `tidySEM::descriptives()`),
-and to test for MAR using `mice::mcar()`.
+Our recommendation is to inspect and report the proportion of missingness per variable (e.g., using `tidySEM::descriptives()`),
+and report the `mice::mcar()` test.
 As FIML estimation assumes that missingness is either MCAR or MAR,
-one would proceed with FIML regardless of the outcome of the test.
-One minor concern is that the approach `tidySEM` uses to determine starting values is *not* robust to
-partially missing data.
-This should not be a problem, however, as uses a global optimizer to estimate LCA models,
-which should be independent of starting values [@coranaMinimizingMultimodalFunctions1987].
+one would proceed with FIML regardless of the outcome.
+
+One minor concern is that `tidySEM` uses a different algorithm to determine starting values for complete data (K-means) and for missing data (hierarchical clustering).
+This should not be a problem, however, as the global optimizer used to estimate the model should be independent of starting values [@coranaMinimizingMultimodalFunctions1987].
+A second concern is that FIML is not suitable for cases with complete missing data.
+If such cases must be included, their values must be imputed first.
 
 ### Model Specification
 
-Any LCA model should be carefully specified based on theoretical and empirical considerations.
-The parameters of LCA depend on the measurement level of the indicators.
-LCA with continuous indicators can be parametrized in terms of means, variances, and covariances.
-Latent class growth analyses have the same parameters,
+In principle, LCA can be based on any parametric model.
+At present, `tidySEM` only facilitates estimation of models that can be specified in `lavaan` syntax.
+The available model parameters depend on the measurement level of the indicators.
+Continuous indicators can be parametrized in terms of means, variances, and covariances.
+LCGA and GMM have these same parameters,
 but with respect to the latent growth variables.
-LCA with ordinal indicators can be parametrized differently.
-The approach implemented in `tidySEM` assumes that each ordinal variable reflects an underlying standard normal distribution.
-The parameters are "thresholds" that correspond to quantiles of a standard
-normal distribution (with $N(\mu = 0, \sigma = 1)$).
-These thresholds
-are estimated based on the proportion of individuals in each of the
-response categories of the indicator variable. For example, a binary
+Ordinal indicators can be parametrized differently;
+the default approach in `tidySEM` assumes that each ordinal indicator reflects an underlying standard normal distribution, $N(\mu = 0, \sigma = 1)$.
+The parameters are "thresholds" that correspond to quantiles of this distribution, estimated based on the proportion of individuals in each of the
+response categories of the indicator variable.
+For example, a binary
 indicator has a single threshold that distinguishes the two response
 categories. If responses are distributed 50/50, then the corresponding
 threshold would be $t_1 = 0.00$. If the responses are distributed 60/40,
@@ -633,8 +675,8 @@ All of the aforementioned parameters can be freely estimated,
 or constrained across classes, or fixed (e.g., to zero).
 
 Prior literature emphasized the importance of considering alternative model specifications [@vandeschootGRoLTSChecklistGuidelinesReporting2017].
-However, what has remained underemphasized is that alternative model specifications may be approached differently depending on whether an analysis is exploratory or confirmatory (see Use Cases).
-Most prior literature has emphasized exploratory applications of LCA [e.g., @nylund_deciding_2007]
+What has remained underemphasized is that alternative model specifications should be approached differently for exploratory versus confirmatory analyses (see Use Cases).
+Most prior literature has emphasized exploratory LCA [e.g., @nylund_deciding_2007].
 In this context, model specification typically consists of an exhaustive grid search along several model specifications and varying numbers of classes.
 A "final" model is then selected based on a combination of fit indices,
 significance tests,
@@ -644,19 +686,18 @@ Confirmatory LCA does not require such an extensive search over the model space.
 If hypothesized models have been specified a priori,
 and possibly even preregistered,
 it makes sense to focus on these models, rather than proceed in a purely data-driven manner.
-Nonetheless, an important reason to consider alternative model specifications is that LCA lacks objective fit indices.
+Nonetheless, the theoretical model specification should still be compared to a few alternatives because LCA lacks objective fit indices.
 The fit of a theoretical model can thus only be assessed by comparison to other candidates.
-For this reason, the theoretical model should still be compared to a few others.
-A one-class model is a sensible benchmark, to test whether LCA is even appropriate.
+A one-class model is a sensible benchmark
+to test whether the theoretical model fits better than a model that assumes a homogeneous population.
 Other candidates for comparison include competing theoretical models and those with a few more or less classes than the hypothesized number.
 If the theoretical model has much better fit than other models,
+for example, based on IC weights,
 this provides evidence for the theory.
-If differences in fit are small, however, this may not  do not give cause to reject a theoretical model.
-The theoretical model may still be preferred, for example, to ensure comparability with prior work.
-The fact that the theoretical model received little differential support should of course be discussed,
-along with potential implications for future work.
-
-
+If another model fits substantially better,
+this provides evidence against the theory.
+If fit differences are small, the theoretical model may still be preferred, as theory is a relevant consideration in model selection [@jungIntroductionLatentClass2008].
+The fact that the theoretical model received little differential support should of course be discussed.
 <!-- This will ensure that the model accurately represents the data and provides reliable results. -->
 <!-- Two factors play a role in LCA model specification: -->
 <!-- the number of latent classes and the model estimated within each class. -->
@@ -668,7 +709,7 @@ along with potential implications for future work.
 <!-- Its parameters may include means, (co)variances, regression coefficients, factor loadings, and thresholds for ordinal variables. -->
 <!-- All of these parameters can be freely estimated, -->
 <!-- constrained to be equal across classes, -->
-<!-- or fixed to a known value. -->
+<!-- or fixed to a known value. --> 
 <!-- The specific types LCA introduced in the Taxonomy all have different parameters. -->
 <!-- For example, LPA typically assumes class-specific means, -->
 <!-- equal variances across classes, and zero covariances (i.e., indicators are independent after accounting for latent class membership), see `mx_profiles()`. -->
@@ -680,11 +721,6 @@ along with potential implications for future work.
 <!-- either using `lavaan` model syntax or using `OpenMx` RAM specification, -->
 <!-- and supplied to the general function `mx_mixture()`. -->
 <!-- The resulting model may have -->
-
-
-
-
-
 <!-- HIER -->
 <!-- For latent profile analysis, the function -->
 <!-- `tidySEM::mx_profiles(classes, variances, covariances)` largely -->
@@ -706,19 +742,23 @@ along with potential implications for future work.
 <!-- subsection of this paper. -->
 
 A second consideration in model specification is the risk of overfitting [@hastieElementsStatisticalLearning2009].
-Overfitting means that a model captures idiosyncratic noise in a sample,
-and thus generalizes poorly to new samples.
-It occurs when a model has many parameters relative to the number of observations
+Overfitting occurs when a model has many parameters relative to the number of observations,
+causing it to capture idiosyncratic noise in the sample and limiting its generalizability to new samples.
 As explained before, the number of parameters in LCA scales with the number of estimated classes.
 Consequently, LCA with many classes have a potentially very high number of parameters.
-
-
-
 In Bayesian mixture modeling,
 it was observed that if the estimated number of classes exceeded the true number, the number of observations assigned to these classes tended towards zero as sample size increased [@rousseauAsymptoticBehaviourPosterior2011].
 Although it is not known whether frequentist LCA exhibits the same behavior,
-this suggests that low class counts might indicate overfitting.
+low class counts are still an indicator of potential overfitting.
+The section on Class Enumeration addresses ways to guard against overfitting.
 
+Models can be specified in `tidySEM` in different ways.
+The wrapper functions `mx_profiles()` and `mx_lca()` construct LCA models for continuous and ordinal indicators respectively, without needing to specify model syntax.
+The function `mx_profiles()` has two arguments to free elements of the covariance matrix: `variances` and `covariances`.
+By default, `mx_profiles()` fixes covariances to zero, and thus performs latent profile analysis.
+Finally, function `mx_mixture()` accepts a more flexible `model` argument, which can be a character string specifying a model in `lavaan` syntax,
+which is translated to `OpenMx` models via the function `as_ram()`,
+or a list of `OpenMx` models.
 
 ```{r, include = FALSE}
 grolts <- structure(list(Number = c("1.", "2.", "3a.", "3b.", "3c.", "4.", 
@@ -747,100 +787,69 @@ TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
 TRUE, TRUE, TRUE)), row.names = c(NA, -21L), class = "data.frame")
 ```
 
-### Software
+### Estimation and Convergence
 
-	
-LCA models can be estimated in a variety of ways.
-Some of these packages have limited functionality, or implement specific
-innovations. Other packages implement LCA in the context of a more
-flexible structural equation modeling framework. The most notable
-examples of the latter are the commercial programs Mplus and Latent
-GOLD, and the free open source R-package OpenMx. The commercial packages
-stand out because they offer relatively user-friendly interfaces and
-implement sensible defaults for complex analyses, including LCA methods.
-This lowers the threshold for applied researchers to adopt such methods.
-Commercial software also has several downsides, however. One such
-downside is that use of the software is restricted to those individuals
-and institutions who can afford a license. Another downside is that the
-source code, being proprietary, cannot be audited, debugged, or enhanced
-by third parties. This incurs the risk that mistakes in the source code
-may go unnoticed, and curbs progress as software developers cannot add
-new functionality.
-
-Conversely, the free open source program OpenMx [@neale_openmx_2016] is very flexible, but
-not very user-friendly. We directly address this limitation using the
-`tidySEM` R-package. New functionality in `tidySEM` seeks to lower the
-threshold for latent class analysis using `OpenMx`. It adheres to best
-practices in estimation and reporting, as described in this paper. The
-user interface is simple, making use of the model syntax of the widely
-used `lavaan` R-package [@rosseel_lavaan_2012]. This syntax offers a human-readable way to
-specify latent variable models. Minor enhancements are made to simplify
-the specification of LCA.
-
-Because of the limitations of the aforementioned tools, we set out to
-develop a free tool that provides sensible defaults and is easy to use,
-but provides the option to access and modify all of the model inputs
-(i.e., low barrier, high ceiling). `tidySEM` interfaces with existing
-tools, and is able to translate between what existing tools are capable
-of and what researchers and analysts carrying-out person-oriented
-analyses would like to specify. Furthermore,`tidySEM` facilitates
-fully-reproducible analyses and contributes to open science.
-
-### Algorithm
-
-LCA parameters and model fit statistics can be estimated in a variety of
-ways. The choice of the estimator depends on the presence of missing
+LCA parameters and model fit statistics can be estimated in different
+ways.
+The choice of estimator depends on the presence of missing
 values, sample size, number of indicators, and available computational
-resources [@weller_latent_2020]. A commonly used technique is maximum
-likelihood (ML) estimation with the expectation-maximization (EM)
-algorithm as a local optimizer. Imagine we are estimating two
-parameters, e.g. the class-specific means $\mu_c$ on a continuous
+resources [@weller_latent_2020].
+LCA in `tidySEM` uses maximum likelihood estimation (ML), which can be conceptually understood as follows:
+Imagine we are estimating two
+parameters, e.g. the class-specific means $\mu_c$ on a continuous indicator for two classes
 (ignoring the variance for now).
-EM attempts to find a combination of values for these two parameters that maximizes the log likelihood ($LL$) of the data.
-In practice, instead of maximizing $LL$,
-$-2*LL$ is minimized.
-Transforming the likelihood this way does not change the resulting parameter estimates,
-but it is mathematically convenient.
-Moreover, the $-2*LL$ is asymptotically $\chi^2$ distributed if the null-hypothesis is true, and thus this quantity can be used for model fit tests [@wilksLargeSampleDistributionLikelihood1938].
-To understand the optimization problem, imagine a three-dimensional landscape: 
-The X and Y dimensions represent potential values of the class-specific means, $X = \mu_1$ and $Y = \mu_2$, and the Z-dimension is determined by $Z = -2*LL$. 
+ML attempts to find a combination of values for these two parameters that minimizes minus two times the log likelihood ($-2LL$) of the data.
+<!-- The $-2LL$ is asymptotically $\chi^2$ distributed if the null-hypothesis is true, and can thus be used for model fit tests [@wilksLargeSampleDistributionLikelihood1938]. -->
+To understand the ML optimization procedure,
+imagine a three-dimensional landscape: 
+The X and Y dimensions represent potential values of the class-specific means, $X = \mu_1$ and $Y = \mu_2$, and the Z-dimension is determined by $Z = -2LL$. 
 The optimizer must find the
 deepest "valley" in this landscape,
-which reflects the combination of $\mu_1$ and $\mu_2$ that minimizes the $-2*LL$.
-The EM
+which reflects the combination of $\mu_1$ and $\mu_2$ that minimizes the $-2LL$.
+The ML
 optimizer behaves somewhat like a marble dropped in this landscape. It
-is dropped at some random point in space, and will roll into the nearest
-valley.
+is dropped at some random point in space, and rolls into the nearest valley (a combination of values for $\mu_1$ and $\mu_2$ that has a low $-2LL$).
 The challenge is that LCA models are often highly parametrized.
 This means that the landscape is not three-dimensional, but (very) high-dimensional,
-with potentially many valleys and sparse data to provide information about which valley is deepest.
+with many valleys and sparse data to provide information about which valley is deepest.
 If the marble rolls into one of these valleys,
 it will settle there and not climb out again.
 The estimator has "converged".
-The risk is that the optimizer gets stuck in a shallower valley (a "local optimum"),
+
+A unique challenge in LCA is that not only model parameters,
+but also class membership must be estimated.
+Parameters in all classes are estimated from the same dataset,
+but for each class,
+observations are weighted by their probability of being in that class - which is in turn computed based on the class-specific parameters.
+The resulting chicken-and-egg problem is solved by the expectation-maximization (EM) algorithm:
+It alternates between estimating model parameters,
+calculating posterior class probabilities from those parameters,
+re-estimating model parameters using those new class probabilities as weights, and so on, until both have converged.
+
+A risk with this approach is that the optimizer might get stuck in a shallower valley (a "local optimum"),
 and never discovers the deepest valley (the "global optimum", or best solution).
 One solution to this problem is to drop many marbles at random places,
-compare their final $-2*LL$ values,
+compare their final $-2LL$ values,
 choose the solution
-with the lowest $-2*LL$, and make sure that several marbles replicated
+with the lowest $-2LL$, and make sure that several marbles replicated
 this solution.
 This is the "random starts" approach implemented in, e.g., Mplus.
 
 One problem with the random starts approach is that it is
 computationally expensive to run this many replications. Moreover,
 because the algorithm begins with random starting values,
-it is inefficient because many marbles are likely to start very far away from any valley.
-Finally, if all sets of starting values are close to a local optimum,
-there is a risk that the global optimum is not discovered.
-An alternative solution that overcomes these challenges is to use a global optimizer, like the simulated annealing algorithm [SA, @coranaMinimizingMultimodalFunctions1987].
+it is inefficient because many marbles are likely to start far away from any valley.
+Additionally, if all sets of starting values are close to a specific local optimum,
+there is a risk that the global optimum is never found.
+An alternative solution that overcomes these challenges is to use a global optimizer, like simulated annealing [SA, @coranaMinimizingMultimodalFunctions1987].
 SA does not behave quite like the marbles of the random starts approach;
 instead, it iteratively considers some "destination" in the landscape,
-and compares its $-2*LL$ to the current one.
-If the destination $-2*LL$ is lower, 
+and compares its $-2LL$ to the current one.
+If the destination $-2LL$ is lower, 
 the estimator moves there.
-However, if the destination  $-2*LL$ is *higher*,
-the estimator still moves there occasionally, with a certain probability.
-Think of this as occasionally flicking the marble back out of valleys,
+However, if the destination  $-2LL$ is *higher*,
+it still moves there occasionally, with a certain probability.
+Think of this as occasionally flicking the marble,
 to see if it rolls back into the current valley, or finds another,
 even deeper one.
 This property allows SA it to escape local optima and find the global optimum.
@@ -849,24 +858,64 @@ Since SA is a global optimizer, it should be independent of starting values.
 With this in mind, it is efficient to start estimation from a "reasonable solution", instead of a random starting point.
 For example, if we assume that the different classes are likely to have different mean values on the indicators, 
 then a nonparametric clustering algorithm - like K-means or hierarchical clustering - can be used to determine these cluster centroids [see also @biernackiChoosingStartingValues2003].
-By default, `tidySEM` derives starting values using K-means clustering,
+By default, `tidySEM` derives starting values using K-means clustering [REF],
 computing the mixture model starting values by treating the K-means solution as multi-group model.
 Next, SA is used to find the global optimum solution.
 Finally, SA is followed up with a short run of the ML algorithm,
-as EM inherently produces an asymptotic
+as ML inherently produces an asymptotic
 covariance matrix for the parameters that can be used to compute
 standard errors.
 Note that these defaults can be manually overridden.
 
-In case of any (suspected) convergence problems,
-note that `tidySEM` LCA models are `OpenMx` models.
-Thus, existing `OpenMx` functions to aid model convergence can be used, like `mxTryHardWideSearch()` for continuous indicators, and `mxTryHardOrdinal()` for ordinal indicators.
+In practice, models do not always converge.
+Reasons may include local optima,
+bad starting values,
+incorrect model specification (the model may be too complex for the data, or conversely, too simple to capture important patterns),
+or poor data quality (small data sets, or distributions that are difficult to model).
+Convergence problems may be indicated by errors and warnings from the estimator,
+or they may be suspected, for example,
+when results change if the analyses are reproduced.
 
+Nonconvergence may be due to bad model specification.
+Consider, for example, an LCA with multiple ordinal indicators.
+If certain combinations of responses never occur together,
+in general or within one of the classes,
+this can result in extreme conditional item probabilities (exactly 0 or 1).
+Such extreme values impede model convergence.
+This problem could be addressed by trying alternative model specifications (e.g., fewer classes),
+or by merging categories of the ordinal indicators with very few responses.
+Similarly problems occur with continuous indicators.
+For instance, consider a zero-inflated indicator and a two class LPA.
+To account for the excess zeroes, one class will have a mean of zero.
+It is difficult to estimate the standard deviation for this class, however, because all of its members have the same value.
+If standard deviations are constrained to be equal across classes,
+this model will likely not converge.
+This problem can be addressed by considering more appropriate model specifications (e.g., free class variances).
+
+Nonconvergence due to bad starting values
+can be overcome by manually specifying starting values:
+Specify the argument `run = FALSE` in the call to `mx_mixture()` and related functions.
+This returns the model with default starting values, which can be updated.
+Nonconvergence and local optima may also be overcome by re-estimating the model while permuting the starting values.
+The `OpenMx` package contains a family of functions for this purpose: `mxTryHard()` and `mxTryHardWideSearch()` for continuous indicators, and `mxTryHardOrdinal()` for ordinal indicators.
+When poor data quality is to blame, the only solution is to collect more, or higher quality, data.
+
+<!-- A problem which can occur is that of inadmissible solutions. With binary -->
+<!-- indicators, LCA is modeling a cross-table with all the predictors. The -->
+<!-- problem with such cross-tables is that they will often contain empty -->
+<!-- cells, i.e. combinations of responses that never occur together. This -->
+<!-- problem is reflected by extreme conditional item probabilities (as in -->
+<!-- exactly 0 or 1). Such boundary parameter estimates could indicate that -->
+<!-- the solution is invalid [@geiser_data_2012]. Boundary parameter -->
+<!-- estimates can also happen with continuous indicators. For instance, if -->
+<!-- we have a zero-inflated normal distribution and a two class solution, -->
+<!-- one class might have the mean of zero and its standard deviation cannot -->
+<!-- be determined since there is little variance. This too could be a sign -->
+<!-- of an invalid solution, warn that too many classes were extracted, or -->
+<!-- indicate a local optimum [@geiser_data_2012]. -->
 
 ### Class Enumeration
 
-Class enumeration refers to the common practice of comparing models with different numbers of classes in LCA.
-	
 <!-- The total number of parameters scales with the number of estimated classes. -->
 <!-- Consequently, latent class analyses have a potentially very high number of parameters. -->
 <!-- As any of these parameters could be mis-specified, -->
@@ -876,17 +925,32 @@ Class enumeration refers to the common practice of comparing models with differe
 <!-- From sinhaPractitionerGuideLatent2021: -->
 <!-- Testing for number of classes. In addition to indexing model fit, there are tests comparing a model with k classes to one with k-1 classes. Developed by Lo, Mendell and Rubin (36) based on work by Vuong (54) the VLMR test assumes multivariate normality, and it is not clear how sensitive the p-value is to violation of that assumption. It is also possible to use a bootstrapped p-value, although its validity outside of normally distributed data remains unknown.(55) In a Monte Carlo simulation of LCA using only categorical indicators, Nylund and colleagues found that the bootstrapped test (BLMR) consistently outperformed the simple Lo-Mendell-Rubin test (LMR).(34) Again in simulation studies with latent profile analysis (continuous indicators), Tein and colleagues found that the BLMR had higher statistical power than LMR, although both tests performed well at detecting the true class.(56) In our practice, across multiple analyses with real-life data consisting of a mixture of categorical and continuous indicators, we have found that the BLMR consistently favours k classes over k - 1 class to the point of being of limited value. -->
 Class enumeration refers to the process of determining the appropriate number of classes.
-This topic is closely related to model specification.
-As explained before,
-LCA can be done in an exploratory or in a confirmatory fashion.
-In the confirmatory case, the set of models to be compared will be smaller.
-In the exploratory case, the set of models typically consists of a sequence from 1 to some higher number of classes $K$.
-The maximum number of classes $K$ may be chosen a-priori, or on theoretical accounts.
-In practice, the limit is often dictated by the data;
-after a certain number,
-convergence problems may arise, 
-or the proportion of cases assigned to the smallest classes may be so low that such a class would not be locally identified.
-It is sensible to limit $K$ to the maximum number of classes that result in valid solutions.
+It is approached differently for exploratory versus confirmatory LCA.
+In exploratory LCA, the set of models typically consists of a sequence from 1 to the maximum number of classes $K$. 
+The number $K$ may be chosen a-priori or dictated by the data.
+It is sensible to limit $K$ to the maximum number of classes that result in valid and interpretable solutions (also see Classification Diagnostics).
+Above a certain number of classes,
+convergence problems typically arise, 
+or the proportion of cases assigned to the smallest classes may be low relative to the number of class-specific parameters.
+In Bayesian LCA, it has been observed that, when the estimated number of classes exceeds the true number,
+the proportion of cases assigned to the excessive classes converges to zero as the sample size increases [@rousseauAsymptoticBehaviourPosterior2011].
+It is not known whether this also happens in frequentist LCA;
+nonetheless, near-zero class memberships should be taken into account when determining the maximum $K$.
+
+In confirmatory LCA,
+the set of models with different numbers of classes to be compared is typically smaller.
+Its purpose is to provide context for the relative fit of the theoretical model, or to compare multiple theoretical models.
+
+In class enumeration, the set of models is compared on several statistical and substantive criteria.
+In exploratory LCA, these criteria may be decisive in selecting a final model;
+in the confirmatory case, the burden of proof is reversed: there must be convincing evidence against the theoretical model in order to reject it.
+Statistical criteria to consider in class enumeration include model fit indices and
+likelihood ratio tests [@weller_latent_2020; @masyn_latent_2013].
+Substantive criteria include convergence and model identification,
+class separability,
+and interpretability.
+We address each of these criteria below.
+
 <!-- In exploratory LCA, a sequence of models is fitted to the data -->
 <!-- with each additional model estimating one more class than the previous -->
 <!-- model. These models are then compared and the best solution is selected -->
@@ -897,66 +961,51 @@ It is sensible to limit $K$ to the maximum number of classes that result in vali
 <!-- of classes. Therefore, it may always be useful to compare different -->
 <!-- class solutions. -->
 
-From a sequence of models, the final class solution is chosen based on
-both theoretical and statistical criteria. Theory should drive the
-selection of indicator variables, inform the expectations and reflect on
-the findings. In addition to this, there are several statistical
-criteria to consider in model selection. These include but are not
-limited to likelihood ratio tests, information criteria, and the Bayes
-factor [@weller_latent_2020; @masyn_latent_2013].
-
-Relative model fit can be examined using the likelihood ratio test. This
-is only appropriate when the two models we wish to compare are nested.
-The likelihood ratio test statistic is computed as the difference in
-maximum log-likelihoods of the two models, with the test degrees of
-freedom being the difference in the degrees of freedom of the two
-compared models. The test statistic follows the $\chi^2$ distribution,
-and we want it to be non-significant in order to give support to the
-simpler model. The likelihood ratio test can only compare two nested
-models at a time [@lanza_introduction_2003].
 
 ### Model Fit Indices
 
 As there are no absolute fit indices for LCA,
 information criteria are typically used to assess relative fit.
-The original information criterion is the Akaike Information Criterion (AIC);
-it was designed to balance model fit and model complexity.
-This is achieved by adding a penalty for the number of parameters to the -2\*log-likelihood (which is the most fundamental measure of model fit).
+Information criteria are computed from the $-2LL$,
+which is the most basic fit measure.
+Information criteria add a penalty for model complexity to the $-2LL$, and thus balance fit and complexity.
 The lower
 the value of an information criterion, the better the overall fit of the
 model.
-The Bayesian Information Criterion (BIC) multiplies the penalty for complexity with a function of the sample size,
+The original information criterion is the Akaike Information Criterion (AIC),
+computed as $-2LL+2p$, where $p$ is the number of parameters.
+The Bayesian Information Criterion (BIC) multiplies the penalty for complexity with a function of the sample size, $p \ln(n)$,
 such that complex models are penalized more in smaller samples.
 Finally,
-the so-called *sample size adjusted* BIC (saBIC) implements a different penalty for sample size.
-
-Note however that this table does not include the bootstrapped likelihood ratio test (BLRT) by default,
-because this test is very computationally expensive.
-It is recommended to use the function `tidySEM::BLRT()` to compare a shortlist of likely candidate models based on other fit indices.
-
-Fit indices typically used for determining the optimal number of classes include
-the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC).
-Both information criteria are based on the -2 log likelihood (which is lower for better fitting models),
-and add a penalty for the number of parameters (thus incentivizing simpler models).
-This helps balance fit and model complexity.
-The BIC usually applies a stronger penalty for complexity that scales logarithmically with the sample size.
+the so-called *sample size adjusted* BIC (saBIC) implements a different ad-hoc penalty for sample size,
+$\ln(\frac{n + 2}{24})$.
+Although a simulation study showed that the saBIC performed well for class enumeration,
+its penalty is not based on theory [REF].
+BIC also performs well and is theoretically substantiated;
+as such, it may be the most appropriate information criterion to use for model comparison [@nylund-gibson_ten_2018; @masyn_latent_2013]. 
+All three ICs are available in the output of `table_fit()`.
 
 Information criteria may occasionally contradict each other, so it is
-important to identify a suitable strategy to reconcile them. One option
-is to select a specific fit index before analyzing the data. Another
-option is to always prefer the most parsimonious model that has best fit
-according to any of the available fit indices. Yet another option is to
-incorporate information from multiple fit indices using the analytic
-hierarchy process [@akogul_comparison_2016]. Finally, one might make an
-elbow plot and compare multiple information criteria
-[@nylund-gibson_ten_2018].
+important to identify a suitable strategy to reconcile them.
+One option is to select a specific fit index, such as the BIC,
+before seeing the results.
+This choice can be preregistered to avoid concerns about cherry picking.
+Another option is to always prefer the most parsimonious model that has best fit according to any of the available fit indices.
+Yet another option is to incorporate information from multiple fit indices using the analytic hierarchy process [@akogul_comparison_2016],
+which is implemented in `tidyLPA` [@rosenbergTidyLPAPackageEasily2018].
+Finally, one can use a scree plot to determine the inflection point at which additional classes contribute little to further decreases of the ICs [@nylund-gibson_ten_2018].
+The preferred number of classes is at the inflection point where the slope of the curve is clearly leveling off.
+Adding this many classes results in substantial decreases of the IC,
+and adding further classes results in relatively small decreases.
 
-The literature suggests that the saBIC performs especially well for class enumeration.
-However, unlike the AIC and BIC, its penalty for sample size is not grounded in theory.
-BIC also performs well and is grounded in theory; as such, it may be the most appropriate information criterion to use for model
-comparison [@nylund-gibson_ten_2018; @masyn_latent_2013]. 
-All three ICs are available in `tidySEM` output.
-
+Given a specific IC,
+it is also possible to calculate so-called "IC-weights",
+which indicate the relative support the data provide for each model in the set [@wagenmakersAICModelSelection2004].
+This is particularly useful for confirmatory LCA,
+as it allows one to quantify the support for the theoretical model.
+IC-weights are calculated by calling `ic_weights()` on the model fit table.
+Note, however, that IC-weights will (strongly) favor the model with the lowest IC value;
+the scree plot approach above may be more suitable to select the most parsimonious model with adequate fit.
 <!-- The general objective of information criteria is to evaluate the model's  -->
 <!-- out-of-sample predictive accuracy, -->
 <!-- thus curtailing overfitting. -->
@@ -973,487 +1022,491 @@ All three ICs are available in `tidySEM` output.
 <!-- simpler models and indicate worse fit when a predictor, or its added complexity  -->
 <!-- is unnecessary [@mcelreath_statistical_2020].  -->
 
-### Nested model tests
+### Nested Model Tests
 
-Another common test of model fit is the likelihood ratio $\chi^2$
-goodness-of-fit test. However, this test is not implemented in
-`tidySEM`.
+When two models are nested, the significance of the difference in fit between these models can be tested using a Likelihood Ratio test (LR).
+The test statistic is computed as the -2 times the log of the ratio of likelihoods,
+and its degrees of freedom are equal to the difference in the degrees of freedom of the two compared models.
+Since a $k-1$-class model is nested in a $k$-class model,
+it is possible to test the difference in model fit using a LR test.
+One challenge is that the LR test statistic is not asymptotically $\chi^2$ distributed for LCA.
+The so-called Lo-Mendell-Rubin adjusted LR test (LMR) overcomes this problem by applying an ad-hoc correction to the LR [REF lo 2001].
+This test is implemented in `tidySEM`, and is part of the default output of `table_fit()`, comparing subsequent rows of the table.
 
-A disadvantage of ICs is that they are not accompanied by standard errors or 
-any measure of variability, only their absolute value. The difference between 
-two models' ICs can be rather small. The lower information criterion would 
-still indicate the better model, but if the ICs difference is very small, 
-two models can be considered "functionally equal". In such situations, the 
-interpretability of the model should take priority. 
+Another solution is to derive an empirical sampling distribution for the LR difference.
+The so-called bootstrapped Likelihood Ratio Test (BLRT) does so by simulating data from the $k-1$-class model $B$ times (e.g., 1000),
+and fitting the $k$- and $k-1$-class models to each simulated dataset [REF Nylund et al., 2007].
+The p-value of this test is the proportion of $B$ in which the LR of the models fit to simulated data exceeds the LR observed in the real data.
+Simulation studies suggest that the BLRT has greater statistical power than the LRT,
+although both performed comparably well at detecting the true number of classes [REF Nylund 2007, REF Tein 2013].
+A crucial limitation of the BLRT is that it is very computationally expensive.
+With this in mind, `table_fit()` does not provide the BLRT by default.
+Specific models can be compared using the function `BLRT()`.
 
-LCA studies commonly report -2\*log likelihood of the final class
-solution. This is a basic fit measure used to compute most information
-criteria. However, since log likelihood is not penalized for model
-complexity, it will continuously fall with the addition of more classes.
+Anecdotal experience as a statistical co-author on LCA studies suggests that both these tests tend to be liberal,
+returning significant p-values for models with more classes even when other indicators suggest that those models are overfitted (e.g., near-zero class counts).
+Other authors have reported similar experiences [@sinhaPractitionerGuideLatent2021].
+This suggests that, like existing ICs,
+LR tests might not adequately balance fit and complexity in LCA.
+Better solutions for class enumeration are thus an important target for future research.
 
-An alternative is using the bootstrapped likelihood ratio test which can
-be run using `tidySEM::BLRT()`. Currently, this test is computationally
-expensive and can be slow on most computers. A faster version of this
-test, namely an implementation of *the lazy bootstrap*
-[@van_kollenburg_lazy_2018] to `tidySEM` is being developed.
+A promising novel solution is the so-called *lazy bootstrap*,
+which is much more efficient than the BLRT because it is based on sample statistics of model-implied data generated from the $k-1$ and $k$-class models,
+rather than on fit statistics of LCA models fit to those data [@van_kollenburg_lazy_2018].
+This simulation-based approach to inference is similar to the posterior predictive p-value in Bayesian statistics,
+which describes how well each model is able to reproduce the observed correlation matrix [see @mcelreath_statistical_2020].
+One version of the lazy bootstrap is already implemented in the commercial program latentGOLD [REF].
+At the time of writing, we are developing a more general simulation-based likelihood ratio test (SBLRT) for class enumeration.
+Future versions of `tidySEM` will likely incorporate this test.
 
 ### Classification Diagnostics
 
-Best models will divide the sample into subgroups which are internally
-homogeneous and externally distinct. Classification diagnostics give us
-a way to assess the degree to which this is the case. They are separate
-from model fit indices as a model can fit the data well but show poor
-latent class separation [@masyn_latent_2013]. Classification diagnostics
-should not be used for model selection, but they can be used to
-disqualify certain solutions because they are uninterpretable.
-Interpretability should always be a consideration when considering
-different class solutions [@nylund-gibson_ten_2018].
+<!-- 1. We do not consider classes with, on average, fewer than 5 participants per parameter in a class due to potential local underidentification -->
+<!-- 1. We do not consider solutions with entropy < .90 because poor class separability compromises interpretability of the results -->
+<!-- 1. We do not consider solutions with minimum posterior classification probability < .90 because poor class separability compromises interpretability of the results -->
+<!-- Nevertheless, researchers can set an a-priori threshold for the minimum proportion of cases per class, -->
+<!-- for example by considering only solutions with a number of participants at least five times as large as the number of parameters per class. -->
+Classification diagnostics assess whether the classes identified by LCA are distinct and clearly separable.
+These diagnostics are not model fit indices and should not be used for class enumeration,
+because a model can fit the data well and still show poor latent class separation [@masyn_latent_2013].
+However, classification diagnostics can be used to eliminate models:
+If one analysis goal is to interpret properties of (members of) classes,
+it makes sense to only consider models that classify well [@nylund-gibson_ten_2018].
+Classification diagnostics should thus not be used for model selection, but they can help restrict the search space of acceptable models.
 
-Three important classification diagnostics provided by `tidySEM` are:
-(1) the *minimum* and *maximum* percentage of the sample assigned to a 
-particular *class*, (2) the *range of the posterior class probabilities* by most
-likely class membership, and (3) *entropy*. All three are based on posterior 
-class probabilities.
-<!-- MGV: I will work on adding average posterior class probability (AvePP) as well-->
+All classification diagnostics are derived from the posterior classification probabilities: an $n \times k$ matrix called $P$, with the probability that every individual $n$ belongs to latent class $k$.
+When classification accuracy is high, and classes are distinct,
+each individual's posterior class probabilities are high for one class, and low for the remaining classes.
+The individual classification probabilities $P$ are obtained by running `class_prob(res, type = "individual")`.
+Note that one column is added to the matrix, with each individual's most likely class membership $M$.
+$M$ is obtained by assigning each individual to the class corresponding to their maximum posterior class probability.
+<!-- Thus, if an individual has posterior probabilities `c(0.2, 0.5, 0.3)` for classes 1-3, -->
+<!-- they would be assigned to class 2 ($M = 2$). -->
+Predicted class membership $M$ is often of interest to researchers who wish to carry out follow up analyses.
+Note, however, that follow-up analyses should take classification error into account.
+The function `BCH()` does this automatically.
 
-The posterior class probability is a measure of classification
-uncertainty which can be computed for each individual, or averaged for
-each latent class. When the posterior class probability is computed for
-each individual in the dataset, it represents each person's probability
-of belonging to each latent class. For each person, the highest
-posterior class probability is then determined and the individual is
-assigned to the corresponding class. We want each individual's posterior
-class probabilities to be high for one and low for the remaining latent
-classes. This is considered a high classification accuracy and means
-that the classes are distinct. To obtain posterior class probabilities,
-run `tidySEM::class_prob()`. This function produces output comprised of
-several elements:
+The matrix $P$ can be summarized in different way.
+For example, the estimated frequency table of the latent categorical variable can be obtained by summing the posterior probabilities by class (i.e., the column sums of $P$).
+This frequency table $F_P$ is obtained by calling `class_prob(res, type = "sum.posterior"`.
+These numbers are fractional because this table takes classification error into account.
+Individuals can contribute partially to multiple classes.
 
-`$sum.posterior` is a summary table of the posterior class probabilities
-indicating what proportion of the data contributes to each class.
+Second, most likely class membership based on the highest posterior class probability, $F_M$, is obtained by running `class_prob(res, "sum.mostlikely")`.
+This is the frequency table of the variable $M$.
+Unlike $F_P$, $F_M$ ignores classification error.
+If every observation is classified with perfect accuracy,
+$F_M$ and $F_P$ are identical.
+Part of the output of `table_fit()` for LCA analyses
+are the minimum and maximum percentage of the sample assigned to a particular class, `n_min` and `n_max`, derived from $F_M$.
+This is reported by default because the smallest class proportion, `n_min`, is of particular interest.
+When the size of the smallest class is not much larger than the number of parameters per class,
+proceed with caution:
+The model might not be locally identified in that class [@depaoliMixtureClassRecovery2013].
+Existing rules of thumb have focused on smallest class size in terms of percentage of the total sample size.
+This is not particularly meaningful,
+however, as the primary concern is that small classes may comprise too few observations to accurately estimate class parameters.
+Thus, a better rule of thumb might be to ascertain that the smallest class has many more observations than the average number of parameters per class.
+Another good practice is to ensure that the smallest class has a unique and meaningful substantive interpretation.
+If the smallest class does not comprise at least a few observations per parameter, or is redundant with another larger class, a simpler solution is preferable.
 
-`$sum.mostlikely` is a summary table of the most likely class membership
-based on the highest posterior class probability. From this table, we
-compute the minimum and maximum percentage of the sample assigned to a
-particular class, , i.e. **n_min** (the smallest class proportion based
-on the posterior class probabilities) and **n_max** (the largest class
-proportion based on the posterior class probabilities). We are
-especially interested in **n_min** as if it is very small and comprised
-of few observations, the model for that group might not be locally
-identified. It may be impossible to calculate descriptive statistics for
-such a small class. Estimating LCA parameters on small subsamples might
-lead to bias in the results. Therefore, we advise caution when dealing
-with small classes.
+To assess classification accuracy, we turn to the third diagnostic table:
+The average posterior probabilities by most likely class membership, $P_{p_{(M = m)}}$, `class_prob(res, type = "avg.mostlikely")`:
+for participants assigned to one particular class (rows) according to $M$,
+this table gives the mean probability of being assigned to any class (columns).
+This table is obtained by calculating the column means of $P$ for the 
+$k$ subsets of observations with most likely class of $M = 1 \ldots k$.
+The diagonal represents the probability that observations in each class will be correctly classified.
+<!-- Mauricio: Can you fact-check this?!? I really struglle here -->
 
-`$mostlikely.class` is a table with rows representing the class the
-person was assigned to, and the columns indicating the average posterior
-probability. The diagonal represents the probability that observations
-in each class will be correctly classified. If any of the values on the
-diagonal of this table is low, we might consider not to interpret that
-solution. In `tidySEM` we use the diagonal to compute the range of the
-posterior class probabilities by most likely class membership which
-consists of the lowest class posterior probability (**prob_min**), and
-the highest posterior probability (**prob_max**). Both **prob_min** and
-**prob_max** can be used to disqualify certain class solutions, and are
-a convenient way to summarize class separation in LCA. We want both
-**prob_min** and **prob_max** to be high as that means that for all
-classes the people who were assigned to that class have a high
-probability of being there. **prob_min** is especially important as it
-can diagnose if there is a class with low posterior probabilities which
-could make one reconsider that class solution.
+The table of classification probabilities for the most likely latent class $M$ by latent class, $P_{p_{(M = m | C = c)}}$ is similar to the aforementioned table $P_{p_{(M = m)}}$,
+except that it accounts for classification uncertainty.
+If $C$ is the true class of an observation, which is imperfectly measured,
+and $M$ is the most likely class,
+then this table shows the probability of an observation being assigned to class $m$ in $M$, given that its true class is $c$ in $C$, or $p(M=m|C=c)$.
+Values on the diagonal can thus be conceptualized as the reliability with which each level of the categorical latent variable is measured by $M$,
+and off-diagonal elements can be conceptualized as measurement error.
+<!-- Mauricio: Can you fact-check this?!? I really struglle here -->
+The minimum and maximum of the diagonal of this table are given by default as part of the output of `table_fit()` for LCA analyses (`prob_min` and `prob_max`).
+These probabilities are of particular interest because they conveniently summarize classification accuracy per class.
+Both probabilities should be high, as this means that all classes are reliably classified.
+If the minimum probability is low,
+there is at least one class with poor classification accuracy.
 
-`$avg.mostlikely` contains the average posterior probabilities for each
-class, for the subset of observations with most likely class of 1:k,
-where k is the number of classes.
+Finally, class separability can be summarized in a single statistic:
+the entropy criterion [REF].
+<!-- Celeux, G., & Soromenho, G. (1996). An entropy criterion for assessing the number of clusters -->
+<!-- in a mixture model. Journal of Classification, 13, 195-212. -->
+In physics, high entropy refers to maximum randomness or uncertainty,
+and low entropy corresponds to a strict arrangement of the units of study.
+Applied to LCA, high entropy means that classes are completely indistinguishable; every individual has equal probability of being in any class.
+Low entropy, by contrast, means that classes are fully separated: every individual has a near-one probability of being in one class only, and near-zero probability of being in any other class.
+Crucially, in `tidySEM`, the entropy criterion is defined as 1-entropy (a convention originating in Mplus).
+Its interpretation is reversed;
+0 means the model classification is no better than chance,
+and 1 means perfect classification. 
+There are no rules of thumb for entropy,
+because entropy is also sensitive to the sample size (entropy tends to be lower in larger samples),
+number of latent classes (entropy tends to be lower for higher number of classes), 
+and number of indicators.
+Like other classification diagnostics,
+entropy is not a model fit measure and should not be used for model selection [@masyn_latent_2013].
+However, it can be used to disqualify certain solutions if the goal is to identify clearly distinct classes.
 
-`$individual` is the individual posterior probability matrix, with
-dimensions n (number of cases in the data) x k (number of classes). 
-Additionally, it includes the `predicted` class as a function of the highest 
-predicted probability. Individual class probabilities and/or predicted class 
-are often useful to researchers who wish to carry out follow up analyses. 
+### Labelling Classes
 
-Entropy is a summary measure of posterior class probabilities across
-classes and individuals. It ranges from 0 (model classification no
-better than random chance) to 1 (perfect classification). As a rule of
-thumb, values above .80 are deemed acceptable and those approaching 1
-are considered ideal. An appropriate use of entropy is that it can
-disqualify certain solutions if class separability is too low. Entropy
-was not built for nor should it be used for model selection during class
-enumeration [@masyn_latent_2013].
+Class names should be chosen to accurately reflect theoretically relevant characteristics of group membership.
+These class names should aid the interpretation of the class solutions and serve as a shorthand throughout the manuscript.
+For example, one study used a dual-trajectory LCGA of cognitive and affective empathy development with gender as a covariate.
+Although this model has dozens of parameters,
+the resulting classes were labeled low, average, and high empathy because level differences were the most distinguishing feature.
+However, overly simplistic and general class names can be misleading, a phenomenon known as the *naming fallacy* [@weller_latent_2020].
+For example, it would be misleading to call one group "low empathy" and another group "medium empathy" if the empathy differences were non-significant,
+or if other differences, like the effect of the covariate gender, were more substantial than level differences.
+One way to avoid the naming fallacy is comprehensively reporting model parameters,
+and explicating that class names are just a shorthand.
 
-**n_min**, **n_max**, **prob_min**, **prob_max**, and **entropy** and
-can be obtained using `tidySEM::table_fit()`.
+When labeling classes, it is important to note that LCA models are identified up to the class order.
+<!-- This means that, if an LCA model has converged on the global optimum solution, -->
+<!-- its results are stable if the analysis is replicated. -->
+This means that the order of classes is arbitrary and may change if the analysis is replicated.
+A simple solution to ensure replicable results is setting a random seed before fitting the model, using `set.seed()`.
+This will ensure that the classes stay in the same order upon replication,
+but that may not be the preferred order for, e.g., interpreting the results.
+To address this problem, the function `mx_switch_labels()` can be used.
+By default, the function orders classes from largest to smallest class count - but classes can also be ordered by values of a specific parameter (e.g., the mean intercept in a latent class growth model).
+Note that label switching is a much bigger problem when using Bayesian estimation,
+where it can occur during model estimation.
+This is beyond the scope of the present paper.
 
-### Interpreting Class Solutions
+### Follow-up Analyses
 
-An important outcome of LCA are conditional item probabilities, also
-known as class-specific item probabilities [@masyn_latent_2013],
-conditional response, or conditional solution probabilities
-[@geiser_data_2012]. They indicate the probability of an item being
-endorsed given that the observation belongs to a particular latent
-class. Conditional item probabilities can be obtained using
-`tidySEM::table_prob()`. If a particular item is endorsed by two or more
-classes at markedly different rates, it is said to discriminate well
-between the classes and is consequently considered a good indicator.
-Classes are considered highly homogeneous with respect to an item when
-for a particular item there is a distinct difference in conditional item
-probabilities for two or more classes. For instance, if an item is
-endorsed below 30% for one class and above 70% for another class, the
-classes have high homogeneity with respect to this item
-[@masyn_latent_2013]. Conditional item probabilities are the analogue of
-mean and standard deviation when the indicators are binary or ordinal.
+LCA is rarely performed in isolation;
+often, researchers wish to relate class membership to auxiliary variables, or even auxiliary models.
+It is important to keep in mind that model-implied class membership is subject to classification error.
+Treating class membership as an observed variable in follow-up analyses disregards this error.
+The results will be biased,
+except when class separation is very high - as indicated by high (near 1) entropy and minimum posterior classification probability.
+It is therefore important to account for classification error.
 
-A problem which can occur is that of inadmissible solutions. With binary
-indicators, LCA is modeling a cross-table with all the predictors. The
-problem with such cross-tables is that they will often contain empty
-cells, i.e. combinations of responses that never occur together. This
-problem is reflected by extreme conditional item probabilities (as in
-exactly 0 or 1). Such boundary parameter estimates could indicate that
-the solution is invalid [@geiser_data_2012]. Boundary parameter
-estimates can also happen with continuous indicators. For instance, if
-we have a zero-inflated normal distribution and a two class solution,
-one class might have the mean of zero and its standard deviation cannot
-be determined since there is little variance. This too could be a sign
-of an invalid solution, warn that too many classes were extracted, or
-indicate a local optimum [@geiser_data_2012].
+There are several different ways to do follow-up analyses in latent class analysis (LCA) while accounting for classification error.
+At present, the so-called BCH method is considered one of the best approaches [after its creators, REF].
+It has been implemented in `tidySEM`.
+The advantage of the BCH method is that it not only allows for the comparison of individual variables, but also entire auxiliary models across latent classes.
 
-### Label Switching
 
-The final class solution will usually discover and enumerate several
-classes. The class ordering, however, is completely arbitrary. The class
-labeled as Class 1 in one solution may become Class 2 or Class 3 in
-another model, even when the only difference between the models is in
-their starting values. Label switching is something to be mindful of
-when comparing different LCA models [@masyn_latent_2013].
+<!-- Using posterior class probabilities: In LCA, individuals are assigned to classes based on their maximum posterior class probabilities. However, posterior class probabilities can be used to assess the degree of uncertainty in class assignment. By using posterior class probabilities rather than discrete class assignments, follow-up analyses can account for classification error. -->
 
-The order of clusters is nondeterministic when using K-means in
-`tidySEM`. Therefore label switching is still a consideration. A simple
-solution to this is setting a random seed number one line prior to
-fitting the model. We advise `tidySEM` users to always do so in order to
-circumvent label switching.
-
-Class names should be chosen to accurately reflect group membership,
-as theoretically relevant names according to the interpretation of the class 
-solutions. Overly simplified and generalized class names may prove misleading 
-to both audiences and researches alike leading to what is known as a naming
-fallacy [@weller_latent_2020].
+<!-- One way to account for classification error in follow-up analyses is using the three-step method. The first step is to estimate the latent class model using data on observed variables. This step produces estimates of the class-specific probabilities for each observed variable and the class membership probabilities for each individual. The second step is to use the estimated model to classify each individual into the class that maximizes their posterior class probability. This results in a set of discrete class assignments. The third step is to adjust the follow-up analyses for classification error. This can be done by using techniques such as weighting, matching, or regression adjustment, which take into account the posterior class probabilities and the uncertainty of class assignment. -->
 
 ## Best Practices in Reporting
 
 Among studies using LCA, reporting practices vary significantly
-[@weller_latent_2020]. Various authors have tried to improve and
+[@weller_latent_2020].
+Various authors have tried to improve and
 standardize ways of reporting LCA [e.g. @masyn_latent_2013;
 @weller_latent_2020], but more work is needed. 
-<!-- This does not belong here: -->
-<!-- @van_lissa_worcs_2020 -->
-<!-- developed WORCS, a workflow for open reproducible code in science. WORCS -->
-<!-- consists of step-by-step guidelines for research projects based on the -->
-<!-- TOP-guidelines developed by @nosek_promoting_2015. WORCS workflow can be -->
-<!-- easily implemented in R in form of an R package which facilitates -->
-<!-- preregistration, article drafting, version control, citation and -->
-<!-- formatting, among others [@van_lissa_worcs_2020]. -->
 
-TOP-guidelines emphasize the use of comprehensive citation (including
-referencing the software used in the analysis), as well as code and data
-sharing wherever possible [@nosek_promoting_2015]. @van_lissa_worcs_2020
-If the original data cannot be shared, sharing synthetic data is a good alternative.
-The function `worcs::synthetic()` provides a generic, non-parametric method to create a synthetic copy of data.
-When synthesizing data for LCA, it is also possible to synthesize data directly from the model.
-LCA models constructed in `tidySEM` are estimated using `OpenMx`,
-and as such, can benefit from all existing functions in that package.
-To synthesize data from a mixture model `mix`, use the function `mxGenerateData(mix)`.
+### Open and Reproducible Science
 
-the entire research project is made reproducible so that others may
-download it and reproduce it with just one click; for guidance, see
-@van_lissa_worcs_2020.
+<!-- TOP-guidelines emphasize the use of comprehensive citation (including -->
+<!-- referencing the software used in the analysis), as well as code and data -->
+<!-- sharing wherever possible [@nosek_promoting_2015]. @van_lissa_worcs_2020 -->
+<!-- If the original data cannot be shared, sharing synthetic data is a good alternative. -->
+<!-- The function `worcs::synthetic()` provides a generic, non-parametric method to create a synthetic copy of data. -->
+<!-- When synthesizing data for LCA, it is also possible to synthesize data directly from the model. -->
+<!-- LCA models constructed in `tidySEM` are estimated using `OpenMx`, -->
+<!-- and as such, can benefit from all existing functions in that package. -->
+<!-- To synthesize data from a mixture model `mix`, use the function `mxGenerateData(mix)`. -->
 
-As the open science movement is gaining momentum, researchers are
-becoming increasingly aware how important it is that analyses can be
-reproduced and audited. In line with open science principles, one of the
-suggested reporting standards relates to reproducible code. In this
-context, it is important to note that user-friendly methods for
-estimating LCA models have predominantly been available in commercial
-software packages (e.g., *Mplus* and *Latent GOLD*). A potential
-downside of commercial software is that it restricts the ability to
-reproduce analyses to license holders, and prevents auditing research
-because the underlying source code is proprietary. To overcome these
-limitations, the present paper introduces new user-friendly functions in
-the `tidySEM` R-package that can be used to estimate a wide range of LCA
-models using the free, open-source R-package `OpenMx` as the backend. The 
-reporting guidelines described in this paper are adopted in `tidySEM` by 
-default. The `tidySEM` R-package thus makes advanced mixture modeling based 
-on best practices widely accessible, and facilitates the adoption of the
-estimation and reporting guidelines described in this paper.
+<!-- the entire research project is made reproducible so that others may -->
+<!-- download it and reproduce it with just one click; for guidance, see -->
+<!-- @van_lissa_worcs_2020. -->
+
+<!-- As the open science movement is gaining momentum, researchers are -->
+<!-- becoming increasingly aware how important it is that analyses can be -->
+<!-- reproduced and audited. In line with open science principles, one of the -->
+<!-- suggested reporting standards relates to reproducible code. In this -->
+<!-- context, it is important to note that user-friendly methods for -->
+<!-- estimating LCA models have predominantly been available in commercial -->
+<!-- software packages (e.g., *Mplus* and *Latent GOLD*). A potential -->
+<!-- downside of commercial software is that it restricts the ability to -->
+<!-- reproduce analyses to license holders, and prevents auditing research -->
+<!-- because the underlying source code is proprietary. To overcome these -->
+<!-- limitations, the present paper introduces new user-friendly functions in -->
+<!-- the `tidySEM` R-package that can be used to estimate a wide range of LCA -->
+<!-- models using the free, open-source R-package `OpenMx` as the backend. The  -->
+<!-- reporting guidelines described in this paper are adopted in `tidySEM` by  -->
+<!-- default. The `tidySEM` R-package thus makes advanced mixture modeling based  -->
+<!-- on best practices widely accessible, and facilitates the adoption of the -->
+<!-- estimation and reporting guidelines described in this paper. -->
+
+Journals and funding bodies increasingly require research to be open and reproducible.
+For instance, many journals (and the APA) have adopted the TOP guidelines, which recommend comprehensive citation of literature, software, and data sources;
+sharing data and analysis code required to exactly reproduce analyses,
+and pre-registering study plans prior to data collection or analysis [@nosekTransparencyOpennessPromotion2016a].
+A key advantage of using open source software for LCA is that, compared to commercial software, it enables much greater adherence to open science principles.
+Sharing code has limited utility if it can only be evaluated in commercial software,
+as this restricts the ability to reproduce analyses to license holders,
+and prevents auditing research because the underlying source code is proprietary.
+The `tidySEM` package enables performing LCA in free open source software,
+thus increasing the utility of shared code.
+
+Adopting FOSS makes it possible to conduct a fully reproducible LCA analysis compliant with best practices in open science.
+The Workflow for Open Reproducible Code in Science describes how to create a fully reproducible research archive,
+and the `worcs` R-package automates many of the steps involved [@vanlissaWORCSWorkflowOpen2021a].
+<!-- brings down the learning curve by implementing best practices for creating a reproducible digital research repository. 
+-->
+This workflow is based on three principles: First,
+the paper (or analysis section) is written as a *dynamic document* that contains both prose and analysis code.
+Results are automatically rendered as text, tables, and plots.
+Second,
+the research archive is *version controlled*, which means that the entire historical record of the project is retained.
+This version controlled archive can be made public.
+Third, *dependency management* ensures that all software used is documented, including its version number and provenance.
+Without dependency management, code might not work (for example, because it is not clear where certain functions come from),
+or its results may change when some dependencies are updated.
+By combining `tidySEM` and `worcs`,
+it is possible to conduct a fully reproducible LCA analysis compliant with best practices in open science.
+
+An additional argument for sharing data in the context of LCA is that reproducing LCA analyses requires individual participant data,
+not just sufficient statistics like many other methods (i.e., a correlation or covariance matrix).
+If the original data cannot be shared,
+sharing synthetic data at least enables reproducing and reusing analysis code.
+The `worcs` package provides a generic, non-parametric method to create a synthetic copy of data when data cannot be shared.
+It is also possible to synthesize data directly from the LCA model using `mxGenerateData()`,
+which often provides a better basis for reproducing the LCA.
+<!-- In sum, open science practices are particularly relevant for LCA, -->
+<!-- and the use of FOSS enables making analyses fully reproducible. -->
+
+<!-- Furthermore, the FAIR principles focus on *how* research output is shared, -->
+<!-- including data, code, and preprints. -->
+<!-- These outputs should be Findable in standardized search-indexed repositories, like [psyarxiv.org](https://psyarxiv.org) or [osf.io](https://osf.io), -->
+<!-- made Accessible by using open source software and file formats, -->
+<!-- made Interoperable so that others can build upon prior work, -->
+<!-- and licensed with permission for Reuse, thus enabling others to use and cite the work. -->
+
+### Preregistration
+
+LCA analyses inherently involve some subjectivity,
+because of the potential for disagreement between criteria for class enumeration and the lack of objective fit indices.
+In our experience, reviewers (and authors) often disagree about which criteria should be used.
+Preregistering the class enumeration criteria as part of the analysis plan reduces disagreement and eliminates concerns about cherry picking fit measures after the results are known.
+It is particularly important to pre-specify the criteria that will be used to determine the maximum number of classes,
+because there is a risk that information criteria and likelihood ratio tests will suggest a larger number of classes, even if there are concerns about overfitting, classification accuracy, or model interpretability.
+
+The aforementioned Workflow for Open Reproducible Code in Science facilitates creating a preregistration.
+More interestingly, it also enables creating a *Preregistration As Code* (PAC):
+A draft paper with reproducible analysis section based on fake (synthetic or simulated) data [@peikertReproducibleResearchTutorial2021].
+When the real data are accessed or collected,
+the analysis is simply reproduced with this new data file,
+and the results in the paper are automatically updated.
+PACs are quite unambiguous; the selection of the final model can even be automated by hard-coding the criteria into the analysis section.
+For an example of PAC, see @vanlissaComplementingPreregisteredConfirmatory2022.
+
+### Reporting Model Fit
+
+The function `table_fit()` reports an overview of fit indices, customized for LCA.
+In reporting model fit, it is important, firstly, to report the effective sample size, which should be the same for all models in order to compare relative fit measures.
+Secondly, it should be clearly reported,
+for example, in the strategy of analyses,
+which parameters are estimated across and within classes.
+In case of doubt, a full overview of the parameters is given by the `coef()` and `table_results()` functions.
+The number of parameters for each model should be included in the fit table.
+Thirdly, it is important that readers can assess the relative fit of different solutions.
+The most fundamental fit measure is the $-2LL$,
+as this is the quantity optimized during estimation.
+From these statistics, information criteria can be computed.
+By default, `table_fit()` includes the AIC, BIC, and saBIC.
+We suggest to report at least the BIC, as it is ubiquitous, grounded in theory, and performs well in class enumeration.
+
+Classification diagnostics should be reported,
+as they may determine whether models are excluded from consideration.
+Of particular interest is the diagonal of either the average posterior probabilities by most likely class membership,
+or of the most likely class membership by true class membership.
+The former indicates the average probability that individuals belong to the class they were assigned to,
+and the latter indicates the probability that individuals are assigned to a class if they actually belong to that class.
+By default, `table_fit()` reports the latter as `prob_min` and `prob_max`.
+The entropy is also of interest as an overall measure of class separation.
+Finally, the range of proportions of cases assigned to each class is important;
+the minimum proportion of cases per class can be used to diagnose classes that are too small to be locally identified or practically relevant [see @depaoliMixtureClassRecovery2013].
+By default, `table_fit()` reports the minimum and maximum proportion of cases,
+based on most likely class membership.
+Fifth, the LMR or BLRT can be reported if it is part of the class enumeration strategy, using `lr_lmr()` and `BLRT()`.
+By default, `table_fit()` reports the VLM for subsequent models in the table.
+
+### Reporting results
+
+Reporting LCA results involves reporting the class proportions,
+obtained via `class_prob(res, "sum.posterior")`,
+and model parameters, obtained via `table_results(res)`.
+The class proportions are obtained by standardizing the class weights:
+A $k$-class model has $k-1$ free class weights,
+and one weight constrained to 1 for model identification.
+The free weights are included in the model results,
+but are redundant with the aforementioned class proportions.
+Other model parameters may include means, (co)variances, regression coefficients (rarely), and thresholds for ordinal indicators.
+It is good practice to report the point estimate and confidence interval of these parameters.
+Although it is conventional to report p-values as well,
+note that the default p-values tests the hypothesis that the parameter is equal to zero.
+This hypothesis may be irrelevant in LCA when the focus is on parameter differences between classes.
+Reporting standard errors allows readers to compute p-values for other more informative hypotheses.
+Thresholds are more readily interpretable when converted to conditional item probabilities, using the function `table_prob()`.
+These indicate the probability of an item being
+endorsed given that the observation belongs to a particular latent [@geiser_data_2012].
+
+### Inference
+
+As mentioned before, the results table included null-hypothesis tests for all parameters by default.
+Whether these tests are informative depends on the study goals and scale of the data.
+For example, if LCA indicators are mean-centered,
+then the p-values of class-specific means indicate whether the mean in that class differs significantly from the sample average.
+It is also possible to test more informative hypotheses,
+using the function `wald_test()`.
+Equality-constrained informative hypotheses are specified using the `bain` syntax,
+and evaluated on the model object.
+This enables testing theoretical hypotheses - for example, if specific values for class-specific means had been hypothesized.
+The same function allows testing parameters for equality, either within or across classes.
 
 ### Visualization
 
-Plots can greatly improve the interpretability of LCA models. There are
-several stages where this is an important consideration.
+In an informal review of published graphics for LCA,
+we found that most visualizations focused on the estimated model parameters,
+displaying class means as points connected by lines, with point shape and linetype indicating class membership.
+Note that the lines introduce spurious information.
+Furthermore, they omit uncertainty about class means and do not illustrate how well the model describes the data.
 
-First, in class enumeration, we want to compare several competing class
-solutions. This can be done by means of the AIC and BIC. Here, we
-suggest using an elbow plot with the $K-class\ solution$ on the X-axis,
-and information criteria value on the Y-axis. For continuous variables, 
-density plots can aid class enumeration. We demonstrate how to implement 
-both elbow and density plots in the Tutorial subsection of this paper.
+The Grammar of Graphics addresses best practices in visualization, which we summarize here with specific emphasis on the application to LCA.
+Most importantly, good graphics start with the *data* in mind.
+Visualizing raw data allows one to assess class separability,
+and which aspects of the data are captured well or poorly by the model.
+A second consideration are which *aesthetics* to use.
+In a color plot, class membership can be indicated by color.
+In a black and white plot, it can be indicated by linetype and point shape.
+A third consideration is which geometric objects (geoms) to use.
+As mentioned before, common practice is to plot parameter estimates as points, and connect these points with lines.
+Points are suitable geoms to visualize point estimates and raw data.
+For continuous indicators, additional relevant geoms include error bars for standard errors and standard deviations,
+and density plots to visualize the distribution of raw data (smoothed with a kernel density function).
+In two dimensions, (co)variances can be visualized as ellipses.
+Finally, when plotting multiple class solutions,
+it makes sense to *facet* a plot into multiple panels by class solution.
+The plots in `tidySEM` are based on best practices as outlined in the grammar of graphics,
+and are implemented in `ggplot2`.
+As such, these plots can be further modified just like any other `ggplot2` object.
+One remaining limitation is that these best practices have only been implemented for LCA with continuous indicators, in `plot_profiles()`, `plot_density()` and `plot_bivariate()`, and for LCGA in `plot_growth()`. Plots for LCA with ordinal indicators are still rudimentary, more work remains to be done in this area.
+<!-- Plots can greatly aid the interpretability of LCA models. There are several stages where this is an important consideration. -->
+<!-- Visualization can aid class enumeration by means of a scree plot for the chosen information criterion. -->
+<!-- Calling `plot()` on the LCA object renders a scree plot by default, with the $1:K$-class solutions on the X-axis, -->
+<!-- and an IC on the Y-axis. -->
+<!-- The preferred model is typically either the one with the minimum IC value, -->
+<!-- or the inflection point at which the line graph flattens out. -->
+<!-- For continuous variables, plots can also aid in class enumeration and interpretation of the chosen solution. -->
+<!-- A good plot has the following properties:  -->
 
-Second, once we have decided on the final class solution, we want to
-interpret the response patterns on the indicators for each latent class.
-While `tidySEM` can create a table showing the probability of each
-item's response endorsement (using `tidySEM::table_prob`), it may be
-easier to inspect these probabilities visually. For this reason, we
-created `ggplot2::plot_prob()`. The resulting shows response patterns on
-all indicators for each group. We give an example of this plot in the
-Tutorial subsection.
+<!-- Second, once we have decided on the final class solution, we want to -->
+<!-- interpret the response patterns on the indicators for each latent class. -->
+<!-- While `tidySEM` can create a table showing the probability of each -->
+<!-- item's response endorsement (using `tidySEM::table_prob`), it may be -->
+<!-- easier to inspect these probabilities visually. For this reason, we -->
+<!-- created `ggplot2::plot_prob()`. The resulting shows response patterns on -->
+<!-- all indicators for each group. We give an example of this plot in the -->
+<!-- Tutorial subsection. -->
 
-## Myths and misunderstandings
+## Potential Pitfalls
 
-Relatedly, a recent publication claimed that an assumption of mixture
+Based on our experience in statistical consultations,
+there are a few common pitfalls and misunderstandings about LCA.
+First, perhaps the most common problem we see in consultations is treating ordinal data as continuous.
+As explained previously, LCA for ordinal indicators should be used for Likert-type scales and other data with few unique values.
+A second common pitfall is omitting the 1-class solution from class enumeration.
+If a one-class solution has better or similar fit to models with a higher number of classes, LCA may not be appropriate.
+A one-class solution should thus always be included as a benchmark.
+Third, although it is widely understood that classification diagnostics (e.g., entropy, posterior probability, class counts) are not class enumeration criteria,
+they still have a role in class enumeration.
+Specifically, they can be used to exclude solutions that do not meet predefined criteria from consideration.
+Fourth, previous reporting standards called for reporting of sample descriptive statistics [see @schreiberLatentClassAnalysis2017].
+While we agree that this is due dilligence,
+sample descriptives have two limitations in the context of LCA:
+they are not sufficient to check or reproduce the analysis,
+and many use cases of LCA assume that the population is heterogeneous, which limits the utility of whole-sample descriptives.
+These two limitations can be addressed by data sharing and reporting descriptive statistics for each latent class separately.
+Fifth, a recent publication mistakenly stated that an assumption of mixture
 models is that observed indicators are normally distributed
-[@spurk_latent_2020]. This is incorrect. When the number of classes is
-greater than one, Gaussian mixture models assume that the observed indicators 
-are a mixture of multiple (multivariate) normal distributions. In our shoe
-size example, it can be seen that the population distribution is
-comprised of two normal distributions. When examined visually, the
-population distribution is evidently bimodal. The Shapiro-Wilk normality
-test ($W `r report(shoesize_shapiro[["statistic"]])`$, $p `r report(shoesize_shapiro[["p.value"]])`$ ) rejects the null hypothesis that the
-sample comes from a normally distributed population. Yet, this is a
-prototypical example of a mixed population distribution where LCA can
-discover latent groups. If the population distribution were instead
-normal, there would be no classes to extract as the whole population
-would belong to a single (homogeneous) class.
-
-A recent paper suggested maximum likelihood with robust standard errors
-should be used when the observed indicators are not normally distributed
 [@spurk_latent_2020].
-This statement is incorrect;
-LCA does not have an assumption of marginal normality, and there is - to our knowledge - no literature on the merits of robust standard errors for LCA.
+This is incorrect, as evident from the shoe size example:
+When the number of classes is greater than one,
+Gaussian mixture models assume that the distribution of observed indicators is a *mixture of multiple normal distributions*.
+<!-- In our shoe -->
+<!-- size example, it can be seen that the population distribution is -->
+<!-- comprised of two normal distributions. When examined visually, the -->
+<!-- population distribution is evidently bimodal. The Shapiro-Wilk normality -->
+<!-- test ($W `r report(shoesize_shapiro[["statistic"]])`$, $p `r report(shoesize_shapiro[["p.value"]])`$ ) rejects the null hypothesis that the -->
+<!-- sample comes from a normally distributed population. Yet, this is a -->
+<!-- prototypical example of a mixed population distribution where LCA can -->
+<!-- discover latent groups. -->
+If the indicators were normally distributed,
+there would be no classes to extract as the whole population
+would belong to a single (homogeneous) class.
+Finally, the same paper suggested that robust standard errors
+should be used when indicators are not normally distributed
+[@spurk_latent_2020].
+This is also incorrect;
+to our knowledge, there is no literature on the merits of robust standard errors for LCA.
+Finally, we caution against step-wise class enumeration,
+whereby additional models are estimated until the selected class enumeration criteria no longer show improvement of model fit [e.g., see @spurk_latent_2020].
+This practice is problematic,
+because it is possible that an even higher number of classes would lead to a (significant) improvement in fit.
+Consider this thought experiment: there exist two groups of three relatively similar classes each (six in total).
+Step-wise class enumeration shows improvement in model fit going from a 1-class to 2-class model: the two classes capture the difference between the two groups of three classes.
+Then, no noteworthy improvement in model fit is found for adding more classes, until the 6-class solution is reached.
+In the step-wise approach, the analysis would be terminated after the 2-class model - even though the correct number of classes is 6.
 
-<!-- and may lead readers -->
-<!-- to believe that they must use commercial software, as robust maximum -->
-<!-- likelihood is currently only implemented in Mplus and LatentGOLD. As -->
-<!-- explained before, mixture modeling assumes that observed data are a -->
-<!-- mixture of (multivariate) normal distributions; thus, the observed -->
-<!-- indicators will likely not be normally distributed. -->
-<!-- CJ: there is no literature that says robust standard errors are better with latent class analysis? -->
+## SMART-LCA Checklist
 
-<!-- Treating ordinal data as continuous -->
-<!-- People omitting the 1-class solution in class enumeration -->
+The best practices discussed in this paper are summarized in the SMART-LCA Checklist: Standards for More Accuracy in Reporting of different Types of Latent Class Analysis.
 
-# Tutorial
-
-This is an example of an exploratory LCA using `tidySEM`.
-
-## Loading the Dataset
-
-In this example, we use *data_mix_ordinal*, a simulated data for mixture
-modeling with ordinal indicators. This dataset is built-in to
-`tidySEM`. For more information about the dataset, type
-`?tidySEM::data_mix_ordinal` into the R console after loading the
-`tidySEM` using library().
-
-We load the dataset and convert the indicators into ordered factors.
-
-```{r, include = TRUE, eval=F}
-# Load required packages
-library(tidySEM) 
-# Load data
-df <- data_mix_ordinal
-```
-
-## Exploring the Data
-
-An important step to preceding any statistical analysis is data
-exploration. Here we use `tidySEM::descriptives()` to describe the
-dataset we are using.
-
-```{r, include = TRUE, eval=F}
-tidySEM::descriptives(df)
-```
-
-As we can see, the output includes various descriptives of our dataset.
-Special attention should be paid to examining the pattern of
-missingness, as discussed in the *Handling missing data* section of this
-paper. In our example, we see that there are no missing values, hence we
-proceed with our analysis.
-
-## Conducting Latent Class Analysis
-
-Before we fit a series of LCA models, we set a random seed using
-`set.seed()`. This is an important
-step as there is some inherent randomness in the LCA computations, and
-having the same seed number ensures that two separate researcher obtain
-exactly the same results when fitting LCA models.
-
-Finally, we reach the step of fitting LCA models.
-As all variables are ordinal, we can use the convenience function
-`tidySEM::mx_lca()`, which is a wrapper for the generic function `mx_mixture()`,
-optimized for latent class analysis with ordinal data.
-Any mixture model can be specified through `mx_mixture()`,
-but at the time of writing, there are two more wrapper functions for specialized models:
-`mx_profiles()`, for latent profile analysis, and `mx_growth_mixture()`, for latent growth analysis and growth mixture models.
-All of these functions have arguments `data` and number of `classes`.
-All variables in `data` are included in the analysis,
-so relevant variables must be selected first.
-Below, we fit 1 to 4 class solutions.
-<!-- Depending on your computer's computational power, -->
-<!-- this might take a while. -->
-<!-- As `tidySEM::mx_lca()` run several models at a time, the resulting object `res`  -->
-<!-- is a `mixture_list` class where each $K$ class solution is a list element, or -->
-<!-- more specifically an `OpenMx` model (`MxModel`). -->
-
-```{r fitting_LCA, include = TRUE, eval=F}
-set.seed(123) # setting seed 
-res <- mx_lca(data = df, classes = 1:4) # fitting LCA 1 to 4 class solutions
-```
-
-<!-- Notice that the model run 10 times for each $K$ class solution. -->
-<!-- This way we can choose the best fitting model across all the solutions. -->
-<!-- In this example, we see that all models converged without issues.  -->
-<!-- We can inspect the class of resulting objects. -->
-
-```{r, include = TRUE, eval=F, echo = F}
-is(res)
-is(res[[1]])
-```
-
-## Class Enumeration
-
-In class enumeration, we want to compare a sequence of LCA models fitted
-to the data. To aid the process, we create a model fit table using
-`tidySEM::table_fit()` with the results object as the input. As the
-output contains a lot of information on each of the four fitted models,
-we select a subset of helpful model fit indices and classification
-diagnostics.
-
-```{r fit_table, include = TRUE, eval=F}
-fit_table <- table_fit(res) # model fit table
-fit_table[ , c("Name", "LL", "Parameters", 
-               "AIC", "BIC", "Entropy", 
-               "prob_min", "prob_max", 
-               "n_min", "n_max")] # our selection
-```
-
-Our selection of fit indices and classification diagnostics includes:
-
-```{r, echo=F}
-Selection <- c(
-    "Name", "LL", "Parameters", 
-    "AIC", "BIC", "prob_min", 
-    "prob_max", "n_min", "n_max")
-
-Description <- c(
-    "Number of classes $K$",
-    "Basic fit measure of the natural log of the likelihood of the data",
-    "Total number of model parameters (in all classes)",
-    "Relative fit measure: Akaike Information Criterion",
-    "Relative fit measure: Bayesian Information Criterion",
-    "Lowest average posterior class probability for class cases were assigned to",
-    "Highest average posterior class probability for class cases were assigned to",
-    "Proportion of cases in the smallest class based on posterior class probability",
-    "Proportion of cases in the largest class based on posterior class probability")
-
-selection <- cbind(Selection, Description)
-
-knitr::kable(selection, format = 'pipe', 
-             caption = "Selection of Fit Indices and 
-                        Classification Diagnostics")
-```
+1. Report item descriptives
+    + Are all items on similar scales?
+    + Is the measurement level correctly coded?
+    + Any other reasons why the observed (multivariate) distribution could not be described by the LCA (e.g., extreme skew)?
+2. Report missingness
+    + Proportion of missingness per variable
+    + MAR test
+    + Missing data method for handling missingness (typically FIML)
+3. Report model specification
+    + In exploratory LCA, compare all sensible alternative specifications
+    + In confirmatory LCA, justify alternative models on theoretical grounds
+    + Check that the observed (multivariate) distribution could theoretically be captured by the specified model (see #1).
+4. Class enumeration
+    + Justify the maximum number of classes $K$
+    + In exploratory LCA, estimate 1:$K$ classes
+    + In confirmatory LCA, estimate the theoretical number of classes, a 1-class model, and optionally other numbers of classes for comparison
+5. Justify the (preregistered) criteria used for class enumeration, which can include:
+    + Information criteria
+    + LR tests
+6. Justify the (preregistered) criteria used to eliminate models from consideration, including:
+    + Classification diagnostics
+    + Local identifiability (acceptable number of observations per parameter in each class)
+    + Model convergence
+    + Theoretical interpretability of the solution
+7. Report the following:
+    + Fit of all models under consideration
+    + Classification diagnostics for all models under consideration
+    + All parameters of the chosen model (means, (co)variances, thresholds)
+    + Proportion of cases per class
+8. Provide an informative plot of the chosen solution
+    + Show raw data
+    + Show parameters
+    + Show confidence bounds if possible
+    + Show multivariate distributions for multivariate models, if possible
+9. Account for classification inaccuracy in follow-up analyses
+    + If entropy > .95 and posterior classification probability for each class > .95, this is less crucial
 
 
-We discussed several possible strategies to select the final class
-solution. Here, we apply our own.
+# Conclusions
 
-To aid our interpretation of the results, we create an elbow plot
-showing the trends in information criteria across four models.
-
-```{r elbow_plot, include = TRUE, message=F, warning=F, eval=F}
-library(tidyverse) # for data-wrangling
-library(ggplot2) # for plots
-
-elbow_plot <- fit_table[ , c("Name", "AIC", "BIC")] # extract ICs
-elbow_plot <- pivot_longer(elbow_plot, cols = c("AIC", "BIC"), 
-                           names_to = "IC", values_to = "Value") # to long format
-
-ggplot(elbow_plot, aes(x = Name, y = Value, group = IC))+
-  geom_point(aes(color = IC))+
-  geom_line(aes(color = IC))+
-  labs(title="Elbow Plot of Information Criteria per Class Solution", 
-       x = "Class Solution", y = " Value")+
-  scale_color_manual(name = "Information Criterion", 
-                     values = c(AIC = 'blue', BIC = 'red'))+
-  theme_minimal()
-
-```
-
-From the elbow plot, we see that AIC has a lower penalty for model
-complexity. However, we are more interested in the BIC values, which are
-similar for the one, two and three-class solutions, but the four-class
-solution fits significantly worse. For this reason, we eliminate the
-four-class solution from the selection process.
-
-Then we examine the model fit table. As expected, the -2\*log likelihood
-falls successively with each added class. As previously stated,
-classification diagnostics should not be used for model selection, but
-they can be used to disqualify certain solutions because they are
-uninterpretable. We see that prob_min and n_min for the four-class solution is
-low, knowing that this solution also has a high BIC, we disqualify this
-solution.
-
-Out of the remaining three solutions, we notice that entropy is the
-highest for the three-class solution, and it has a satisfactory prob_min
-and n_min. Based on this, we retain the three class solution in model
-selection. Note that entropy for the one-class solution will always
-equal to one, as it is 100% true that every case is in that class. Based
-on the low entropy of the two-class solution, we eliminate this model.
-
-Finally, when comparing the one and three-class solutions, we inspect
-the information criteria. For BIC, the one-class solution fits better,
-but the difference is marginal. AIC tells us that the added complexity
-of having three classes still explains the data better than a one-class
-solution. Therefore, we select the three-class solution as our
-final-class solution.
-
-## Interpreting the Final Class Solution
-
-To aid our understanding of the final class solution, we use
-`ggplot2::plot_prob()` with the results of the three-class model as the
-input. The resulting graph shows response patterns on all the indicators
-for each group.
-
-If we want to know the probability of each response option's endorsement
-for each class, we can use `tidySEM::table_prob`. These are thresholds
-for ordinal dependent variables in the probability scale.
-
-```{r plot_prob, include = TRUE, eval=F}
-plot_prob(res[[3]]) # visualizing the response patterns for the final model
-table_prob(res[[3]]) # tabulating the response patterns for the final model
-```
-
-In the plot, we can see the distributions of the response probabilities
-on the indicators for each of the three classes. For instance, we see
-that in Class 1 the most common response to u2 is 2, while in Class 2
-and Class 3 this is 0. We can also see that response 1 is a rare
-response not forming the majority in any class. Class 2 distinguishes
-itself because the majority scores the response 0 category of u3 and u4,
-while in Class 1 and 2 this is not the case. Class 3 distinguishes
-itself because the most common response to u3 and u4 is 3.
-
-We can also interpret the response patterns numerically. It is a matter of 
-preferences on how to interpret these probabilities. Here is where you would
-**name** each class, such that each response pattern is theoretically meaningful.
-
-## Extracting Posterior Class Probabilities
-
-Another step is to extract posterior class probabilities. This is done
-by the use of `tidySEM::class_prob` with the results of the final class
-solution as the input.
-
-```{r extract_Post_Class_Prob, include = TRUE, eval=F}
-probs <- class_prob(res[[3]]) # extracting the posterior class probabilities
-probs$mostlikely.class # posterior probabilities by most likely class membership
-probs$individual # individual posterior class probabilities
-```
+Write me
 
 \newpage
 
