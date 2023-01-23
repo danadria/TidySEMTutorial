@@ -197,11 +197,14 @@
 \begin{document}
 \maketitle
 
-This vignette illustrated \texttt{tidySEM}'s ability to perform latent class growth analysis, or growth mixture modeling.
-The simulated data used for this example are inspired by work in progress by Plas and colleagues,
-on heterogeneity in depression trajectories among Dutch military personnel who were deployed to Afghanistan.
-The original data were collected as part of the \emph{Prospection in Stress-related Military Research (PRISMO)} study,
-which examined of psychological problems after deployment in more than 1,000 Dutch military personnel from 2005-2019.
+This vignette illustrated \texttt{tidySEM}'s ability to perform latent class
+growth analysis, or growth mixture modeling. The simulated data used for
+this example are inspired by work in progress by Plas and colleagues, on
+heterogeneity in depression trajectories among Dutch military personnel
+who were deployed to Afghanistan. The original data were collected as
+part of the \emph{Prospection in Stress-related Military Research (PRISMO)}
+study, which examined of psychological problems after deployment in more
+than 1,000 Dutch military personnel from 2005-2019.
 
 First, we load all required packages:
 
@@ -243,15 +246,17 @@ scl.6 & 21.07 & 20.00 & 4.10 & 16.00 & 58.00 & 20.44 & 65.76\\
 
 \end{table}
 
-Note that all variables were extremely right-skewed due to censoring at the lower end of the scale.
+Note that all variables were extremely right-skewed due to censoring at
+the lower end of the scale.
 
 We can examine these distributions visually as well:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{df\_plot }\OtherTok{\textless{}{-}} \FunctionTok{reshape}\NormalTok{(df, }\AttributeTok{direction =} \StringTok{"long"}\NormalTok{, }\AttributeTok{varying =} \FunctionTok{names}\NormalTok{(df))}
-\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ scl)) }\SpecialCharTok{+} \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{time) }\SpecialCharTok{+}
-    \FunctionTok{theme\_bw}\NormalTok{()}
+\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ scl)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{time) }\SpecialCharTok{+} \FunctionTok{theme\_bw}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -259,9 +264,9 @@ We can examine these distributions visually as well:
 \includegraphics[width=0.5\linewidth]{appendices/plot_dist} \caption{ }\label{fig:unnamed-chunk-5}
 \end{figure}
 
-As this type of skew can result in convergence problems in LCGA,
-we compared several transformations to reduce skew:
-The square and cube root, log, inverse, and Box-Cox transformations.
+As this type of skew can result in convergence problems in LCGA, we
+compared several transformations to reduce skew: The square and cube
+root, log, inverse, and Box-Cox transformations.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -269,24 +274,20 @@ The square and cube root, log, inverse, and Box-Cox transformations.
 \CommentTok{\# Store original range of SCL}
 \NormalTok{rng\_scl }\OtherTok{\textless{}{-}} \FunctionTok{range}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{scl)}
 \CommentTok{\# Log{-}transform}
-\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{log }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(}\FunctionTok{log}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{scl), }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}
-    \DecValTok{1}\NormalTok{))}
+\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{log }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(}\FunctionTok{log}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{scl), }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
 \CommentTok{\# Square root transform}
-\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{sqrt }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(}\FunctionTok{sqrt}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{scl), }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}
-    \DecValTok{1}\NormalTok{))}
+\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{sqrt }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(}\FunctionTok{sqrt}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{scl), }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
 \CommentTok{\# Cube root transform}
-\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{qrt }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{scl}\SpecialCharTok{\^{}}\FloatTok{0.33}\NormalTok{, }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}
-    \DecValTok{1}\NormalTok{))}
+\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{qrt }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{scl}\SpecialCharTok{\^{}}\NormalTok{.}\DecValTok{33}\NormalTok{, }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
 \CommentTok{\# Reciprocal transform}
-\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{reciprocal }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(}\DecValTok{1}\SpecialCharTok{/}\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{scl, }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}
-    \DecValTok{1}\NormalTok{))}
+\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{reciprocal }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(}\DecValTok{1}\SpecialCharTok{/}\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{scl, }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
 \CommentTok{\# Define function for Box{-}Cox transformation}
-\NormalTok{bc }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x, lambda) \{}
-\NormalTok{    (((x}\SpecialCharTok{\^{}}\NormalTok{lambda) }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)}\SpecialCharTok{/}\NormalTok{lambda)}
+\NormalTok{bc }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x, lambda)\{}
+\NormalTok{  (((x }\SpecialCharTok{\^{}}\NormalTok{ lambda) }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{) }\SpecialCharTok{/}\NormalTok{ lambda)}
 \NormalTok{\}}
 \CommentTok{\# Inverse Box{-}Cox transformation}
-\NormalTok{invbc }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x, lambda) \{}
-\NormalTok{    ((x }\SpecialCharTok{*}\NormalTok{ lambda) }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{\^{}}\NormalTok{(}\DecValTok{1}\SpecialCharTok{/}\NormalTok{lambda)}
+\NormalTok{invbc }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x, lambda)\{}
+\NormalTok{  ((x}\SpecialCharTok{*}\NormalTok{lambda)}\SpecialCharTok{+}\DecValTok{1}\NormalTok{)}\SpecialCharTok{\^{}}\NormalTok{(}\DecValTok{1}\SpecialCharTok{/}\NormalTok{lambda)}
 \NormalTok{\}}
 \CommentTok{\# Box{-}Cox transform}
 \NormalTok{b }\OtherTok{\textless{}{-}}\NormalTok{ MASS}\SpecialCharTok{::}\FunctionTok{boxcox}\NormalTok{(}\FunctionTok{lm}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{scl }\SpecialCharTok{\textasciitilde{}} \DecValTok{1}\NormalTok{), }\AttributeTok{plotit =} \ConstantTok{FALSE}\NormalTok{)}
@@ -294,8 +295,7 @@ The square and cube root, log, inverse, and Box-Cox transformations.
 \NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{boxcox }\OtherTok{\textless{}{-}} \FunctionTok{bc}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{scl, lambda)}
 \CommentTok{\# Store range of Box{-}Cox transformed data}
 \NormalTok{rng\_bc }\OtherTok{\textless{}{-}} \FunctionTok{range}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{boxcox)}
-\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{boxcox }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{boxcox, }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}
-    \DecValTok{1}\NormalTok{))}
+\NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{boxcox }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{boxcox, }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
 \CommentTok{\# Rescale SCL}
 \NormalTok{df\_scores}\SpecialCharTok{$}\NormalTok{scl }\OtherTok{\textless{}{-}}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(df\_scores}\SpecialCharTok{$}\NormalTok{scl, }\AttributeTok{to =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
 \end{Highlighting}
@@ -306,15 +306,18 @@ We can plot these transformations:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# Make plot data}
-\NormalTok{df\_plot }\OtherTok{\textless{}{-}} \FunctionTok{do.call}\NormalTok{(rbind, }\FunctionTok{lapply}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"scl"}\NormalTok{, }\StringTok{"log"}\NormalTok{, }\StringTok{"sqrt"}\NormalTok{, }\StringTok{"qrt"}\NormalTok{,}
-    \StringTok{"boxcox"}\NormalTok{), }\ControlFlowTok{function}\NormalTok{(n) \{}
-    \FunctionTok{data.frame}\NormalTok{(df\_scores[}\FunctionTok{c}\NormalTok{(}\StringTok{"time"}\NormalTok{, }\StringTok{"id"}\NormalTok{)], }\AttributeTok{Value =}\NormalTok{ df\_scores[[n]],}
-        \AttributeTok{Transformation =}\NormalTok{ n)}
+\NormalTok{df\_plot }\OtherTok{\textless{}{-}} \FunctionTok{do.call}\NormalTok{(rbind, }\FunctionTok{lapply}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"scl"}\NormalTok{, }\StringTok{"log"}\NormalTok{, }\StringTok{"sqrt"}\NormalTok{, }\StringTok{"qrt"}\NormalTok{, }\StringTok{"boxcox"}\NormalTok{), }\ControlFlowTok{function}\NormalTok{(n)\{}
+  \FunctionTok{data.frame}\NormalTok{(df\_scores[}\FunctionTok{c}\NormalTok{(}\StringTok{"time"}\NormalTok{, }\StringTok{"id"}\NormalTok{)],}
+             \AttributeTok{Value =}\NormalTok{ df\_scores[[n]],}
+             \AttributeTok{Transformation =}\NormalTok{ n)}
 \NormalTok{\}))}
 \CommentTok{\# Plot}
-\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Value, }\AttributeTok{colour =}\NormalTok{ Transformation)) }\SpecialCharTok{+} \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+}
-    \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{time) }\SpecialCharTok{+} \FunctionTok{scale\_y\_sqrt}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{xlab}\NormalTok{(}\StringTok{"scl (rescaled to 0{-}1)"}\NormalTok{) }\SpecialCharTok{+}
-    \FunctionTok{theme\_bw}\NormalTok{()}
+\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Value, }\AttributeTok{colour =}\NormalTok{ Transformation)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{time) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_sqrt}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"scl (rescaled to 0{-}1)"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_bw}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -323,13 +326,13 @@ We can plot these transformations:
 \end{figure}
 
 Evidently, the Box-Cox transformation reduced skew the most.
-Consequently, we proceeded with the Box-Cox transformed scores for analysis.
+Consequently, we proceeded with the Box-Cox transformed scores for
+analysis.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{dat }\OtherTok{\textless{}{-}}\NormalTok{ df\_scores[, }\FunctionTok{c}\NormalTok{(}\StringTok{"id"}\NormalTok{, }\StringTok{"time"}\NormalTok{, }\StringTok{"boxcox"}\NormalTok{)]}
-\NormalTok{dat }\OtherTok{\textless{}{-}} \FunctionTok{reshape}\NormalTok{(dat, }\AttributeTok{direction =} \StringTok{"wide"}\NormalTok{, }\AttributeTok{v.names =} \StringTok{"boxcox"}\NormalTok{, }\AttributeTok{timevar =} \StringTok{"time"}\NormalTok{,}
-    \AttributeTok{idvar =} \StringTok{"id"}\NormalTok{)}
+\NormalTok{dat }\OtherTok{\textless{}{-}} \FunctionTok{reshape}\NormalTok{(dat, }\AttributeTok{direction =} \StringTok{"wide"}\NormalTok{, }\AttributeTok{v.names =} \StringTok{"boxcox"}\NormalTok{, }\AttributeTok{timevar =} \StringTok{"time"}\NormalTok{, }\AttributeTok{idvar =} \StringTok{"id"}\NormalTok{)}
 \FunctionTok{names}\NormalTok{(dat) }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"boxcox."}\NormalTok{, }\StringTok{"scl"}\NormalTok{, }\FunctionTok{names}\NormalTok{(dat))}
 \end{Highlighting}
 \end{Shaded}
@@ -337,27 +340,34 @@ Consequently, we proceeded with the Box-Cox transformed scores for analysis.
 \hypertarget{latent-class-growth-analysis}{%
 \section{Latent Class Growth Analysis}\label{latent-class-growth-analysis}}
 
-Next, we estimated a latent class growth model
-for SCL.
-The model included an overall intercept, centered at T1, \texttt{i}.
-To model the potential effect of deployment on
-depresion,
-we also included a dummy variable that was zero before
-deployment, and 1 after deployment, \texttt{step}.
-Finally, to model potential change (or recovery) in depression post-deployment,
-we included a linear slope from T2-T6, \texttt{s}.
-All variances of growth parameters were fixed to zero due to the sparse nature of the data.
-In this vignette,
-we do not consider more than 5 classes,
-because the analyses are computationally very intensive and the data were simulated from a 3-class model.
+Next, we estimated a latent class growth model for SCL. The model
+included an overall intercept, centered at T1, \texttt{i}. To model the
+potential effect of deployment on depresion, we also included a dummy
+variable that was zero before deployment, and 1 after deployment,
+\texttt{step}. Finally, to model potential change (or recovery) in depression
+post-deployment, we included a linear slope from T2-T6, \texttt{s}. All
+variances of growth parameters were fixed to zero due to the sparse
+nature of the data. In this vignette, we do not consider more than 5
+classes, because the analyses are computationally very intensive and the
+data were simulated from a 3-class model.
 
-\textbf{NOTE: The time scales in this model are not correct; it currently assumes that all measurements are equidistant. Feel free to experiment with adjusting this.}
+It is important to not that in LCGA, the subgroups will be limited by
+the specify growth structure, meaning that LCA will identify distinctive
+growth patterns within the intercept, step, and slope growth. For
+example, if there is a subgroup that follows a quadratic growth pattern
+this models will not be able to identify it.
+
+\textbf{NOTE: The time scales in this model are not correct; it currently
+assumes that all measurements are equidistant. Feel free to experiment
+with adjusting this.}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{set.seed}\NormalTok{(}\DecValTok{27796}\NormalTok{)}
 \NormalTok{dat[[}\StringTok{"id"}\NormalTok{]] }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
-\NormalTok{res\_step }\OtherTok{\textless{}{-}} \FunctionTok{mx\_growth\_mixture}\NormalTok{(}\AttributeTok{model =} \StringTok{"}
+\NormalTok{res\_step }\OtherTok{\textless{}{-}} \FunctionTok{mx\_growth\_mixture}\NormalTok{(}
+  \AttributeTok{model =}
+  \StringTok{"}
 \StringTok{  i =\textasciitilde{} 1*scl1 + 1*scl2 + 1*scl3 +1*scl4 +1*scl5 +1*scl6}
 \StringTok{  step =\textasciitilde{} 0*scl1 + 1*scl2 + 1*scl3 +1*scl4 +1*scl5 +1*scl6}
 \StringTok{  s =\textasciitilde{} 0*scl1 + 0*scl2 + 1*scl3 +2*scl4 +3*scl5 +4*scl6}
@@ -372,46 +382,53 @@ because the analyses are computationally very intensive and the data were simula
 \StringTok{  s \textasciitilde{}\textasciitilde{} 0*s}
 \StringTok{  i \textasciitilde{}\textasciitilde{} 0*s}
 \StringTok{  i \textasciitilde{}\textasciitilde{} 0*step}
-\StringTok{  s \textasciitilde{}\textasciitilde{} 0*step"}\NormalTok{,}
-    \AttributeTok{classes =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{5}\NormalTok{, }\AttributeTok{data =}\NormalTok{ dat)}
-\CommentTok{\# Additional iterations because of convergence problems for}
-\CommentTok{\# model 1:}
+\StringTok{  s \textasciitilde{}\textasciitilde{} 0*step"}\NormalTok{, }\AttributeTok{classes =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{5}\NormalTok{,}
+  \AttributeTok{data =}\NormalTok{ dat)}
+\CommentTok{\# Additional iterations because of}
+\CommentTok{\# convergence problems for model 1:}
 \NormalTok{res\_step[[}\DecValTok{1}\NormalTok{]] }\OtherTok{\textless{}{-}} \FunctionTok{mxTryHardWideSearch}\NormalTok{(res\_step[[}\DecValTok{1}\NormalTok{]], }\AttributeTok{extraTries =} \DecValTok{50}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-Note that the first model showed convergence problems, throwing the error:
-\emph{The model does not satisfy the
-first-order optimality conditions to
-the required accuracy, and no improved
-point for the merit function could be
-found during the final linesearch.}
-To address this problem, we performed
-additional iterations to\\
-find a better solution, using \texttt{OpenMx::mxTryHardWideSearch()}.
-This also illustrates that \texttt{tidySEM} mixture models inherit from \texttt{OpenMx}'s \texttt{MxModel},
-and thus, different \texttt{OpenMx} functions can be used to act on models specified via \texttt{tidySEM}.
+Note that the first model showed convergence problems, throwing the
+error: \emph{The model does not satisfy the first-order optimality conditions
+to the required accuracy, and no improved point for the merit function
+could be found during the final linesearch.} To address this problem, we
+performed additional iterations to\\
+find a better solution, using \texttt{OpenMx::mxTryHardWideSearch()}. This also
+illustrates that \texttt{tidySEM} mixture models inherit from \texttt{OpenMx}'s
+\texttt{MxModel}, and thus, different \texttt{OpenMx} functions can be used to act on
+models specified via \texttt{tidySEM}.
 
-The fifth model also evidenced convergence problems, but this (as we will see) is because the solution is overfitted.
+The fifth model also evidenced convergence problems, but this (as we
+will see) is because the solution is overfitted.
 
 \hypertarget{class-enumeration}{%
 \subsection{Class enumeration}\label{class-enumeration}}
 
-To determine the correct number of classes, we considered the following criteria:
+To determine the correct number of classes, we considered the following
+criteria:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  We do not consider classes with, on average, fewer than 5 participants per parameter in a class due to potential local underidentification
+  We do not consider classes with, on average, fewer than 5
+  participants per parameter in a class due to potential local
+  underidentification
 \item
-  Lower values for information criteria (AIC, BIC, saBIC) indicate better fit
+  Lower values for information criteria (AIC, BIC, saBIC) indicate
+  better fit
 \item
-  Significant Lo-Mendell-Rubin LRT test indicates better fit for \(k\) vs \(k-1\) classes
+  Significant Lo-Mendell-Rubin LRT test indicates better fit for \(k\)
+  vs \(k-1\) classes
 \item
-  We do not consider solutions with entropy \textless{} .90 because poor class separability compromises interpretability of the results
+  We do not consider solutions with entropy \textless{} .90 because poor class
+  separability compromises interpretability of the results
 \item
-  We do not consider solutions with minimum posterior classification probability \textless{} .90 because poor class separability compromises interpretability of the results
+  We do not consider solutions with minimum posterior classification
+  probability \textless{} .90 because poor class separability compromises
+  interpretability of the results
 \end{enumerate}
 
 \begin{Shaded}
@@ -419,8 +436,7 @@ To determine the correct number of classes, we considered the following criteria
 \CommentTok{\# Get fit table fit}
 \NormalTok{tab\_fit }\OtherTok{\textless{}{-}} \FunctionTok{table\_fit}\NormalTok{(res\_step)}
 \CommentTok{\# Select columns}
-\NormalTok{tab\_fit }\OtherTok{\textless{}{-}}\NormalTok{ tab\_fit[, }\FunctionTok{c}\NormalTok{(}\StringTok{"Name"}\NormalTok{, }\StringTok{"Classes"}\NormalTok{, }\StringTok{"LL"}\NormalTok{, }\StringTok{"Parameters"}\NormalTok{,}
-    \StringTok{"BIC"}\NormalTok{, }\StringTok{"Entropy"}\NormalTok{, }\StringTok{"prob\_min"}\NormalTok{, }\StringTok{"n\_min"}\NormalTok{, }\StringTok{"warning"}\NormalTok{, }\StringTok{"lmr\_p"}\NormalTok{)]}
+\NormalTok{tab\_fit }\OtherTok{\textless{}{-}}\NormalTok{ tab\_fit[, }\FunctionTok{c}\NormalTok{(}\StringTok{"Name"}\NormalTok{, }\StringTok{"Classes"}\NormalTok{, }\StringTok{"LL"}\NormalTok{, }\StringTok{"Parameters"}\NormalTok{, }\StringTok{"BIC"}\NormalTok{, }\StringTok{"Entropy"}\NormalTok{, }\StringTok{"prob\_min"}\NormalTok{, }\StringTok{"n\_min"}\NormalTok{, }\StringTok{"warning"}\NormalTok{, }\StringTok{"lmr\_p"}\NormalTok{)]}
 \NormalTok{tab\_fit}
 \end{Highlighting}
 \end{Shaded}
@@ -449,23 +465,25 @@ Name & \multicolumn{1}{c}{Classes} & \multicolumn{1}{c}{LL} & \multicolumn{1}{c}
 
 \end{table}
 
-According to the Table, increasing the number of classes keeps increasing model fit according to all ICs except the BIC, which increased after 3 classes.
+According to the Table, increasing the number of classes keeps
+increasing model fit according to all ICs except the BIC, which
+increased after 3 classes.
 
-The first two LMR tests are significant,
-indicating that a 2- and 3-class solution were a significant improvement over a 1- and 2-class solution, respectively.
-However, solutions with \textgreater3 classes had entropy and minimum posterior classification probability below the pre-specified thresholds.
-Models with \textgreater3 solutions also had fewer than five observations per parameter.
-This suggests that the preferred model should be selected from 1-3 classes.
+The first two LMR tests are significant, indicating that a 2- and
+3-class solution were a significant improvement over a 1- and 2-class
+solution, respectively. However, solutions with \textgreater3 classes had entropy
+and minimum posterior classification probability below the pre-specified
+thresholds. Models with \textgreater3 solutions also had fewer than five
+observations per parameter. This suggests that the preferred model
+should be selected from 1-3 classes.
 
 \hypertarget{scree-plot}{%
 \subsubsection{Scree plot}\label{scree-plot}}
 
-A scree plot indicates that
-the largest decrease in ICs occurs from 1-2 classes,
-and the inflection point for all ICs is at 3 classes.
-Moreover, the BIC increased after 3 classes.
-A three-class solution thus appears to be the most parsimonious
-solution with good fit.
+A scree plot indicates that the largest decrease in ICs occurs from 1-2
+classes, and the inflection point for all ICs is at 3 classes. Moreover,
+the BIC increased after 3 classes. A three-class solution thus appears
+to be the most parsimonious solution with good fit.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -477,20 +495,17 @@ solution with good fit.
 \includegraphics[width=0.5\linewidth]{appendices/lcga_plot_fit} \caption{ }\label{fig:unnamed-chunk-15}
 \end{figure}
 
-Based on the aforementioned criteria,
-we selected a 3-class model for further analyses.
-First, to prevent label switching,
-we re-order these classes by the value of the intercept \texttt{i}.
-Then, we report the estimated parameters.
+Based on the aforementioned criteria, we selected a 3-class model for
+further analyses. First, to prevent label switching, we re-order these
+classes by the value of the intercept \texttt{i}. Then, we report the estimated
+parameters.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{res\_final }\OtherTok{\textless{}{-}} \FunctionTok{mx\_switch\_labels}\NormalTok{(res\_step[[}\DecValTok{3}\NormalTok{]], }\AttributeTok{param =} \StringTok{"M[1,7]"}\NormalTok{,}
-    \AttributeTok{decreasing =} \ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{res\_final }\OtherTok{\textless{}{-}} \FunctionTok{mx\_switch\_labels}\NormalTok{(res\_step[[}\DecValTok{3}\NormalTok{]], }\AttributeTok{param =} \StringTok{"M[1,7]"}\NormalTok{, }\AttributeTok{decreasing =} \ConstantTok{FALSE}\NormalTok{)}
 \NormalTok{tab\_res }\OtherTok{\textless{}{-}} \FunctionTok{table\_results}\NormalTok{(res\_final, }\AttributeTok{columns =} \ConstantTok{NULL}\NormalTok{)}
 \CommentTok{\# Select rows and columns}
-\NormalTok{tab\_res }\OtherTok{\textless{}{-}}\NormalTok{ tab\_res[tab\_res}\SpecialCharTok{$}\NormalTok{Category }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"Means"}\NormalTok{, }\StringTok{"Variances"}\NormalTok{),}
-    \FunctionTok{c}\NormalTok{(}\StringTok{"Category"}\NormalTok{, }\StringTok{"lhs"}\NormalTok{, }\StringTok{"est"}\NormalTok{, }\StringTok{"se"}\NormalTok{, }\StringTok{"pval"}\NormalTok{, }\StringTok{"confint"}\NormalTok{, }\StringTok{"name"}\NormalTok{)]}
+\NormalTok{tab\_res }\OtherTok{\textless{}{-}}\NormalTok{ tab\_res[tab\_res}\SpecialCharTok{$}\NormalTok{Category }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"Means"}\NormalTok{, }\StringTok{"Variances"}\NormalTok{), }\FunctionTok{c}\NormalTok{(}\StringTok{"Category"}\NormalTok{, }\StringTok{"lhs"}\NormalTok{, }\StringTok{"est"}\NormalTok{, }\StringTok{"se"}\NormalTok{, }\StringTok{"pval"}\NormalTok{, }\StringTok{"confint"}\NormalTok{, }\StringTok{"name"}\NormalTok{)]}
 \NormalTok{tab\_res}
 \end{Highlighting}
 \end{Shaded}
@@ -542,27 +557,25 @@ Then, we report the estimated parameters.
 \end{ThreePartTable}
 \end{center}
 
-As evident from these results,
-Class 1 started at a relatively lower level of depressive symptoms,
-experienced a decrease after deployment,
-followed by increase over time.
-Class 2 started at a moderate level of depressive symptoms,
-experienced an increase after deployment,
-followed by significant increase over time from T2-T6.
-Class 3 started at a relatively higher level,
-experienced an increase after deployment, followed by stability.
+As evident from these results, Class 1 started at a relatively lower
+level of depressive symptoms, experienced a decrease after deployment,
+followed by increase over time. Class 2 started at a moderate level of
+depressive symptoms, experienced an increase after deployment, followed
+by significant increase over time from T2-T6. Class 3 started at a
+relatively higher level, experienced an increase after deployment,
+followed by stability.
 
 \hypertarget{wald-tests}{%
 \subsection{Wald tests}\label{wald-tests}}
 
 To test whether parameters are significantly different between classes,
-we can use Wald tests.
-Wald tests can be specified for all parameters in the model,
-using the hypothesis syntax from the \texttt{bain} package for informative hypothesis testing.
+we can use Wald tests. Wald tests can be specified for all parameters in
+the model, using the hypothesis syntax from the \texttt{bain} package for
+informative hypothesis testing.
 
-To identify the names of parameters in the model,
-we can use the \texttt{name} column of the results table above.
-Alternatively, to see all parameters in the model, run:
+To identify the names of parameters in the model, we can use the \texttt{name}
+column of the results table above. Alternatively, to see all parameters
+in the model, run:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -579,18 +592,20 @@ Alternatively, to see all parameters in the model, run:
 #> [16] "class3.M[1,8]"     "class3.M[1,9]"
 \end{verbatim}
 
-Next, specify equality constrained hypotheses.
-For example, a hypothesis that states that the mean intercept is equal across groups is specified as follows:
+Next, specify equality constrained hypotheses. For example, a hypothesis
+that states that the mean intercept is equal across groups is specified
+as follows:
 
 \texttt{"class1.M{[}1,7{]}\ =\ class2.M{[}1,7{]}\ \&\ class1.M{[}1,7{]}\ =\ class3.M{[}1,7{]}}
 
-It is also possible to consider comparisons between two classes at a time.
-When conducting many significance tests,
-consider correcting for multiple comparisons however.
+It is also possible to consider comparisons between two classes at a
+time. When conducting many significance tests, consider correcting for
+multiple comparisons however.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{wald\_tests }\OtherTok{\textless{}{-}} \FunctionTok{wald\_test}\NormalTok{(res\_final, }\StringTok{"}
+\NormalTok{wald\_tests }\OtherTok{\textless{}{-}} \FunctionTok{wald\_test}\NormalTok{(res\_final, }
+                   \StringTok{"}
 \StringTok{                   class1.M[1,7] = class2.M[1,7]\&}
 \StringTok{                   class1.M[1,7] = class3.M[1,7];}
 \StringTok{                   class1.M[1,8] = class2.M[1,8]\&}
@@ -625,25 +640,24 @@ Mean slope & 2 & 13.03 & 0.00\\
 
 \end{table}
 
-All Wald tests are significant, indicating that there are significant differences between the intercepts, step function, and slopes of the three classes.
+All Wald tests are significant, indicating that there are significant
+differences between the intercepts, step function, and slopes of the
+three classes.
 
 \hypertarget{trajectory-plot}{%
 \subsection{Trajectory plot}\label{trajectory-plot}}
 
-Finally, we can plot the growth trajectories.
-This can help interpret the results better,
-as well as the residual heterogeneity around class trajectories.
+Finally, we can plot the growth trajectories. This can help interpret
+the results better, as well as the residual heterogeneity around class
+trajectories.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{p }\OtherTok{\textless{}{-}} \FunctionTok{plot\_growth}\NormalTok{(res\_step[[}\DecValTok{3}\NormalTok{]], }\AttributeTok{rawdata =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{alpha\_range =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}
-    \FloatTok{0.05}\NormalTok{))}
+\NormalTok{p }\OtherTok{\textless{}{-}} \FunctionTok{plot\_growth}\NormalTok{(res\_step[[}\DecValTok{3}\NormalTok{]], }\AttributeTok{rawdata =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{alpha\_range =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, .}\DecValTok{05}\NormalTok{))}
 \CommentTok{\# Add Y{-}axis breaks in original scale}
 \NormalTok{brks }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\AttributeTok{length.out =} \DecValTok{5}\NormalTok{)}
-\NormalTok{labs }\OtherTok{\textless{}{-}} \FunctionTok{round}\NormalTok{(}\FunctionTok{invbc}\NormalTok{(scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(brks, }\AttributeTok{from =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{), }\AttributeTok{to =}\NormalTok{ rng\_bc),}
-\NormalTok{    lambda))}
-\NormalTok{p }\OtherTok{\textless{}{-}}\NormalTok{ p }\SpecialCharTok{+} \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{breaks =} \FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\AttributeTok{length.out =} \DecValTok{5}\NormalTok{),}
-    \AttributeTok{labels =}\NormalTok{ labs) }\SpecialCharTok{+} \FunctionTok{ylab}\NormalTok{(}\StringTok{"SCL (rescaled from Box{-}Cox)"}\NormalTok{)}
+\NormalTok{labs }\OtherTok{\textless{}{-}} \FunctionTok{round}\NormalTok{(}\FunctionTok{invbc}\NormalTok{(scales}\SpecialCharTok{::}\FunctionTok{rescale}\NormalTok{(brks, }\AttributeTok{from =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{), }\AttributeTok{to =}\NormalTok{ rng\_bc), lambda))}
+\NormalTok{p }\OtherTok{\textless{}{-}}\NormalTok{ p }\SpecialCharTok{+} \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{breaks =} \FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\AttributeTok{length.out =} \DecValTok{5}\NormalTok{), }\AttributeTok{labels =}\NormalTok{ labs) }\SpecialCharTok{+} \FunctionTok{ylab}\NormalTok{(}\StringTok{"SCL (rescaled from Box{-}Cox)"}\NormalTok{)}
 \NormalTok{p}
 \end{Highlighting}
 \end{Shaded}
@@ -652,7 +666,74 @@ as well as the residual heterogeneity around class trajectories.
 \includegraphics[width=0.5\linewidth]{appendices/plot_traj} \caption{ }\label{fig:unnamed-chunk-22}
 \end{figure}
 
-Note that the observed individual trajectories show very high variability within classes.
+Note that the observed individual trajectories show very high
+variability within classes.
+
+\hypertarget{r-session}{%
+\subsection{R session}\label{r-session}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sessionInfo}\NormalTok{()}
+\CommentTok{\#\textgreater{} R version 4.1.3 (2022{-}03{-}10)}
+\CommentTok{\#\textgreater{} Platform: x86\_64{-}w64{-}mingw32/x64 (64{-}bit)}
+\CommentTok{\#\textgreater{} Running under: Windows 10 x64 (build 19045)}
+\CommentTok{\#\textgreater{} }
+\CommentTok{\#\textgreater{} Matrix products: default}
+\CommentTok{\#\textgreater{} }
+\CommentTok{\#\textgreater{} locale:}
+\CommentTok{\#\textgreater{} [1] LC\_COLLATE=English\_United Kingdom.1252 }
+\CommentTok{\#\textgreater{} [2] LC\_CTYPE=English\_United Kingdom.1252   }
+\CommentTok{\#\textgreater{} [3] LC\_MONETARY=English\_United Kingdom.1252}
+\CommentTok{\#\textgreater{} [4] LC\_NUMERIC=C                           }
+\CommentTok{\#\textgreater{} [5] LC\_TIME=English\_United Kingdom.1252    }
+\CommentTok{\#\textgreater{} }
+\CommentTok{\#\textgreater{} attached base packages:}
+\CommentTok{\#\textgreater{} [1] stats     graphics  grDevices utils     datasets  methods   base     }
+\CommentTok{\#\textgreater{} }
+\CommentTok{\#\textgreater{} other attached packages:}
+\CommentTok{\#\textgreater{} [1] MASS\_7.3{-}58.2    ggplot2\_3.4.0    tidySEM\_0.2.4.6  OpenMx\_2.21.1   }
+\CommentTok{\#\textgreater{} [5] scales\_1.2.1     yaml\_2.3.6       papaja\_0.1.1     tinylabels\_0.2.3}
+\CommentTok{\#\textgreater{} }
+\CommentTok{\#\textgreater{} loaded via a namespace (and not attached):}
+\CommentTok{\#\textgreater{}   [1] TH.data\_1.1{-}1         colorspace\_2.1{-}0      estimability\_1.4.1   }
+\CommentTok{\#\textgreater{}   [4] parameters\_0.20.1     rstudioapi\_0.14       listenv\_0.9.0        }
+\CommentTok{\#\textgreater{}   [7] lavaan\_0.6{-}13         rstan\_2.26.13         fansi\_1.0.4          }
+\CommentTok{\#\textgreater{}  [10] mvtnorm\_1.1{-}3         codetools\_0.2{-}18      splines\_4.1.3        }
+\CommentTok{\#\textgreater{}  [13] mnormt\_2.1.1          knitr\_1.41            texreg\_1.38.6        }
+\CommentTok{\#\textgreater{}  [16] bayesplot\_1.10.0      jsonlite\_1.8.4        effectsize\_0.8.2     }
+\CommentTok{\#\textgreater{}  [19] compiler\_4.1.3        httr\_1.4.4            emmeans\_1.8.4{-}1      }
+\CommentTok{\#\textgreater{}  [22] backports\_1.4.1       assertthat\_0.2.1      Matrix\_1.5{-}3         }
+\CommentTok{\#\textgreater{}  [25] fastmap\_1.1.0         cli\_3.6.0             htmltools\_0.5.4      }
+\CommentTok{\#\textgreater{}  [28] prettyunits\_1.1.1     tools\_4.1.3           igraph\_1.3.5         }
+\CommentTok{\#\textgreater{}  [31] coda\_0.19{-}4           gtable\_0.3.1          glue\_1.6.2           }
+\CommentTok{\#\textgreater{}  [34] RANN\_2.6.1            dplyr\_1.0.10          V8\_4.2.2             }
+\CommentTok{\#\textgreater{}  [37] Rcpp\_1.0.10           carData\_3.0{-}5         vctrs\_0.5.2          }
+\CommentTok{\#\textgreater{}  [40] nlme\_3.1{-}161          psych\_2.2.9           insight\_0.18.8       }
+\CommentTok{\#\textgreater{}  [43] xfun\_0.36             stringr\_1.5.0         globals\_0.16.2       }
+\CommentTok{\#\textgreater{}  [46] ps\_1.7.2              proto\_1.0.0           CompQuadForm\_1.4.3   }
+\CommentTok{\#\textgreater{}  [49] lifecycle\_1.0.3       future\_1.30.0         zoo\_1.8{-}11           }
+\CommentTok{\#\textgreater{}  [52] parallel\_4.1.3        sandwich\_3.0{-}2        inline\_0.3.19        }
+\CommentTok{\#\textgreater{}  [55] curl\_5.0.0            gridExtra\_2.3         pander\_0.6.5         }
+\CommentTok{\#\textgreater{}  [58] blavaan\_0.4{-}3         loo\_2.5.1             StanHeaders\_2.26.13  }
+\CommentTok{\#\textgreater{}  [61] stringi\_1.7.12        bayestestR\_0.13.0     fastDummies\_1.6.3    }
+\CommentTok{\#\textgreater{}  [64] checkmate\_2.1.0       boot\_1.3{-}28           pkgbuild\_1.4.0       }
+\CommentTok{\#\textgreater{}  [67] rlang\_1.0.6           pkgconfig\_2.0.3       matrixStats\_0.63.0   }
+\CommentTok{\#\textgreater{}  [70] evaluate\_0.20         lattice\_0.20{-}45       rstantools\_2.2.0     }
+\CommentTok{\#\textgreater{}  [73] processx\_3.8.0        tidyselect\_1.2.0      parallelly\_1.34.0    }
+\CommentTok{\#\textgreater{}  [76] plyr\_1.8.8            magrittr\_2.0.3        bookdown\_0.32        }
+\CommentTok{\#\textgreater{}  [79] R6\_2.5.1              generics\_0.1.3        multcomp\_1.4{-}20      }
+\CommentTok{\#\textgreater{}  [82] DBI\_1.1.3             withr\_2.5.0           gsubfn\_0.7           }
+\CommentTok{\#\textgreater{}  [85] pillar\_1.8.1          survival\_3.5{-}0        datawizard\_0.6.5     }
+\CommentTok{\#\textgreater{}  [88] abind\_1.4{-}5           tibble\_3.1.8          future.apply\_1.10.0  }
+\CommentTok{\#\textgreater{}  [91] crayon\_1.5.2          car\_3.1{-}1             nonnest2\_0.5{-}5       }
+\CommentTok{\#\textgreater{}  [94] utf8\_1.2.2            tmvnsim\_1.0{-}2         MplusAutomation\_1.1.0}
+\CommentTok{\#\textgreater{}  [97] rmarkdown\_2.20        grid\_4.1.3            data.table\_1.14.6    }
+\CommentTok{\#\textgreater{} [100] pbivnorm\_0.6.0        bain\_0.2.8            callr\_3.7.3          }
+\CommentTok{\#\textgreater{} [103] digest\_0.6.31         xtable\_1.8{-}4          dbscan\_1.1{-}11        }
+\CommentTok{\#\textgreater{} [106] RcppParallel\_5.1.6    stats4\_4.1.3          munsell\_0.5.0}
+\end{Highlighting}
+\end{Shaded}
 
 
 \end{document}

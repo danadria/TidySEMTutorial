@@ -198,8 +198,7 @@
 \maketitle
 
 This is an example of confirmatory LPA using \texttt{tidySEM}.
-The simulated data are based on work by Zegwaard and colleagues,
-who sought to establish a typology of caregivers who support a close other receiving outpatient psychological care.
+The simulated data are based on work by Zegwaard and colleagues, who sought to establish a typology of caregivers who support a close other receiving outpatient psychological care.
 Qualitative research among experts resulted in a theory postulating the existence of four types of caregivers (translated from the original Dutch):
 
 \textbf{Balanced}
@@ -226,8 +225,7 @@ The lonely caregiver experiences a strong sense of isolation.
 The entrapped caregiver strongly feels a sense of being entangled in responsibilities which are difficult to fulfill.
 \end{quote}
 
-To view the data documentation,
-run the command \texttt{?tidySEM::zegwaard\_carecompass} in the R console.
+To view the data documentation, run the command \texttt{?tidySEM::zegwaard\_carecompass} in the R console.
 
 \hypertarget{loading-the-data}{%
 \subsection{Loading the Data}\label{loading-the-data}}
@@ -240,28 +238,26 @@ We first only use the four scales: \texttt{c("burdened",\ "trapped",\ "negaffect
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# Load required packages}
-\FunctionTok{library}\NormalTok{(tidySEM)}
+\FunctionTok{library}\NormalTok{(tidySEM) }
 \FunctionTok{library}\NormalTok{(ggplot2)}
 \CommentTok{\# Load data}
-\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ zegwaard\_carecompass[, }\FunctionTok{c}\NormalTok{(}\StringTok{"burdened"}\NormalTok{, }\StringTok{"trapped"}\NormalTok{, }\StringTok{"negaffect"}\NormalTok{,}
-    \StringTok{"loneliness"}\NormalTok{)]}
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ zegwaard\_carecompass[, }\FunctionTok{c}\NormalTok{(}\StringTok{"burdened"}\NormalTok{, }\StringTok{"trapped"}\NormalTok{, }\StringTok{"negaffect"}\NormalTok{, }\StringTok{"loneliness"}\NormalTok{)]}
 \end{Highlighting}
 \end{Shaded}
 
 \hypertarget{examining-the-data}{%
 \subsection{Examining the Data}\label{examining-the-data}}
 
-As per the best practices,
-the first step in LCA is examining the observed data.
+As per the best practices, the first step in LCA is examining the observed data.
 We use \texttt{tidySEM::descriptives()} to describe the data numerically.
-Because all scales are continuous,
-we select only columns for continuous data to de-clutter the table:
+Because all scales are continuous, we select only columns for continuous data to de-clutter the table:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{desc }\OtherTok{\textless{}{-}}\NormalTok{ tidySEM}\SpecialCharTok{::}\FunctionTok{descriptives}\NormalTok{(df)}
-\NormalTok{desc }\OtherTok{\textless{}{-}}\NormalTok{ desc[, }\FunctionTok{c}\NormalTok{(}\StringTok{"name"}\NormalTok{, }\StringTok{"n"}\NormalTok{, }\StringTok{"missing"}\NormalTok{, }\StringTok{"unique"}\NormalTok{, }\StringTok{"mean"}\NormalTok{, }\StringTok{"median"}\NormalTok{,}
-    \StringTok{"sd"}\NormalTok{, }\StringTok{"min"}\NormalTok{, }\StringTok{"max"}\NormalTok{, }\StringTok{"skew\_2se"}\NormalTok{, }\StringTok{"kurt\_2se"}\NormalTok{)]}
+\NormalTok{desc }\OtherTok{\textless{}{-}}\NormalTok{ desc[, }\FunctionTok{c}\NormalTok{(}\StringTok{"name"}\NormalTok{, }\StringTok{"n"}\NormalTok{, }\StringTok{"missing"}\NormalTok{, }\StringTok{"unique"}\NormalTok{,}
+                 \StringTok{"mean"}\NormalTok{, }\StringTok{"median"}\NormalTok{, }\StringTok{"sd"}\NormalTok{, }\StringTok{"min"}\NormalTok{, }\StringTok{"max"}\NormalTok{,}
+                 \StringTok{"skew\_2se"}\NormalTok{, }\StringTok{"kurt\_2se"}\NormalTok{)]}
 \NormalTok{desc}
 \end{Highlighting}
 \end{Shaded}
@@ -289,28 +285,25 @@ loneliness & 510 & 0.01 & 510 & 2.66 & 2.69 & 0.62 & 0.98 & 4.22 & -0.33 & 6.31\
 
 \end{table}
 
-The table indicates two potential causes for concern:
-there is a small percentage of missingness,
-and all variables have relatively high kurtosis.
-Since there are some missing values,
-we can conduct an MCAR test using \texttt{mice::mcar(df)}.
-According to Hawkins' test,
-there is no evidence to reject the assumptions of multivariate normality and MCAR, \(\tilde{\chi^2}(6) = 3.78, \tilde{p} = 0.71\).
+The table indicates two potential causes for concern: there is a small percentage of missingness, and all variables have relatively high kurtosis.
+Since there are some missing values, we can conduct an MCAR test using \texttt{mice::mcar(df)}.
+According to Hawkins' test, there is no evidence to reject the assumptions of multivariate normality and MCAR, \(\tilde{\chi^2}(6) = 3.78, \tilde{p} = 0.71\).
 Missing data will be accounted for using FIML.
 
 Additionally, we can plot the data.
 The \texttt{ggplot2} function \texttt{geom\_density()} is useful for continuous data.
-Visual inspection confirms the conclusions from the \texttt{descriptives()} table:
-the data are kurtotic (peaked).
+Visual inspection confirms the conclusions from the \texttt{descriptives()} table: the data are kurtotic (peaked).
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{df\_plot }\OtherTok{\textless{}{-}}\NormalTok{ df}
 \FunctionTok{names}\NormalTok{(df\_plot) }\OtherTok{\textless{}{-}} \FunctionTok{paste0}\NormalTok{(}\StringTok{"Value."}\NormalTok{, }\FunctionTok{names}\NormalTok{(df\_plot))}
 \NormalTok{df\_plot }\OtherTok{\textless{}{-}} \FunctionTok{reshape}\NormalTok{(df\_plot, }\AttributeTok{varying =} \FunctionTok{names}\NormalTok{(df\_plot), }\AttributeTok{direction =} \StringTok{"long"}\NormalTok{,}
-    \AttributeTok{timevar =} \StringTok{"Variable"}\NormalTok{)}
-\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Value)) }\SpecialCharTok{+} \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Variable) }\SpecialCharTok{+}
-    \FunctionTok{theme\_bw}\NormalTok{()}
+                   \AttributeTok{timevar =} \StringTok{"Variable"}\NormalTok{)}
+\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Value)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Variable)}\SpecialCharTok{+}
+  \FunctionTok{theme\_bw}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -319,52 +312,42 @@ the data are kurtotic (peaked).
 \hypertarget{conducting-latent-profile-analysis}{%
 \subsection{Conducting Latent Profile Analysis}\label{conducting-latent-profile-analysis}}
 
-As all variables are continuous, we can use the convenience function
-\texttt{tidySEM::mx\_profiles()},
-which is a wrapper for the generic function \texttt{mx\_mixture()} optimized for continuous indicators.
+As all variables are continuous, we can use the convenience function \texttt{tidySEM::mx\_profiles()}, which is a wrapper for the generic function \texttt{mx\_mixture()} optimized for continuous indicators.
 Its default settings are appropriate for LPA, assuming fixed variances across classes and zero covariances.
 Its arguments are \texttt{data} and number of \texttt{classes}.
-All variables in \texttt{data} are included in the analysis,
-which is why we first selected the indicator variables.
-As this is a confirmatory LCA,
-we do not follow a strictly data-driven class enumeration procedure.
+All variables in \texttt{data} are included in the analysis, which is why we first selected the indicator variables.
+As this is a confirmatory LCA, we do not follow a strictly data-driven class enumeration procedure.
 We will set the maximum number of classes \(K\) to one more than the theoretically expected number.
 We set a seed to ensure replicable results.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
-\NormalTok{res }\OtherTok{\textless{}{-}} \FunctionTok{mx\_profiles}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df, }\AttributeTok{classes =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{5}\NormalTok{)}
+\NormalTok{res }\OtherTok{\textless{}{-}} \FunctionTok{mx\_profiles}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df,}
+                   \AttributeTok{classes =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{5}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 This analysis should produce some warnings about cluster initialization.
-These relate to the selection of starting values,
-which relies on the K-means algorithm and is not robust to missing data.
+These relate to the selection of starting values, which relies on the K-means algorithm and is not robust to missing data.
 The algorithm automatically switches to hierarchical clustering, no further action is required.
 
 \hypertarget{class-enumeration}{%
 \subsection{Class Enumeration}\label{class-enumeration}}
 
-To compare the fit of the theoretical model against other models,
-we create a model fit table using
-\texttt{table\_fit()} and retain relevant columns.
+To compare the fit of the theoretical model against other models, we create a model fit table using \texttt{table\_fit()} and retain relevant columns.
 We also determine whether any models can be disqualified.
 
 In this example, all models converge without issues.
 If, for example, the two-class solution had not converged, we could use the function \texttt{res{[}{[}2{]}{]}\ \textless{}-\ mxTryHard(res{[}{[}2{]}{]})} to aid convergence.
 
 Next, we check for local identifiability.
-The sample size is consistently reported as 513,
-which means that partially missing cases were indeed included via FIML.
-The smallest class size occurs in the 5-class model,
-where the smallest class is assigned 7\% of cases, or 38 cases.
+The sample size is consistently reported as 513, which means that partially missing cases were indeed included via FIML.
+The smallest class size occurs in the 5-class model, where the smallest class is assigned 7\% of cases, or 38 cases.
 This model has 28 parameters, approximately 6 per class.
-We thus have at least five observations per parameter in every class,
-and do not disqualify the 5-class model.
+We thus have at least five observations per parameter in every class, and do not disqualify the 5-class model.
 
-There are concerns about theoretical interpretability of all solutions,
-as the entropies and minimum classification probabilities are all low.
+There are concerns about theoretical interpretability of all solutions, as the entropies and minimum classification probabilities are all low.
 However, in this confirmatory use case, we address this when interpreting the results.
 
 \begin{table}[tbp]
@@ -391,15 +374,11 @@ equal var 5 & -1,912.93 & 28 & 513 & 4,000.59 & 0.70 & 0.39 & 0.92 & 0.07 & 0.31
 
 \end{table}
 
-Class enumeration unambiguously indicates a preference for the 4-class solution:
-the 4-class solution has the lowest BIC,
-which means it is preferred over all other solutions including a 1-class solution and a solution with more classes.
+Class enumeration unambiguously indicates a preference for the 4-class solution: the 4-class solution has the lowest BIC, which means it is preferred over all other solutions including a 1-class solution and a solution with more classes.
 The p-values of the LMR LR test are significant for all pairwise model comparisons, except for the 5-class model.
 Note that a scree plot for the BIC can be plotted by calling \texttt{plot(fit)}.
 Following the elbow criterion, a three-class solution would also be defensible.
-The function \texttt{ic\_weights(tab\_compare)} allows us to compute IC weights;
-it indicates that, conditional on the set of models,
-the 4-class model has a posterior model probability of nearly 100\%.
+The function \texttt{ic\_weights(tab\_compare)} allows us to compute IC weights; it indicates that, conditional on the set of models, the 4-class model has a posterior model probability of nearly 100\%.
 
 \hypertarget{optional-alternative-model-specifications}{%
 \subsection{Optional: Alternative Model Specifications}\label{optional-alternative-model-specifications}}
@@ -445,8 +424,7 @@ Yet, it has a higher BIC, which indicates that this additional complexity does n
 \hypertarget{interpreting-the-final-class-solution}{%
 \subsection{Interpreting the Final Class Solution}\label{interpreting-the-final-class-solution}}
 
-To interpret the final class solution,
-we first reorder the 4-class model by class size.
+To interpret the final class solution, we first reorder the 4-class model by class size.
 This helps prevent label switching.
 
 \begin{Shaded}
@@ -455,17 +433,14 @@ This helps prevent label switching.
 \end{Highlighting}
 \end{Shaded}
 
-The 4-class model yielded classes of reasonable size;
-the largest class comprised 33\%,
-and the smallest comprised 16\% of cases.
+The 4-class model yielded classes of reasonable size; the largest class comprised 33\%, and the smallest comprised 16\% of cases.
 However, the entropy was low, \(S = .75\), indicating poor class separability.
 Furthermore, the posterior classification probability ranged from \([.81, .92]\), which means that at least some classes had a high classification error.
 We produce a table of the results below.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{table\_results}\NormalTok{(res\_final, }\AttributeTok{columns =} \FunctionTok{c}\NormalTok{(}\StringTok{"label"}\NormalTok{, }\StringTok{"est"}\NormalTok{, }\StringTok{"se"}\NormalTok{, }\StringTok{"confint"}\NormalTok{,}
-    \StringTok{"class"}\NormalTok{))}
+\FunctionTok{table\_results}\NormalTok{(res\_final, }\AttributeTok{columns =} \FunctionTok{c}\NormalTok{(}\StringTok{"label"}\NormalTok{, }\StringTok{"est"}\NormalTok{, }\StringTok{"se"}\NormalTok{, }\StringTok{"confint"}\NormalTok{, }\StringTok{"class"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -525,34 +500,21 @@ However, we omit the density plots, because \texttt{plot\_bivariate()} also incl
 \includegraphics[width=1\linewidth]{appendices/lpa_bivariate} \caption{Bivariate profile plot}\label{fig:unnamed-chunk-16}
 \end{figure}
 
-On the diagonal of the bivariate plot are weighted density plots:
-normal approximations of the density function of observed data,
-weighed by class probability.
-On the off-diagonal are plots for each pair of indicators,
-with the class means indicated by a point,
-class standard deviations indicated by lines,
-and covariances indicated by circles.
-As this model has zero covariances,
-all circles are round (albeit warped by the different scales of the X and Y axes)
+On the diagonal of the bivariate plot are weighted density plots: normal approximations of the density function of observed data, weighed by class probability.
+On the off-diagonal are plots for each pair of indicators, with the class means indicated by a point, class standard deviations indicated by lines, and covariances indicated by circles.
+As this model has zero covariances, all circles are round (albeit warped by the different scales of the X and Y axes)
 
 The marginal density plots show that trappedness distinguishes classes rather well.
 For all other indicators, groups are not always clearly separated in terms of marginal density: class 2 and 3 coalesce on negative affect, 1 and 2 coalesce on loneliness, and 1 and 2 coalesce on burden.
 Nevertheless, the off-diagonal scatterplots show reasonable bivariate separation for all classes.
 
 We can obtain a more classic profile plot using \texttt{plot\_profiles(res\_final)}.
-This plot conveys less information than the bivariate plot,
-but is readily interpretable.
-Below is a comparison between the most common type of visualization
-for LPA, and the best-practices visualization provided by \texttt{tidySEM}.
-Note that the best practices plot includes class means and error bars,
-standard deviations,
-and a ribbon plot of raw data weighted by class probability to indicate how well the classes describe the observed distribution.
-The overlap between the classes is clearly visible in this figure;
-this is why the entropy and classification probabilities are relatively low.
+This plot conveys less information than the bivariate plot, but is readily interpretable.
+Below is a comparison between the most common type of visualization for LPA, and the best-practices visualization provided by \texttt{tidySEM}.
+Note that the best practices plot includes class means and error bars, standard deviations, and a ribbon plot of raw data weighted by class probability to indicate how well the classes describe the observed distribution.
+The overlap between the classes is clearly visible in this figure; this is why the entropy and classification probabilities are relatively low.
 
-Based on the bivariate plot, we can label class 1 as the \emph{balanced} type (33\%),
-class 2 as the \emph{imbalanced} type (29\%), class 3 as the \emph{entrapped} type (22\%),
-and class 4 as the \emph{lonely} type (16\%).
+Based on the bivariate plot, we can label class 1 as the \emph{balanced} type (33\%), class 2 as the \emph{imbalanced} type (29\%), class 3 as the \emph{entrapped} type (22\%), and class 4 as the \emph{lonely} type (16\%).
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -568,16 +530,13 @@ and class 4 as the \emph{lonely} type (16\%).
 \subsection{Auxiliary Analyses}\label{auxiliary-analyses}}
 
 Finally, we may want to compare the different classes on auxiliary variables or models.
-The \texttt{BCH()} function applies three-step analysis,
-which compares the classes using a multi-group model,
-controlling for classification error.
+The \texttt{BCH()} function applies three-step analysis, which compares the classes using a multi-group model, controlling for classification error.
 We consider two examples: a single variable, and an auxiliary model.
 
 \hypertarget{comparing-means-or-proportions-across-classes}{%
 \subsubsection{Comparing Means or Proportions Across Classes}\label{comparing-means-or-proportions-across-classes}}
 
-For a single (continuous or ordinal) variable,
-we can call the BCH function and simply supply the auxiliary variable to the \texttt{data} argument, omitting the \texttt{model} argument.
+For a single (continuous or ordinal) variable, we can call the BCH function and simply supply the auxiliary variable to the \texttt{data} argument, omitting the \texttt{model} argument.
 Below, we estimate an auxiliary model to compare the sex of patients between classes:
 
 \begin{Shaded}
@@ -586,9 +545,7 @@ Below, we estimate an auxiliary model to compare the sex of patients between cla
 \end{Highlighting}
 \end{Shaded}
 
-To obtain an omnibus likelihood ratio test of the significance of these sex differences across classes,
-as well as pairwise comparisons between classes,
-use \texttt{lr\_test(aux\_sex)}.
+To obtain an omnibus likelihood ratio test of the significance of these sex differences across classes, as well as pairwise comparisons between classes, use \texttt{lr\_test(aux\_sex)}.
 The results indicate that there are significant sex differences across classes, \(\Delta LL(1) = 8.7, p = .003\).
 Pairwise comparisons indicate that class 3 differs significantly from classes 1 and 2.
 The results can be reported in probability scale using \texttt{table\_prob(aux\_sex)}.
@@ -604,15 +561,81 @@ Specifically, we will examine whether the distance predicts the frequency of vis
 \begin{Highlighting}[]
 \NormalTok{df\_aux }\OtherTok{\textless{}{-}}\NormalTok{ zegwaard\_carecompass[, }\FunctionTok{c}\NormalTok{(}\StringTok{"freqvisit"}\NormalTok{, }\StringTok{"distance"}\NormalTok{)]}
 \NormalTok{df\_aux}\SpecialCharTok{$}\NormalTok{freqvisit }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(df\_aux}\SpecialCharTok{$}\NormalTok{freqvisit)}
-\NormalTok{aux\_model }\OtherTok{\textless{}{-}} \FunctionTok{BCH}\NormalTok{(res\_final, }\AttributeTok{model =} \StringTok{"freqvisit \textasciitilde{} distance"}\NormalTok{, }\AttributeTok{data =}\NormalTok{ df\_aux)}
+\NormalTok{aux\_model }\OtherTok{\textless{}{-}} \FunctionTok{BCH}\NormalTok{(res\_final, }\AttributeTok{model =} \StringTok{"freqvisit \textasciitilde{} distance"}\NormalTok{,}
+                 \AttributeTok{data =}\NormalTok{ df\_aux)}
 \end{Highlighting}
 \end{Shaded}
 
-To obtain an omnibus likelihood ratio test of the difference in regression coefficients across classes
-and pairwise comparisons between classes,
-use \texttt{lr\_test(aux\_model,\ compare\ =\ "A")}.
+To obtain an omnibus likelihood ratio test of the difference in regression coefficients across classes and pairwise comparisons between classes, use \texttt{lr\_test(aux\_model,\ compare\ =\ "A")}.
 The results indicate that there are no significant sex differences across classes, \(\Delta LL(3) = 0.98, p = .81\).
 The results can be reported using \texttt{table\_results(aux\_model)}.
+
+\hypertarget{r-session}{%
+\subsection{R session}\label{r-session}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sessionInfo}\NormalTok{()}
+\CommentTok{\#\textgreater{} R version 4.1.3 (2022{-}03{-}10)}
+\CommentTok{\#\textgreater{} Platform: x86\_64{-}w64{-}mingw32/x64 (64{-}bit)}
+\CommentTok{\#\textgreater{} Running under: Windows 10 x64 (build 19045)}
+\CommentTok{\#\textgreater{} }
+\CommentTok{\#\textgreater{} Matrix products: default}
+\CommentTok{\#\textgreater{} }
+\CommentTok{\#\textgreater{} locale:}
+\CommentTok{\#\textgreater{} [1] LC\_COLLATE=English\_United Kingdom.1252 }
+\CommentTok{\#\textgreater{} [2] LC\_CTYPE=English\_United Kingdom.1252   }
+\CommentTok{\#\textgreater{} [3] LC\_MONETARY=English\_United Kingdom.1252}
+\CommentTok{\#\textgreater{} [4] LC\_NUMERIC=C                           }
+\CommentTok{\#\textgreater{} [5] LC\_TIME=English\_United Kingdom.1252    }
+\CommentTok{\#\textgreater{} }
+\CommentTok{\#\textgreater{} attached base packages:}
+\CommentTok{\#\textgreater{} [1] stats     graphics  grDevices utils     datasets  methods   base     }
+\CommentTok{\#\textgreater{} }
+\CommentTok{\#\textgreater{} other attached packages:}
+\CommentTok{\#\textgreater{} [1] ggplot2\_3.4.0    tidySEM\_0.2.4.6  OpenMx\_2.21.1    scales\_1.2.1    }
+\CommentTok{\#\textgreater{} [5] yaml\_2.3.6       papaja\_0.1.1     tinylabels\_0.2.3}
+\CommentTok{\#\textgreater{} }
+\CommentTok{\#\textgreater{} loaded via a namespace (and not attached):}
+\CommentTok{\#\textgreater{}   [1] TH.data\_1.1{-}1         colorspace\_2.1{-}0      estimability\_1.4.1   }
+\CommentTok{\#\textgreater{}   [4] parameters\_0.20.1     rstudioapi\_0.14       listenv\_0.9.0        }
+\CommentTok{\#\textgreater{}   [7] lavaan\_0.6{-}13         rstan\_2.26.13         fansi\_1.0.4          }
+\CommentTok{\#\textgreater{}  [10] mvtnorm\_1.1{-}3         codetools\_0.2{-}18      splines\_4.1.3        }
+\CommentTok{\#\textgreater{}  [13] mnormt\_2.1.1          knitr\_1.41            texreg\_1.38.6        }
+\CommentTok{\#\textgreater{}  [16] bayesplot\_1.10.0      jsonlite\_1.8.4        effectsize\_0.8.2     }
+\CommentTok{\#\textgreater{}  [19] compiler\_4.1.3        httr\_1.4.4            emmeans\_1.8.4{-}1      }
+\CommentTok{\#\textgreater{}  [22] backports\_1.4.1       assertthat\_0.2.1      Matrix\_1.5{-}3         }
+\CommentTok{\#\textgreater{}  [25] fastmap\_1.1.0         cli\_3.6.0             htmltools\_0.5.4      }
+\CommentTok{\#\textgreater{}  [28] prettyunits\_1.1.1     tools\_4.1.3           igraph\_1.3.5         }
+\CommentTok{\#\textgreater{}  [31] coda\_0.19{-}4           gtable\_0.3.1          glue\_1.6.2           }
+\CommentTok{\#\textgreater{}  [34] RANN\_2.6.1            dplyr\_1.0.10          V8\_4.2.2             }
+\CommentTok{\#\textgreater{}  [37] Rcpp\_1.0.10           carData\_3.0{-}5         vctrs\_0.5.2          }
+\CommentTok{\#\textgreater{}  [40] nlme\_3.1{-}161          psych\_2.2.9           insight\_0.18.8       }
+\CommentTok{\#\textgreater{}  [43] xfun\_0.36             stringr\_1.5.0         globals\_0.16.2       }
+\CommentTok{\#\textgreater{}  [46] ps\_1.7.2              proto\_1.0.0           CompQuadForm\_1.4.3   }
+\CommentTok{\#\textgreater{}  [49] lifecycle\_1.0.3       future\_1.30.0         MASS\_7.3{-}58.2        }
+\CommentTok{\#\textgreater{}  [52] zoo\_1.8{-}11            parallel\_4.1.3        sandwich\_3.0{-}2       }
+\CommentTok{\#\textgreater{}  [55] inline\_0.3.19         curl\_5.0.0            gridExtra\_2.3        }
+\CommentTok{\#\textgreater{}  [58] pander\_0.6.5          blavaan\_0.4{-}3         loo\_2.5.1            }
+\CommentTok{\#\textgreater{}  [61] StanHeaders\_2.26.13   stringi\_1.7.12        highr\_0.10           }
+\CommentTok{\#\textgreater{}  [64] bayestestR\_0.13.0     fastDummies\_1.6.3     checkmate\_2.1.0      }
+\CommentTok{\#\textgreater{}  [67] boot\_1.3{-}28           pkgbuild\_1.4.0        rlang\_1.0.6          }
+\CommentTok{\#\textgreater{}  [70] pkgconfig\_2.0.3       matrixStats\_0.63.0    evaluate\_0.20        }
+\CommentTok{\#\textgreater{}  [73] lattice\_0.20{-}45       rstantools\_2.2.0      processx\_3.8.0       }
+\CommentTok{\#\textgreater{}  [76] tidyselect\_1.2.0      parallelly\_1.34.0     plyr\_1.8.8           }
+\CommentTok{\#\textgreater{}  [79] magrittr\_2.0.3        bookdown\_0.32         R6\_2.5.1             }
+\CommentTok{\#\textgreater{}  [82] generics\_0.1.3        multcomp\_1.4{-}20       DBI\_1.1.3            }
+\CommentTok{\#\textgreater{}  [85] withr\_2.5.0           gsubfn\_0.7            pillar\_1.8.1         }
+\CommentTok{\#\textgreater{}  [88] survival\_3.5{-}0        datawizard\_0.6.5      abind\_1.4{-}5          }
+\CommentTok{\#\textgreater{}  [91] tibble\_3.1.8          future.apply\_1.10.0   crayon\_1.5.2         }
+\CommentTok{\#\textgreater{}  [94] car\_3.1{-}1             nonnest2\_0.5{-}5        utf8\_1.2.2           }
+\CommentTok{\#\textgreater{}  [97] tmvnsim\_1.0{-}2         MplusAutomation\_1.1.0 rmarkdown\_2.20       }
+\CommentTok{\#\textgreater{} [100] grid\_4.1.3            data.table\_1.14.6     pbivnorm\_0.6.0       }
+\CommentTok{\#\textgreater{} [103] bain\_0.2.8            callr\_3.7.3           digest\_0.6.31        }
+\CommentTok{\#\textgreater{} [106] xtable\_1.8{-}4          dbscan\_1.1{-}11         RcppParallel\_5.1.6   }
+\CommentTok{\#\textgreater{} [109] stats4\_4.1.3          munsell\_0.5.0}
+\end{Highlighting}
+\end{Shaded}
 
 
 \end{document}
