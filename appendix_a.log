@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.12.30)  16 JAN 2023 10:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.12.30)  16 JAN 2023 10:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**appendix_b.tex
-(./appendix_b.tex
+**appendix_a.tex
+(./appendix_a.tex
 LaTeX2e <2022-11-01> patch level 1
 L3 programming layer <2022-12-17> (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/apa6/apa6.cls
 Document Class: apa6 2020/01/13 v2.34 APA formatting (6th edition)
@@ -550,8 +550,8 @@ Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'english'.
-(./appendix_b.aux)
-\openout1 = `appendix_b.aux'.
+(./appendix_a.aux)
+\openout1 = `appendix_a.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 197.
 LaTeX Font Info:    ... okay on input line 197.
@@ -640,9 +640,9 @@ Package microtype Info: No adjustment of character kerning.
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman (RS)
 )
 Package hyperref Info: Link coloring OFF on input line 197.
-(./appendix_b.out) (./appendix_b.out)
+(./appendix_a.out) (./appendix_a.out)
 \@outlinefile=\write6
-\openout6 = `appendix_b.out'.
+\openout6 = `appendix_a.out'.
 
 
 Class apa6 Warning: Abstract not defined.
@@ -651,110 +651,101 @@ Class apa6 Info: Keywords not defined on input line 199.
 [1{c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 ]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 201.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 200.
 (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 208.
+) [2]
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 276.
 (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 208.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 276.
 (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 208.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 276.
 (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 208.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 276.
 (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 208.
+(Font)              <12> on input line 276.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 208.
+(Font)              <8> on input line 276.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 208.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 208.
+(Font)              <6> on input line 276.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 276.
 (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 208.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 276.
 (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ) (c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/microtype/mt-eur.cfg
 File: mt-eur.cfg 2006/07/31 v1.1 microtype config. file: AMS Euler Roman (RS)
-) [2]
-Overfull \hbox (71.1269pt too wide) in paragraph at lines 254--267
+)
+Overfull \hbox (27.92426pt too wide) in paragraph at lines 273--288
  [] 
  []
 
-<appendices/plot_gmm_desc.pdf, id=48, 355.3275pt x 355.3275pt>
-File: appendices/plot_gmm_desc.pdf Graphic file (type pdf)
-<use appendices/plot_gmm_desc.pdf>
-Package pdftex.def Info: appendices/plot_gmm_desc.pdf  used on input line 285.
-(pdftex.def)             Requested size: 355.33745pt x 355.33745pt.
 [3]
-<appendices/plot_gmm_desc_log.pdf, id=56, 355.3275pt x 355.3275pt>
-File: appendices/plot_gmm_desc_log.pdf Graphic file (type pdf)
-<use appendices/plot_gmm_desc_log.pdf>
-Package pdftex.def Info: appendices/plot_gmm_desc_log.pdf  used on input line 302.
+<appendices/plot_lpa_desc.pdf, id=66, 355.3275pt x 355.3275pt>
+File: appendices/plot_lpa_desc.pdf Graphic file (type pdf)
+<use appendices/plot_lpa_desc.pdf>
+Package pdftex.def Info: appendices/plot_lpa_desc.pdf  used on input line 317.
 (pdftex.def)             Requested size: 355.33745pt x 355.33745pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[4 <./appendices/plot_gmm_desc.pdf>]
-<appendices/plot_gmm_scatter.pdf, id=69, 355.3275pt x 355.3275pt>
-File: appendices/plot_gmm_scatter.pdf Graphic file (type pdf)
-<use appendices/plot_gmm_scatter.pdf>
-Package pdftex.def Info: appendices/plot_gmm_scatter.pdf  used on input line 318.
-(pdftex.def)             Requested size: 355.33745pt x 355.33745pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-[5 <./appendices/plot_gmm_desc_log.pdf>] [6 <./appendices/plot_gmm_scatter.pdf>]
-Overfull \hbox (30.05756pt too wide) in paragraph at lines 383--418
+[4] [5 <./appendices/plot_lpa_desc.pdf>]
+Overfull \hbox (54.70726pt too wide) in paragraph at lines 374--390
  [] 
  []
 
+[6] [7]
+Overfull \hbox (33.21764pt too wide) in paragraph at lines 425--438
+ [] 
+ []
 
-LaTeX Warning: Float too large for page by 49.2848pt on input line 420.
+[8]
 
-[7] [8]
-<appendices/gmm_plotfit.pdf, id=108, 355.3275pt x 355.3275pt>
-File: appendices/gmm_plotfit.pdf Graphic file (type pdf)
-<use appendices/gmm_plotfit.pdf>
-Package pdftex.def Info: appendices/gmm_plotfit.pdf  used on input line 461.
-(pdftex.def)             Requested size: 355.33745pt x 355.33745pt.
-[9] [10 <./appendices/gmm_plotfit.pdf>] [11]
-<appendices/gmm_bivariate_bic.pdf, id=133, 1120.185pt x 533.995pt>
-File: appendices/gmm_bivariate_bic.pdf Graphic file (type pdf)
-<use appendices/gmm_bivariate_bic.pdf>
-Package pdftex.def Info: appendices/gmm_bivariate_bic.pdf  used on input line 532.
+LaTeX Warning: Float too large for page by 1.28986pt on input line 512.
+
+<appendices/lpa_bivariate.pdf, id=107, 1120.185pt x 533.995pt>
+File: appendices/lpa_bivariate.pdf Graphic file (type pdf)
+<use appendices/lpa_bivariate.pdf>
+Package pdftex.def Info: appendices/lpa_bivariate.pdf  used on input line 525.
 (pdftex.def)             Requested size: 469.7566pt x 223.93414pt.
-[12 <./appendices/gmm_bivariate_bic.pdf>] [13] AED endfloat: Processing end Figures and Tables [14] (./appendix_b.aux)
-Package rerunfilecheck Info: File `appendix_b.out' has not changed.
-(rerunfilecheck)             Checksum: CB7533EFF1668EF24D563E2D3DFA8AC7;1382.
+[9 <./appendices/lpa_bivariate.pdf>] [10]
+<appendices/lpa_profiles.pdf, id=127, 746.79pt x 426.59375pt>
+File: appendices/lpa_profiles.pdf Graphic file (type pdf)
+<use appendices/lpa_profiles.pdf>
+Package pdftex.def Info: appendices/lpa_profiles.pdf  used on input line 564.
+(pdftex.def)             Requested size: 469.7509pt x 268.33888pt.
+[11] [12 <./appendices/lpa_profiles.pdf>] AED endfloat: Processing end Figures and Tables [13] (./appendix_a.aux)
+Package rerunfilecheck Info: File `appendix_a.out' has not changed.
+(rerunfilecheck)             Checksum: 5F3CA96FF124069F0138A8891E894297;2244.
  ) 
 Here is how much of TeX's memory you used:
- 18009 strings out of 478053
- 301703 string characters out of 5839061
- 1871787 words of memory out of 5000000
- 37721 multiletter control sequences out of 15000+600000
- 550124 words of font info for 96 fonts, out of 8000000 for 9000
+ 18019 strings out of 478053
+ 301634 string characters out of 5839061
+ 1862787 words of memory out of 5000000
+ 37716 multiletter control sequences out of 15000+600000
+ 550615 words of font info for 101 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 72i,12n,77p,1007b,609s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}<c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi12.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt12.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on appendix_b.pdf (14 pages, 1211867 bytes).
+ 72i,11n,77p,1007b,609s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}<c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi12.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt12.pfb><c:/Users/vanlissa/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
+Output written on appendix_a.pdf (13 pages, 726290 bytes).
 PDF statistics:
- 205 PDF objects out of 1000 (max. 8388607)
- 157 compressed objects within 2 object streams
- 36 named destinations out of 1000 (max. 500000)
- 18514 words of extra memory for PDF output out of 20736 (max. 10000000)
+ 203 PDF objects out of 1000 (max. 8388607)
+ 162 compressed objects within 2 object streams
+ 43 named destinations out of 1000 (max. 500000)
+ 18528 words of extra memory for PDF output out of 20736 (max. 10000000)
 

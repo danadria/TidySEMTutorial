@@ -197,13 +197,16 @@
 \begin{document}
 \maketitle
 
-This is an example of exploratory latent class analysis (LCA) with continuous indicators, otherwise known as latent profile analysis (LPA) or finite Gaussian mixture modeling, using \texttt{tidySEM}.
+This is an example of exploratory latent class analysis (LCA) with continuous indicators,
+otherwise known as latent profile analysis (LPA) or finite Gaussian mixture modeling, using \texttt{tidySEM}.
 The present example uses data collected by Alkema as part of a study on ocean microplastics.
 The purpose of this study was to provide a more nuanced model for the distribution of different sizes of ocean microplastics than the commonly used normal distribution.
 To this end, a mixture of normals was used.
 Since there is no theoretical reason to expect a certain number of classes, this is an exploratory LCA.
-To view its documentation, run the command \texttt{?tidySEM::alkema\_microplastics} in the R console.
-The original analyses are available at \url{https://github.com/cjvanlissa/lise_microplastics}; in this vignette, we take a different approach to the analysis to showcase other possibilities.
+To view its documentation,
+run the command \texttt{?tidySEM::alkema\_microplastics} in the R console.
+The original analyses are available at \url{https://github.com/cjvanlissa/lise_microplastics};
+in this vignette, we take a different approach to the analysis to showcase other possibilities.
 
 \hypertarget{loading-the-data}{%
 \subsection{Loading the Data}\label{loading-the-data}}
@@ -217,26 +220,29 @@ The indicators are fragments' length and width.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# Load required packages}
-\FunctionTok{library}\NormalTok{(tidySEM) }
+\FunctionTok{library}\NormalTok{(tidySEM)}
 \FunctionTok{library}\NormalTok{(ggplot2)}
 \CommentTok{\# Load data}
-\NormalTok{df\_analyze }\OtherTok{\textless{}{-}}\NormalTok{ alkema\_microplastics[alkema\_microplastics}\SpecialCharTok{$}\NormalTok{category }\SpecialCharTok{==} \StringTok{"Fragment"}\NormalTok{, ]}
-\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ df\_analyze[ ,}\FunctionTok{c}\NormalTok{(}\StringTok{"length"}\NormalTok{, }\StringTok{"width"}\NormalTok{)]}
+\NormalTok{df\_analyze }\OtherTok{\textless{}{-}}\NormalTok{ alkema\_microplastics[alkema\_microplastics}\SpecialCharTok{$}\NormalTok{category }\SpecialCharTok{==}
+    \StringTok{"Fragment"}\NormalTok{, ]}
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ df\_analyze[, }\FunctionTok{c}\NormalTok{(}\StringTok{"length"}\NormalTok{, }\StringTok{"width"}\NormalTok{)]}
 \end{Highlighting}
 \end{Shaded}
 
 \hypertarget{examining-the-data}{%
 \subsection{Examining the Data}\label{examining-the-data}}
 
-As per the best practices, the first step in LCA is examining the observed data.
+As per the best practices,
+the first step in LCA is examining the observed data.
 We use \texttt{tidySEM::descriptives()} to describe the data numerically.
-Because all items are categorical, we remove columns for continuous data to de-clutter the table:
+Because all items are categorical,
+we remove columns for continuous data to de-clutter the table:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{desc }\OtherTok{\textless{}{-}}\NormalTok{ tidySEM}\SpecialCharTok{::}\FunctionTok{descriptives}\NormalTok{(df)}
-\NormalTok{desc }\OtherTok{\textless{}{-}}\NormalTok{ desc[, }\FunctionTok{c}\NormalTok{(}\StringTok{"name"}\NormalTok{, }\StringTok{"type"}\NormalTok{, }\StringTok{"n"}\NormalTok{, }\StringTok{"missing"}\NormalTok{, }\StringTok{"unique"}\NormalTok{, }
-\StringTok{"mean"}\NormalTok{, }\StringTok{"median"}\NormalTok{, }\StringTok{"sd"}\NormalTok{, }\StringTok{"min"}\NormalTok{, }\StringTok{"max"}\NormalTok{, }\StringTok{"skew\_2se"}\NormalTok{, }\StringTok{"kurt\_2se"}\NormalTok{)]}
+\NormalTok{desc }\OtherTok{\textless{}{-}}\NormalTok{ desc[, }\FunctionTok{c}\NormalTok{(}\StringTok{"name"}\NormalTok{, }\StringTok{"type"}\NormalTok{, }\StringTok{"n"}\NormalTok{, }\StringTok{"missing"}\NormalTok{, }\StringTok{"unique"}\NormalTok{, }\StringTok{"mean"}\NormalTok{,}
+    \StringTok{"median"}\NormalTok{, }\StringTok{"sd"}\NormalTok{, }\StringTok{"min"}\NormalTok{, }\StringTok{"max"}\NormalTok{, }\StringTok{"skew\_2se"}\NormalTok{, }\StringTok{"kurt\_2se"}\NormalTok{)]}
 \NormalTok{papaja}\SpecialCharTok{::}\FunctionTok{apa\_table}\NormalTok{(desc, }\AttributeTok{caption =} \StringTok{"Descriptive statistics"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -270,18 +276,17 @@ The \texttt{ggplot2} function \texttt{geom\_density()} is useful to visualize co
 \NormalTok{df\_plot }\OtherTok{\textless{}{-}}\NormalTok{ df}
 \FunctionTok{names}\NormalTok{(df\_plot) }\OtherTok{\textless{}{-}} \FunctionTok{paste0}\NormalTok{(}\StringTok{"Value."}\NormalTok{, }\FunctionTok{names}\NormalTok{(df\_plot))}
 \NormalTok{df\_plot }\OtherTok{\textless{}{-}} \FunctionTok{reshape}\NormalTok{(df\_plot, }\AttributeTok{varying =} \FunctionTok{names}\NormalTok{(df\_plot), }\AttributeTok{direction =} \StringTok{"long"}\NormalTok{,}
-                   \AttributeTok{timevar =} \StringTok{"Variable"}\NormalTok{)}
-\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Value)) }\SpecialCharTok{+}
-  \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Variable)}\SpecialCharTok{+}
-  \FunctionTok{theme\_bw}\NormalTok{()}
+    \AttributeTok{timevar =} \StringTok{"Variable"}\NormalTok{)}
+\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Value)) }\SpecialCharTok{+} \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Variable) }\SpecialCharTok{+}
+    \FunctionTok{theme\_bw}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
 \includegraphics{appendices/plot_gmm_desc.pdf}
 
 The data are correctly coded as \texttt{numeric}.
-There are no missing values; if any variables had missing values, we would report an MCAR test with \texttt{mice::mcar()}, and explain that missing data are accounted for using FIML.
+There are no missing values; if any variables had missing values, we would report an MCAR test with \texttt{mice::mcar()},
+and explain that missing data are accounted for using FIML.
 Both the table above and the density plot indicate that the data are extremely right-skewed and kurtotic.
 With this in mind, it can be useful to transform and rescale the data.
 We will use a log transformation.
@@ -289,25 +294,24 @@ We will use a log transformation.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{df\_plot}\SpecialCharTok{$}\NormalTok{Value }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(df\_plot}\SpecialCharTok{$}\NormalTok{Value)}
-\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Value)) }\SpecialCharTok{+}
-  \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Variable)}\SpecialCharTok{+}
-  \FunctionTok{theme\_bw}\NormalTok{()}
+\FunctionTok{ggplot}\NormalTok{(df\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Value)) }\SpecialCharTok{+} \FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Variable) }\SpecialCharTok{+}
+    \FunctionTok{theme\_bw}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
 \includegraphics{appendices/plot_gmm_desc_log.pdf}
 
 The log transformation addresses the aforementioned concerns regarding skew and kurtosis.
-To confirm this, reshape the data to wide format and examine a scatterplot:
+To confirm this, reshape the data to wide format
+and examine a scatterplot:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{reshape}\NormalTok{(df\_plot, }\AttributeTok{direction =} \StringTok{"wide"}\NormalTok{, }\AttributeTok{v.names =} \StringTok{"Value"}\NormalTok{)[, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{reshape}\NormalTok{(df\_plot, }\AttributeTok{direction =} \StringTok{"wide"}\NormalTok{, }\AttributeTok{v.names =} \StringTok{"Value"}\NormalTok{)[,}
+    \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
 \FunctionTok{names}\NormalTok{(df) }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"Value."}\NormalTok{, }\StringTok{""}\NormalTok{, }\FunctionTok{names}\NormalTok{(df), }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{)}
-\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ length, }\AttributeTok{y =}\NormalTok{ width)) }\SpecialCharTok{+}
-  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =}\NormalTok{ .}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
-  \FunctionTok{theme\_bw}\NormalTok{()}
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ length, }\AttributeTok{y =}\NormalTok{ width)) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.1}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{theme\_bw}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
 
@@ -316,28 +320,30 @@ To confirm this, reshape the data to wide format and examine a scatterplot:
 \hypertarget{conducting-latent-profile-analysis}{%
 \subsection{Conducting Latent Profile Analysis}\label{conducting-latent-profile-analysis}}
 
-As all variables are continuous, we can use the convenience function \texttt{tidySEM::mx\_profiles()}, which is a wrapper for the generic function \texttt{mx\_mixture()} optimized for continuous indicators.
+As all variables are continuous, we can use the convenience function
+\texttt{tidySEM::mx\_profiles()},
+which is a wrapper for the generic function \texttt{mx\_mixture()} optimized for continuous indicators.
 Its default settings are appropriate for LPA, assuming fixed variances across classes and zero covariances.
 Its arguments are \texttt{data} and number of \texttt{classes}.
-All variables in \texttt{data} are included in the analysis, which is why we first selected the indicator variables.
+All variables in \texttt{data} are included in the analysis,
+which is why we first selected the indicator variables.
 
-As this is an exploratory LCA, we will conduct a rather extensive search across model specifications and number of classes.
+As this is an exploratory LCA,
+we will conduct a rather extensive search across model specifications and number of classes.
 We will set the maximum number of classes \(K\) to four; depending on the results, we can always choose to increase it later.
 We set a seed to ensure replicable results.
 
-As the analysis takes a long time to compute, it is prudent to save the results to disk immediately, so as not to lose them.
+As the analysis takes a long time to compute,
+it is prudent to save the results to disk immediately, so as not to lose them.
 For this, we use the function \texttt{saveRDS()}.
 We can later use \texttt{res\ \textless{}-\ readRDS("res\_gmm.RData")} to load the analysis from the file.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
-\NormalTok{res }\OtherTok{\textless{}{-}} \FunctionTok{mx\_profiles}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df,}
-                   \AttributeTok{classes =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{,}
-                   \AttributeTok{variances =} \FunctionTok{c}\NormalTok{(}\StringTok{"equal"}\NormalTok{, }\StringTok{"varying"}\NormalTok{),}
-                   \AttributeTok{covariances =} \FunctionTok{c}\NormalTok{(}\StringTok{"zero"}\NormalTok{, }\StringTok{"equal"}\NormalTok{,}
-                                   \StringTok{"varying"}\NormalTok{),}
-                   \AttributeTok{expand\_grid =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{res }\OtherTok{\textless{}{-}} \FunctionTok{mx\_profiles}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df, }\AttributeTok{classes =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{, }\AttributeTok{variances =} \FunctionTok{c}\NormalTok{(}\StringTok{"equal"}\NormalTok{,}
+    \StringTok{"varying"}\NormalTok{), }\AttributeTok{covariances =} \FunctionTok{c}\NormalTok{(}\StringTok{"zero"}\NormalTok{, }\StringTok{"equal"}\NormalTok{, }\StringTok{"varying"}\NormalTok{),}
+    \AttributeTok{expand\_grid =} \ConstantTok{TRUE}\NormalTok{)}
 \FunctionTok{saveRDS}\NormalTok{(res, }\StringTok{"res\_gmm.RData"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -345,7 +351,9 @@ We can later use \texttt{res\ \textless{}-\ readRDS("res\_gmm.RData")} to load t
 \hypertarget{class-enumeration}{%
 \subsection{Class Enumeration}\label{class-enumeration}}
 
-To compare the fit of the estimated models, we create a model fit table using \texttt{table\_fit()}.
+To compare the fit of the estimated models,
+we create a model fit table using
+\texttt{table\_fit()}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -354,19 +362,17 @@ To compare the fit of the estimated models, we create a model fit table using \t
 \end{Shaded}
 
 First, we determine whether any models can be disqualified.
-There were no indications of convergence problems during estimation, so this is not a reason to disqualify solutions.
+There were no indications of convergence problems during estimation,
+so this is not a reason to disqualify solutions.
 Next, we check for local identifiability.
 The sample size is \texttt{5605}.
 We can calculate the ratio of observations to parameters and append it to the fit table:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit}\SpecialCharTok{$}\NormalTok{par\_ratio }\OtherTok{\textless{}{-}}\NormalTok{ (}\DecValTok{5605}\SpecialCharTok{*}\NormalTok{fit}\SpecialCharTok{$}\NormalTok{n\_min) }\SpecialCharTok{/}\NormalTok{ (fit}\SpecialCharTok{$}\NormalTok{Parameters}\SpecialCharTok{/}\NormalTok{fit}\SpecialCharTok{$}\NormalTok{Classes)}
-\NormalTok{fit[ , }\FunctionTok{c}\NormalTok{(}\StringTok{"Name"}\NormalTok{, }\StringTok{"LL"}\NormalTok{, }\StringTok{"Parameters"}\NormalTok{, }\StringTok{"par\_ratio"}\NormalTok{,}
-         \StringTok{"BIC"}\NormalTok{, }\StringTok{"Entropy"}\NormalTok{,}
-         \StringTok{"prob\_min"}\NormalTok{, }\StringTok{"prob\_max"}\NormalTok{, }
-         \StringTok{"n\_min"}\NormalTok{, }\StringTok{"n\_max"}\NormalTok{,}
-         \StringTok{"lmr\_p"}\NormalTok{)]}
+\NormalTok{fit}\SpecialCharTok{$}\NormalTok{par\_ratio }\OtherTok{\textless{}{-}}\NormalTok{ (}\DecValTok{5605} \SpecialCharTok{*}\NormalTok{ fit}\SpecialCharTok{$}\NormalTok{n\_min)}\SpecialCharTok{/}\NormalTok{(fit}\SpecialCharTok{$}\NormalTok{Parameters}\SpecialCharTok{/}\NormalTok{fit}\SpecialCharTok{$}\NormalTok{Classes)}
+\NormalTok{fit[, }\FunctionTok{c}\NormalTok{(}\StringTok{"Name"}\NormalTok{, }\StringTok{"LL"}\NormalTok{, }\StringTok{"Parameters"}\NormalTok{, }\StringTok{"par\_ratio"}\NormalTok{, }\StringTok{"BIC"}\NormalTok{, }\StringTok{"Entropy"}\NormalTok{,}
+    \StringTok{"prob\_min"}\NormalTok{, }\StringTok{"prob\_max"}\NormalTok{, }\StringTok{"n\_min"}\NormalTok{, }\StringTok{"n\_max"}\NormalTok{, }\StringTok{"lmr\_p"}\NormalTok{)]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -413,34 +419,41 @@ free var, free cov 4 & -2,024.10 & 23 & 15.48 & 4,246.73 & 0.62 & 0.50 & 0.02 & 
 
 \end{table}
 
-As can be seen from the fit table, the lowest ratio of observations to parameters is 18, which is no cause for concern.
+As can be seen from the fit table,
+the lowest ratio of observations to parameters is 18, which is no cause for concern.
 
 However, note that we have a very large sample, and for many models, the smallest class comprises only a very small percentage of the total sample.
 Since the purpose of this analysis is to better represent the distribution of ocean microplastics, we can wonder whether it makes sense to allow for classes that only describe a small percentage of the cases.
 We therefore set a lower bound for class size and only consider solutions that capture at least 10\% of the sample.
 
-An interesting characteristic of this data is that the BIC and the entropy are strongly correlated.
+An interesting characteristic of this data is that
+the BIC and the entropy are strongly correlated.
 The raw correlation between these two metrics is .66, \texttt{cor(fit\$BIC,\ fit\$Entropy)}.
-If we omit the 1-class models, for which entropy is technically not defined, the correlation is even as high as .85, \texttt{cor(fit\$BIC{[}!fit\$Classes\ ==\ 1{]},\ fit\$Entropy{[}!fit\$Classes\ ==\ 1{]})}.
+If we omit the 1-class models, for which entropy is technically not defined,
+the correlation is even as high as .85, \texttt{cor(fit\$BIC{[}!fit\$Classes\ ==\ 1{]},\ fit\$Entropy{[}!fit\$Classes\ ==\ 1{]})}.
 
 This strong correlation indicates that an increase in fit comes with a decrease in class separability.
 This illustrates why entropy should not be treated as a model fit criterion.
-It also illustrates that criteria for class enumeration should be explicit, because we will likely come to a different decision depending on which criteria are used.
+It also illustrates that criteria for class enumeration should be explicit,
+because we will likely come to a different decision depending on which criteria are used.
 
 As mentioned before, we drop models with \textless{} 10\% of cases in the smallest class:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit }\OtherTok{\textless{}{-}}\NormalTok{ fit[}\SpecialCharTok{!}\NormalTok{fit}\SpecialCharTok{$}\NormalTok{n\_min }\SpecialCharTok{\textless{}}\NormalTok{ .}\DecValTok{1}\NormalTok{, ]}
+\NormalTok{fit }\OtherTok{\textless{}{-}}\NormalTok{ fit[}\SpecialCharTok{!}\NormalTok{fit}\SpecialCharTok{$}\NormalTok{n\_min }\SpecialCharTok{\textless{}} \FloatTok{0.1}\NormalTok{, ]}
 \end{Highlighting}
 \end{Shaded}
 
-If our strategy is to optimize fit, we can examine the fit table above, or plot a scree plot for the BIC by calling \texttt{plot(fit)}.
+If our strategy is to optimize fit,
+we can examine the fit table above,
+or plot a scree plot for the BIC by calling \texttt{plot(fit)}.
 Note that, due to the large sample size, all ICs give identical conclusions.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{plot}\NormalTok{(fit) }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{90}\NormalTok{, }\AttributeTok{vjust =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{hjust=}\DecValTok{1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(fit) }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{90}\NormalTok{, }\AttributeTok{vjust =} \FloatTok{0.5}\NormalTok{,}
+    \AttributeTok{hjust =} \DecValTok{1}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -448,11 +461,14 @@ Note that, due to the large sample size, all ICs give identical conclusions.
 \includegraphics[width=1\linewidth]{appendices/gmm_plotfit} \caption{Bivariate profile plot}\label{fig:unnamed-chunk-16}
 \end{figure}
 
-Looking at the blocks of 1-4 class models for each model specification, it appears that the BIC keeps decreasing with the addition of more classes.
+Looking at the blocks of 1-4 class models for each model specification,
+it appears that the BIC keeps decreasing with the addition of more classes.
 Across the blocks, the BIC keeps decreasing with increasingly complex model specifications.
 Similarly, all LMR tests are significant, indicating a preference for more complex models.
 
-Out of the 16 models that remain after removing those with \textless{} 10\% of cases in the smallest class, one model stands out: The 2-class model with free (co)variances.
+Out of the 16 models that remain after removing those with \textless{} 10\% of cases in the smallest class,
+one model stands out:
+The 2-class model with free (co)variances.
 We thus select this as our final model.
 
 \hypertarget{interpreting-the-final-class-solution}{%
@@ -466,7 +482,8 @@ Note that there is little sense in requesting the standard errors and p-values: 
 \begin{Highlighting}[]
 \NormalTok{res\_bic }\OtherTok{\textless{}{-}}\NormalTok{ res[[}\StringTok{"free var, free cov 2"}\NormalTok{]]}
 \NormalTok{cp }\OtherTok{\textless{}{-}} \FunctionTok{class\_prob}\NormalTok{(res\_bic)}
-\NormalTok{results }\OtherTok{\textless{}{-}} \FunctionTok{table\_results}\NormalTok{(res\_bic, }\AttributeTok{columns =} \FunctionTok{c}\NormalTok{(}\StringTok{"label"}\NormalTok{, }\StringTok{"est"}\NormalTok{, }\StringTok{"std\_est"}\NormalTok{))}
+\NormalTok{results }\OtherTok{\textless{}{-}} \FunctionTok{table\_results}\NormalTok{(res\_bic, }\AttributeTok{columns =} \FunctionTok{c}\NormalTok{(}\StringTok{"label"}\NormalTok{, }\StringTok{"est"}\NormalTok{,}
+    \StringTok{"std\_est"}\NormalTok{))}
 \NormalTok{results}
 \end{Highlighting}
 \end{Shaded}
@@ -515,40 +532,53 @@ However, we omit the density plots, because \texttt{plot\_bivariate()} also incl
 \includegraphics[width=1\linewidth]{appendices/gmm_bivariate_bic} \caption{Bivariate profile plot}\label{fig:unnamed-chunk-22}
 \end{figure}
 
-On the diagonal of the bivariate plot are weighted density plots: normal approximations of the density function of observed data, weighed by class probability.
-On the off-diagonal are plots for each pair of indicators, with the class means indicated by a point, class standard deviations indicated by lines, and covariances indicated by circles.
+On the diagonal of the bivariate plot are weighted density plots:
+normal approximations of the density function of observed data,
+weighed by class probability.
+On the off-diagonal are plots for each pair of indicators,
+with the class means indicated by a point,
+class standard deviations indicated by lines,
+and covariances indicated by circles.
 
 The bivariate and marginal plots show that the classes are not clearly separable, as also evident from the low entropy.
 At the same time however, it is clear that the distributions are non-normal, and the second class accounts for some of this non-normality (there is a smaller `bump' to the right of the mode, which could be the mean of a second normal distribution).
 The first class (57\%) accounts for smaller fragments, and the second class (43\%) accounts for some of the right-skew in fragments' length and width.
-We can simply label class 1 as \emph{small fragments}, and class 2 as \emph{larger fragments}.
+We can simply label class 1 as \emph{small fragments},
+and class 2 as \emph{larger fragments}.
 
 It also appears that the correlation between length and width is stronger for small fragments than for large fragments.
 To test the difference, use \texttt{wald\_test(res\_bic,\ hypothesis\ =\ "c11\ =\ c21")}.
 Results indicate that the correlation is indeed significantly larger for small fragments (\(r = .92\)) than for larger fragments (\(r = .85\)), \(\chi^2(1) = 11.56, p < .001\).
 Thus, small fragments are more coextensive than large fragments.
 
-There are, however, concerns about the interpretability of this solutions: the entropy is \texttt{.56} and the minimum classification probability is\texttt{.81}.
+There are, however,
+concerns about the interpretability of this solutions:
+the entropy is \texttt{.56} and the minimum classification probability is\texttt{.81}.
 This is because of substantial overlap in the distributions of the two classes.
 
 \hypertarget{auxiliary-analyses}{%
 \subsection{Auxiliary Analyses}\label{auxiliary-analyses}}
 
 Finally, we may want to compare the different classes on auxiliary variables or models.
-The \texttt{BCH()} function applies three-step analysis, which compares the classes using a multi-group model, controlling for classification error.
+The \texttt{BCH()} function applies three-step analysis,
+which compares the classes using a multi-group model,
+controlling for classification error.
 For example, we can test whether polymer type differs between the two classes:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{df\_pt }\OtherTok{\textless{}{-}} \FunctionTok{mx\_dummies}\NormalTok{(df\_analyze}\SpecialCharTok{$}\NormalTok{poly\_type)}
-\NormalTok{aux\_pt }\OtherTok{\textless{}{-}} \FunctionTok{BCH}\NormalTok{(res\_bic, }\AttributeTok{model =} \StringTok{"poly\_typeOther | t1}
+\NormalTok{aux\_pt }\OtherTok{\textless{}{-}} \FunctionTok{BCH}\NormalTok{(res\_bic, mo}
+\AttributeTok{l =} \StringTok{"poly\_typeOther | t1}
 \StringTok{                                poly\_typePE | t1}
-\StringTok{                                poly\_typePP | t1"}\NormalTok{, }\AttributeTok{data =}\NormalTok{ df\_pt)}
+\StringTok{                                poly\_typePP | t1"}\NormalTok{,}
+    \AttributeTok{data =}\NormalTok{ df\_pt)}
 \NormalTok{aux\_pt }\OtherTok{\textless{}{-}} \FunctionTok{mxTryHardOrdinal}\NormalTok{(aux\_pt)}
 \end{Highlighting}
 \end{Shaded}
 
-To obtain an omnibus likelihood ratio test of the significance of the differences in polymer type across classes, use \texttt{lr\_test(aux\_pt)}.
+To obtain an omnibus likelihood ratio test of the significance of the differences in polymer type across classes,
+use \texttt{lr\_test(aux\_pt)}.
 The results indicate that there are significant differences in polymer types across classes, \(\Delta LL(3) = 17.14, p < .001\).
 The results can be reported in probability scale using \texttt{table\_prob(aux\_pt)}.
 To test differences for specific polymer types, we can use Wald tests:
@@ -563,73 +593,6 @@ To test differences for specific polymer types, we can use Wald tests:
 
 The results indicate that there is no significant difference in the prevalence of ``Other'' polymer types across classes.
 However, PE is significantly more prevalent in class 1, and PP is significantly more prevalent in class 2.
-
-\hypertarget{r-session}{%
-\subsection{R session}\label{r-session}}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{sessionInfo}\NormalTok{()}
-\CommentTok{\#\textgreater{} R version 4.1.3 (2022{-}03{-}10)}
-\CommentTok{\#\textgreater{} Platform: x86\_64{-}w64{-}mingw32/x64 (64{-}bit)}
-\CommentTok{\#\textgreater{} Running under: Windows 10 x64 (build 19045)}
-\CommentTok{\#\textgreater{} }
-\CommentTok{\#\textgreater{} Matrix products: default}
-\CommentTok{\#\textgreater{} }
-\CommentTok{\#\textgreater{} locale:}
-\CommentTok{\#\textgreater{} [1] LC\_COLLATE=English\_United Kingdom.1252 }
-\CommentTok{\#\textgreater{} [2] LC\_CTYPE=English\_United Kingdom.1252   }
-\CommentTok{\#\textgreater{} [3] LC\_MONETARY=English\_United Kingdom.1252}
-\CommentTok{\#\textgreater{} [4] LC\_NUMERIC=C                           }
-\CommentTok{\#\textgreater{} [5] LC\_TIME=English\_United Kingdom.1252    }
-\CommentTok{\#\textgreater{} }
-\CommentTok{\#\textgreater{} attached base packages:}
-\CommentTok{\#\textgreater{} [1] stats     graphics  grDevices utils     datasets  methods   base     }
-\CommentTok{\#\textgreater{} }
-\CommentTok{\#\textgreater{} other attached packages:}
-\CommentTok{\#\textgreater{} [1] ggplot2\_3.4.0    tidySEM\_0.2.4.6  OpenMx\_2.21.1    scales\_1.2.1    }
-\CommentTok{\#\textgreater{} [5] yaml\_2.3.6       papaja\_0.1.1     tinylabels\_0.2.3}
-\CommentTok{\#\textgreater{} }
-\CommentTok{\#\textgreater{} loaded via a namespace (and not attached):}
-\CommentTok{\#\textgreater{}   [1] TH.data\_1.1{-}1         colorspace\_2.1{-}0      estimability\_1.4.1   }
-\CommentTok{\#\textgreater{}   [4] parameters\_0.20.1     rstudioapi\_0.14       listenv\_0.9.0        }
-\CommentTok{\#\textgreater{}   [7] lavaan\_0.6{-}13         rstan\_2.26.13         fansi\_1.0.4          }
-\CommentTok{\#\textgreater{}  [10] mvtnorm\_1.1{-}3         codetools\_0.2{-}18      splines\_4.1.3        }
-\CommentTok{\#\textgreater{}  [13] mnormt\_2.1.1          knitr\_1.41            texreg\_1.38.6        }
-\CommentTok{\#\textgreater{}  [16] bayesplot\_1.10.0      jsonlite\_1.8.4        effectsize\_0.8.2     }
-\CommentTok{\#\textgreater{}  [19] compiler\_4.1.3        httr\_1.4.4            emmeans\_1.8.4{-}1      }
-\CommentTok{\#\textgreater{}  [22] backports\_1.4.1       assertthat\_0.2.1      Matrix\_1.5{-}3         }
-\CommentTok{\#\textgreater{}  [25] fastmap\_1.1.0         cli\_3.6.0             htmltools\_0.5.4      }
-\CommentTok{\#\textgreater{}  [28] prettyunits\_1.1.1     tools\_4.1.3           igraph\_1.3.5         }
-\CommentTok{\#\textgreater{}  [31] coda\_0.19{-}4           gtable\_0.3.1          glue\_1.6.2           }
-\CommentTok{\#\textgreater{}  [34] RANN\_2.6.1            dplyr\_1.0.10          V8\_4.2.2             }
-\CommentTok{\#\textgreater{}  [37] Rcpp\_1.0.10           carData\_3.0{-}5         vctrs\_0.5.2          }
-\CommentTok{\#\textgreater{}  [40] nlme\_3.1{-}161          psych\_2.2.9           insight\_0.18.8       }
-\CommentTok{\#\textgreater{}  [43] xfun\_0.36             stringr\_1.5.0         globals\_0.16.2       }
-\CommentTok{\#\textgreater{}  [46] ps\_1.7.2              proto\_1.0.0           CompQuadForm\_1.4.3   }
-\CommentTok{\#\textgreater{}  [49] lifecycle\_1.0.3       future\_1.30.0         MASS\_7.3{-}58.2        }
-\CommentTok{\#\textgreater{}  [52] zoo\_1.8{-}11            parallel\_4.1.3        sandwich\_3.0{-}2       }
-\CommentTok{\#\textgreater{}  [55] inline\_0.3.19         curl\_5.0.0            gridExtra\_2.3        }
-\CommentTok{\#\textgreater{}  [58] pander\_0.6.5          blavaan\_0.4{-}3         loo\_2.5.1            }
-\CommentTok{\#\textgreater{}  [61] StanHeaders\_2.26.13   stringi\_1.7.12        highr\_0.10           }
-\CommentTok{\#\textgreater{}  [64] bayestestR\_0.13.0     fastDummies\_1.6.3     checkmate\_2.1.0      }
-\CommentTok{\#\textgreater{}  [67] boot\_1.3{-}28           pkgbuild\_1.4.0        rlang\_1.0.6          }
-\CommentTok{\#\textgreater{}  [70] pkgconfig\_2.0.3       matrixStats\_0.63.0    evaluate\_0.20        }
-\CommentTok{\#\textgreater{}  [73] lattice\_0.20{-}45       rstantools\_2.2.0      processx\_3.8.0       }
-\CommentTok{\#\textgreater{}  [76] tidyselect\_1.2.0      parallelly\_1.34.0     plyr\_1.8.8           }
-\CommentTok{\#\textgreater{}  [79] magrittr\_2.0.3        bookdown\_0.32         R6\_2.5.1             }
-\CommentTok{\#\textgreater{}  [82] generics\_0.1.3        multcomp\_1.4{-}20       DBI\_1.1.3            }
-\CommentTok{\#\textgreater{}  [85] withr\_2.5.0           gsubfn\_0.7            pillar\_1.8.1         }
-\CommentTok{\#\textgreater{}  [88] survival\_3.5{-}0        datawizard\_0.6.5      abind\_1.4{-}5          }
-\CommentTok{\#\textgreater{}  [91] tibble\_3.1.8          future.apply\_1.10.0   crayon\_1.5.2         }
-\CommentTok{\#\textgreater{}  [94] car\_3.1{-}1             nonnest2\_0.5{-}5        utf8\_1.2.2           }
-\CommentTok{\#\textgreater{}  [97] tmvnsim\_1.0{-}2         MplusAutomation\_1.1.0 rmarkdown\_2.20       }
-\CommentTok{\#\textgreater{} [100] grid\_4.1.3            data.table\_1.14.6     pbivnorm\_0.6.0       }
-\CommentTok{\#\textgreater{} [103] bain\_0.2.8            callr\_3.7.3           digest\_0.6.31        }
-\CommentTok{\#\textgreater{} [106] xtable\_1.8{-}4          dbscan\_1.1{-}11         RcppParallel\_5.1.6   }
-\CommentTok{\#\textgreater{} [109] stats4\_4.1.3          munsell\_0.5.0}
-\end{Highlighting}
-\end{Shaded}
 
 
 \end{document}
