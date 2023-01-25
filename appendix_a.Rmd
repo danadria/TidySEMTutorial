@@ -426,3 +426,10 @@ The results can be reported using `table_results(aux_model)`.
 
 <!-- ::: {#refs custom-style="Bibliography"} -->
 <!-- ::: -->
+
+## R session
+
+```{r echo = TRUE, eval=TRUE}
+sessionInfo()
+```
+

@@ -79,7 +79,7 @@ The first challenge is that most existing software that implements these models 
 The second challenge is that there is a lack of standards for estimating and reporting LCA, and some myths and misunderstandings have been perpetuated in prior literature.
 This introduces a risk of misapplications of the technique,
 and complicates manuscript review and assessment of the quality of published studies.
-The present paper seeks to address these challenges by introducing updated guidelines for estimatin and reporting LCA,
+The present paper seeks to address these challenges by introducing updated guidelines for estimating and reporting LCA,
 based on current best practice. 
 Furthermore, meeting the increasing demand for open source research software,
 this paper introduces new functionality in the R-package `tidySEM` [@van_lissa_tidysem_2022] to perform LCA using free open source software (FOSS).
@@ -88,7 +88,7 @@ this paper introduces new functionality in the R-package `tidySEM` [@van_lissa_t
 
 Despite the popularity of LCA,
 most existing software is commercial and closed-source,
-for example, Mplus [@muthen_mplus_1998], for which the R-package `MplusAutomation` offers augmented LCA functionality [@hallquist_mplusautomation_2018], and LatentGOLD [REF].
+for example, Mplus [@muthen_mplus_1998], for which the R-package `MplusAutomation` offers augmented LCA functionality [@hallquist_mplusautomation_2018], and LatentGOLD [@LG_manual].
 <!-- software that implements these models. -->
 <!-- One important limitation is that the most fully-features -->
 A downside of commercial software is that its use is restricted to individuals and institutions who can afford a license.
@@ -107,7 +107,7 @@ researchers can review and verify the methods and algorithms used,
 which helps to ensure the integrity and reliability of research findings.
 Overall, FOSS has the potential to significantly improve the efficiency and effectiveness of scientific research, while also promoting transparency, collaboration, and inclusivity within the scientific community.
 
-Notable FOSS for LCA includes Mclust [REF], depmixS4 [REF], and OpenMx [@neale_openmx_2016].
+Notable FOSS for LCA includes mclust [@scrucca_mclust_2016], depmixS4 [@depmixS4], and OpenMx [@neale_openmx_2016].
 A crucial limitation of these existing packages is that some have limited functionality (e.g., Mclust),
 or implement specific innovations (e.g., depmixS4).
 OpenMx is unique in that, like Mplus, it implement LCA in the context of a fully featured structural equation modeling framework.
@@ -231,7 +231,7 @@ to the parameters of each group is determined by that case's posterior
 probability of belonging to that group.
 
 When the focus is on each individual's estimated class membership,
-LCA can be thought of as a type of clustering algorithm that corrects for (random) measurement error.
+LCA can be thought of as a type of clustering algorithm that corrects for random measurement error by default, and is able to correct for systematic measurement error if it is included in the model.
 Specifically, the posterior class probability that an individual belongs to a latent class
 can be computed from the likelihood of that individual's observed data under given the class-specific model.
 These posterior class probabilities can be used to weight follow-up analyses,
@@ -291,6 +291,17 @@ and a class of smaller particles with a high correlation between length and widt
 The reason for this difference in correlations makes theoretical sense:
 the large particles were heterogenous in shape,
 whereas the smaller particles had been polished to a more uniform (rounded) shape by the elements [@alkema_maximizing_2022].
+
+A longitudinal extension of LCA is the Hidden Markov Model (HMM, also
+called Latent Transition Analysis), which estimates the change in class
+membership over time with the markov assumption over time. The markov
+assumption states that the class membership at time $t$ is only affected
+by the class membership at time $t-1$. The structural part of the model
+is comprise of the initial states (proportion of the sample in each
+class at the first time point), and transition probabilities
+(probabilities to switch class membership across time). The transition
+probabilities are estimated as multinomial logistic regressions between
+class memberships [@vermunt_longitudinal_2010].
 
 Finally, some LCA models use latent variables as indicators.
 A common application of this approach is in
@@ -355,7 +366,7 @@ This is useful when class membership is measured imperfectly by several indicato
 LCA can partial out measurement error and restore most likely class membership.
 For example, one study found discrepancies between self-reported employment status and official register data [@pavlopoulos_measuring_2015]. 
 While it might be tempting to assume that register data is free of error, this assumption was shown to be false.
-A mixture model was used to estimate employment status, correcting for measurement error, from both  self-report and registry data.
+A mixture model was used to estimate employment status, correcting for measurement error, from both self-report and registry data.
 The study investigated random and systematic measurement error in both indicators,
 which reveal strengths and weaknesses of both types of assessment.
 
@@ -387,7 +398,7 @@ Factor analysis would only be able to capture the differences between the first 
 Note that this is a pragmatic use of LCA;
 there is no theory about the existence of a categorical latent variable (cf. Testing theory).
 Consequently, the class solution should be treated as descriptive of the sample,
-and not be "reified" - treated as evidence of the existence of a categorical latent variable.
+and not be "reified" - treated as evidence of the existence of a categorical latent variable. These classes can be theoretically justified, and use as part of the theory building process, but they are not sufficient.
 
 The use of LCA for dimension reduction is common in longitudinal research,
 where one developmental process is summarized using latent class growth analysis (LCGA),
@@ -441,9 +452,9 @@ or what type of intervention is appropriate.
 ### Violations of normality
 
 Finally, LCA can be used to deal with data which violate certain assumptions.
-For example, zero-inflated and hurdle models are special cases of LCA for dealing data with a very high proportion of zeros (extreme right skew) [@baughman_mixture_2007].
+For example, zero-inflated and hurdle models are special cases of LCA for dealing data with a very high proportion of zeros (extreme right skew) [@baughman_mixture_2007; magnus_multidimensional_2021].
 These models estimate one class to explain the "true zeros",
-and another class with a different distribution to explain all oter values, which can include zero.
+and another class with a different distribution to explain all other values, which can include zero.
 Note that this LCA has different models for both classes,
 and thus falls beyond the scope of this paper.
 <!-- CJ: This has been said elsewhere: -->
@@ -549,7 +560,7 @@ and moderating the `tidyLPA` Google group suggest that the
 misapplication of mixture models to ordinal (e.g., Likert-type)
 indicators is the most common source of user error. Whereas it has been
 argued that some parametric methods are robust when scales with 7+
-response categories are treated as continuous [e.g., @norman_likert_2010],
+response categories are treated as continuous [e.g., @norman_likert_2010; rhemtulla_when_2012],
 it is very unlikely
 that an ordinal variable can be modeled as a *mixture* of multiple
 normal distributions.
@@ -614,13 +625,14 @@ missing data and reporting how missingness was handled
 While we concur that investigating missingness is due diligence,
 it is important to emphasize that missingness is adequately handled by default in `OpenMx`, which is the computational backend of `tidySEM`.
 Its Full Information Maximum Likelihood (FIML) estimator makes use of all available
-information without imputing missing values [@enders_relative_2001].
+information without imputing missing values, by estimating the model based on all
+available information for each subject [@enders_relative_2001; enders_applied_2022].
 FIML is a best-practice solution for handling missing data;
 at least on par with multiple imputation [@lee_comparison_2021].
 Multiple imputation is less suitable to LCA for two reasons. First,
 because LCA methods are often computationally intensive,
 and conducting them on several imputed datasets multiplies the load.
-Second, because many multiple imputation methods assume normality; an assumption likely to be violated when data come from a heterogeneous population.
+Second, because many multiple imputation methods assume normality; an assumption likely to be violated when data come from a heterogeneous population, so the imputation model could bias the results as it does not account for the expected heterogeneity.
 
 Three types of missingness have
 been distinguished in the literature [@rubin_inference_1976; 
@@ -638,7 +650,7 @@ A non-parametric MCAR test may be more suitable [@jamshidian_tests_2010].
 For this tutorial,
 the lead author has implemented this test in the `mice` package as `mice::mcar()`.
 Our recommendation is to inspect and report the proportion of missingness per variable (e.g., using `tidySEM::descriptives()`),
-and report the `mice::mcar()` test.
+and report the `mice::mcar()` test, as way to identify variables that can help the parameter recovery instead of evidence of MCAR or MNAR.
 As FIML estimation assumes that missingness is either MCAR or MAR,
 one would proceed with FIML regardless of the outcome.
 
@@ -655,7 +667,7 @@ The available model parameters depend on the measurement level of the indicators
 Continuous indicators can be parametrized in terms of means, variances, and covariances.
 LCGA and GMM have these same parameters,
 but with respect to the latent growth variables.
-Ordinal indicators can be parametrized differently;
+Ordinal indicators are parametrized differently;
 the default approach in `tidySEM` assumes that each ordinal indicator reflects an underlying standard normal distribution, $N(\mu = 0, \sigma = 1)$.
 The parameters are "thresholds" that correspond to quantiles of this distribution, estimated based on the proportion of individuals in each of the
 response categories of the indicator variable.
@@ -960,7 +972,7 @@ We address each of these criteria below.
 As there are no absolute fit indices for LCA,
 information criteria are typically used to assess relative fit.
 Information criteria are computed from the $-2LL$,
-which is the most basic fit measure.
+which is the most basic fit measure, testing the overall hypothesis if the model properly represents the data.
 Information criteria add a penalty for model complexity to the $-2LL$, and thus balance fit and complexity.
 The lower
 the value of an information criterion, the better the overall fit of the
@@ -983,7 +995,7 @@ important to identify a suitable strategy to reconcile them.
 One option is to select a specific fit index, such as the BIC,
 before seeing the results.
 This choice can be preregistered to avoid concerns about cherry picking.
-Another option is to always prefer the most parsimonious model that has best fit according to any of the available fit indices.
+Another option is to always prefer the most parsimonious model that has best fit according to any of the available fit indices. Other approach is to select several competing model based on the ICs, and evaluate the theoretical interpretation.
 Yet another option is to incorporate information from multiple fit indices using the analytic hierarchy process [@akogul_comparison_2016],
 which is implemented in `tidyLPA` [@rosenberg_tidylpa_2018].
 Finally, one can use a scree plot to determine the inflection point at which additional classes contribute little to further decreases of the ICs [@nylund-gibson_ten_2018].
@@ -1038,7 +1050,7 @@ Specific models can be compared using the function `BLRT()`.
 
 Anecdotal experience as a statistical co-author on LCA studies suggests that both these tests tend to be liberal,
 returning significant p-values for models with more classes even when other indicators suggest that those models are overfitted (e.g., near-zero class counts).
-Other authors have reported similar experiences [@sinha_practitioners_2021].
+Other authors have reported similar experiences [@sinha_practitioners_2021], which matches the differences between LRT and ICs from information theory as LRT tests and compare the models based on in sample predictive accuracy, and ICs evaluates and compare the models out-of-sample predictive accuracy which helps to control for overfitting [@mcelreath_statistical_2020].
 This suggests that, like existing ICs,
 LR tests might not adequately balance fit and complexity in LCA.
 Better solutions for class enumeration are thus an important target for future research.
@@ -1109,8 +1121,7 @@ for participants assigned to one particular class (rows) according to $M$,
 this table gives the mean probability of being assigned to any class (columns).
 This table is obtained by calculating the column means of $P$ for the 
 $k$ subsets of observations with most likely class of $M = 1 \ldots k$.
-The diagonal represents the probability that observations in each class will be correctly classified.
-<!-- Mauricio: Can you fact-check this?!? I really struglle here -->
+The diagonal represents the average predictive probability of a the subjects related to their most likely class, indicating the certainty of class assignment for the subjects. Some guidelines have being suggested for this diagonal, like for them to be higher than 0.7 [@masyn2013], but we suggest researchers to be cautions about these guidelines as they cannot be generalized and should not be use as strict cutoffs as evidence "good" or "bad" classification.
 
 The table of classification probabilities for the most likely latent class $M$ by latent class, $P_{p_{(M = m | C = c)}}$ is similar to the aforementioned table $P_{p_{(M = m)}}$,
 except that it accounts for classification uncertainty.
@@ -1119,7 +1130,7 @@ and $M$ is the most likely class,
 then this table shows the probability of an observation being assigned to class $m$ in $M$, given that its true class is $c$ in $C$, or $p(M=m|C=c)$.
 Values on the diagonal can thus be conceptualized as the reliability with which each level of the categorical latent variable is measured by $M$,
 and off-diagonal elements can be conceptualized as measurement error.
-<!-- Mauricio: Can you fact-check this?!? I really struglle here -->
+<!-- Mauricio: Can you fact-check this?!? I really struglle here. MGV: this looks good -->
 The minimum and maximum of the diagonal of this table are given by default as part of the output of `table_fit()` for LCA analyses (`prob_min` and `prob_max`).
 These probabilities are of particular interest because they conveniently summarize classification accuracy per class.
 Both probabilities should be high, as this means that all classes are reliably classified.
@@ -1478,6 +1489,7 @@ The best practices discussed in this paper are summarized in the SMART-LCA Check
 5. Justify the (preregistered) criteria used for class enumeration, which can include:
     + Information criteria
     + LR tests
+    + Theoretical interpretability of the solution
 6. Justify the (preregistered) criteria used to eliminate models from consideration, including:
     + Classification diagnostics
     + Local identifiability (acceptable number of observations per parameter in each class)

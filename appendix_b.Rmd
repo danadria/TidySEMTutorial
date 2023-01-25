@@ -433,3 +433,9 @@ However, PE is significantly more prevalent in class 1, and PP is significantly 
 
 <!-- ::: {#refs custom-style="Bibliography"} -->
 <!-- ::: -->
+
+## R session
+
+```{r echo = TRUE, eval=TRUE}
+sessionInfo()
+```
