@@ -214,6 +214,12 @@ In this vignette,
 we do not consider more than 5 classes,
 because the analyses are computationally very intensive and the data were simulated from a 3-class model.
 
+It is important to highlight that in LCGA, the subgroups will be limited by
+the specify growth structure, meaning that LCA will identify distinctive
+growth patterns within the intercept, step, and slope growth. For
+example, if there is a subgroup that follows a quadratic growth pattern
+this models will not be able to identify it.
+
 **NOTE: The time scales in this model are not correct; it currently assumes that all measurements are equidistant. Feel free to experiment with adjusting this.**
 
 ```{r lcga, echo = TRUE, eval = FALSE}
@@ -469,3 +475,9 @@ Note that the observed individual trajectories show very high variability within
 
 <!-- ::: {#refs custom-style="Bibliography"} -->
 <!-- ::: -->
+
+## R session
+
+```{r echo = TRUE, eval=TRUE}
+sessionInfo()
+```
