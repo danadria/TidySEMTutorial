@@ -48,7 +48,7 @@ abstract: |
   modeling have long been available in commercial software packages, open
   source alternatives have remained somewhat inaccessible. This tutorial
   describes best practices for the estimation and reporting of LCA,
-  using free and open source software in R. To this end, 
+  using the free and open source software in R. To this end, 
   we introduce new functionality for estimating and reporting mixture models
   using the `tidySEM` R-package.
   
@@ -455,7 +455,7 @@ or what type of intervention is appropriate.
 ### Violations of Normality
 
 Finally, LCA can be used to deal with data which violate certain assumptions.
-For example, zero-inflated and hurdle models are special cases of LCA for dealing data with a very high proportion of zeros (extreme right skew) [@baughman_mixture_2007; @magnus_multidimensional_2022].
+For example, zero-inflated and hurdle models are special cases of LCA for dealing data with a very high proportion of zeros (extreme right skew) [@baughman_mixture_2007].
 These models estimate one class to explain the "true zeros",
 and another class with a different distribution to explain all other values, which can include zero.
 Note that this LCA has different models for both classes,
@@ -465,7 +465,12 @@ and thus falls beyond the scope of this paper.
 <!-- distribution is a non-normal mixture of $k$ normal distributions, and it -->
 <!-- can recover the value of $k$, i.e. generate a $k$-class solution. -->
 <!-- CJ: This example is not perfect, we need another example still.. -->
-For instance, a depression questionnaire PH-9 have found 2 distinct groups, ones with no symptoms, and one with symptoms. A mixture model can model the "presence" and "frequency" of symptoms as separate classes, instead of assuming that the sample follows a single continuous underlying distribution [@magnus_multidimensional_2022]. 
+One example of mixture models for violations of normality 
+is in modeling responses to the PH-9, a questionnaire of depressive symptoms.
+Researchers observed two distinct groups: One with no symptoms on most indicators (zero inflation),
+and one with non-zero symptoms [@magnus_multidimensional_2022].
+As this response pattern violates the assumption of multivariate normality,
+the authors used a mixture model to capture the "presence" and "frequency" of symptoms as separate classes.
 <!-- the aforementioned study on marine plastic noted that many prior studies had treated the distribution of particles as (multivariate) normal, despite clear deviations from normality [@alkema_maximizing_2022].
 A mixture of two normal distributions with distinct variances described the observed distribution better. -->
 <!-- LCA and factor analysis share the approximation of an unobserved latent variable, the difference being if that variable is continuous or categorical. We encourage researchers to be agnostic about the **true** nature of the latent variable. And focus on the approach that fits the research question. -->
@@ -870,7 +875,7 @@ Since SA is a global optimizer, it should be independent of starting values.
 With this in mind, it is efficient to start estimation from a "reasonable solution", instead of a random starting point.
 For example, if we assume that the different classes are likely to have different mean values on the indicators, 
 then a nonparametric clustering algorithm - like K-means or hierarchical clustering - can be used to determine these cluster centroids [see also @biernacki_choosing_2003].
-By default, `tidySEM` derives starting values using K-means clustering [@likas_global_2003; @Forgy1965ClusterAO; @Hartigan_kmeans],
+By default, `tidySEM` derives starting values using K-means clustering [@Hartigan_kmeans],
 computing the mixture model starting values by treating the K-means solution as multi-group model.
 Next, SA is used to find the global optimum solution.
 Finally, SA is followed up with a short run of the ML algorithm,
@@ -989,10 +994,13 @@ It is computed as $-2LL+2p$, where $p$ is the number of parameters.
 The *Bayesian Information Criterion* (*BIC*) multiplies the penalty for complexity with a function of the sample size, $p \ln(n)$,
 such that complex models are penalized more in smaller samples.
 Finally,
-the so-called *sample size adjusted BIC* (*saBIC*) implements a different ad-hoc penalty for sample size,
-$\ln(\frac{n + 2}{24})$. Although simulation studies have shown that the saBIC performs well for class enumeration [@tein_statistical_2013; @chen_efficacy_2017],
-a limitation is that its penalty is not based on theory, but on the Minimum Description Length (MDL) as the shortes set of information necessary to reproduce the data [@Rissanen_1985; @sclove_application_1987]. BIC also performs well and is theoretically substantiated.
-As such, BIC may be the most appropriate information criterion to use for model comparison [@nylund-gibson_ten_2018; @masyn_latent_2013]. 
+the so-called *sample size adjusted BIC* (*saBIC*), $\ln(\frac{n + 2}{24})$,
+implements a penalty for sample size that is based on the Minimum Description Length, a concept from data compression that refers to the smallest number of pieces of information necessary to reproduce the data [@Rissanen_1985; @sclove_application_1987].
+Simulation studies have shown that the saBIC performs well for enumeration of homogenous clusters in small samples,
+but tends to select too many classes when the number of the number of classes and the sample size are large [@tein_statistical_2013; @chen_efficacy_2017].
+The BIC has been found to perform consistently well across simulation studies,
+and is among the most widely known information criteria.
+As such, BIC may be a sensible default criterion for model comparison [@nylund-gibson_ten_2018; @masyn_latent_2013]. 
 In `tidySEM`, all three ICs are available as a part of the output of `table_fit()`.
 
 ICs may occasionally contradict each other, so it is
@@ -1335,7 +1343,8 @@ The most fundamental fit measure is the $-2LL$,
 as this is the quantity optimized during estimation.
 From these statistics, information criteria can be computed.
 By default, `table_fit()` includes the AIC, BIC, and saBIC.
-We suggest to report at least the BIC, as it is ubiquitous, grounded in theory, and performs well in class enumeration.
+We suggest to report at least the BIC, as it is ubiquitous, well-understood,
+and performs well in class enumeration.
 
 Classification diagnostics should be reported,
 as they may determine whether models are excluded from consideration.
