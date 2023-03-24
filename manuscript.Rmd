@@ -1051,6 +1051,10 @@ it is possible to test the difference in model fit using a LR test.
 One challenge is that the LR test statistic is not asymptotically $\chi^2$ distributed for LCA.
 The so-called *Lo-Mendell-Rubin (LMR) adjusted LR test* overcomes this problem by applying an ad-hoc correction to the LR [@lo_testing_2001].
 This test is implemented in `tidySEM`, and is a part of the default output of `table_fit()`.
+<!-- A note on ‘Testing the number of components in a normal mixture’ Get access Arrow -->
+<!-- Neal O. Jeffries -->
+<!-- Biometrika, Volume 90, Issue 4, December 2003, Pages 991–994, https://doi.org/10.1093/biomet/90.4.991 -->
+<!-- [LMR]requires conditions that are generally not met when the null hypothesis holds. Consequently, the result is not proven and simulations suggest that it may not be correct. -->
 
 Another solution is to derive an empirical sampling distribution for the LR difference.
 The so-called *Bootstrapped Likelihood Ratio Test (BLRT)* does so by simulating data from the $k-1$-class model $b$ times (e.g., 1000),
@@ -1062,6 +1066,9 @@ A crucial limitation of the BLRT is that it is very computationally expensive.
 With this in mind, `table_fit()` does not provide the BLRT by default.
 Specific models can be compared using the function `BLRT()`.
 
+There are known limitations to both aforementioned tests;
+on the one hand, the LRT is known to contain mathematical inaccuracies [@jeffriesNoteTestingNumber2003a], yet still shows reasonable performance in simulation studies.
+On the other hand, the BLRT is particularly sensitive to model misspecification and is thus not appropriate for exploratory applications [@nylund_deciding_2007].
 The first author's anecdotal experience as a statistical co-author on LCA studies suggests that both aforementioned tests tend to be liberal,
 returning significant p-values for models with more classes even when other indicators suggest that those models are overfitted (e.g., near-zero class counts).
 Other authors have reported similar experiences [@sinha_practitioners_2021], which matches the differences between LRT and ICs from information theory as LRT tests and compare the models based on in sample predictive accuracy, and ICs evaluates and compare the models out-of-sample predictive accuracy which helps to control for overfitting [@mcelreath_statistical_2020].
@@ -1122,18 +1129,19 @@ When the size of the smallest class is not much larger than the number of parame
 proceed with caution:
 The model might not be locally identified in that class [@depaoli_mixture_2013].
 Existing rules of thumb have focused on smallest class size in terms of percentage of the total sample size.
-This is not particularly meaningful,
-however, as the primary concern is that small classes may comprise too few observations to accurately estimate class parameters.
-Thus, a better rule of thumb might be to ascertain that the smallest class has at least as many observations as the average number of parameters per class.
-<!-- DA: what is many more? When making a rule a thumb, you have to eyeball a quantity and recommend it for users without statistical intuition
-MGV: here I changed it "at least as many", as a low bound recommendation-->
+A major concern with these rules of thumb is that it ignores the absolute sample size within each class.
+Small classes may comprise too few observations to accurately estimate class parameters.
+Thus, a better rule of thumb might be to ascertain that the smallest class is sufficiently large;
+both in terms of absolute sample size and in terms of the number of observations per estimated parameter.
+Well-established rules of thumb suggest ratios of 10 or 20 observations per parameter [@klinePrinciplesPracticeStructural2016; @jacksonRevisitingSampleSize2003].
 Another good practice is to ensure that the smallest class has a unique and meaningful substantive interpretation.
-If the smallest class does not comprise at least a few observations per parameter, or is redundant with another larger class, a simpler solution is preferable.
+If the smallest class has too few observations per parameter, or its substantive interpretation is redundant with another class,
+a simpler solution with fewer classes or a simpler class-specific model is preferable.
 
 To assess classification accuracy, we turn to the third diagnostic table:
 the average posterior probabilities by most likely class membership, $P_{p_{(M = m)}}$
 which can be obtained using `class_prob(res, type = "avg.mostlikely")`.
-For participants assigned to one particular class (rows) according to $M$ (most likely class based on predicted probabilities),
+For participants assigned to one particular class (rows) according to $M$ (most likely class according to posterior class probabilities),
 this table gives the mean probability of being assigned to each class (columns).
 This table is obtained by calculating the column means of $P$ for the 
 $k$ subsets of observations with most likely class of $M = 1 \ldots k$.
@@ -1359,9 +1367,7 @@ the minimum proportion of cases per class can be used to diagnose classes that a
 By default, `table_fit()` reports the minimum and maximum proportion of cases,
 based on most likely class membership.
 Fifth, the LMR or BLRT can be reported if it is a part of the class enumeration strategy, using `lr_lmr()` and `BLRT()`.
-By default, `table_fit()` reports the LMR (also called Vuong’s robust likelihood-ratio test, VLMR) for subsequent models in the table.
-
-<!-- DA: We do not introduce VLM, what does it stand for? -->
+By default, `table_fit()` reports the LMR for subsequent models in the table.
 
 ### Reporting Results
 
