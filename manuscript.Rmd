@@ -1,28 +1,38 @@
 ---
-title             : "Best Practices in Latent Class Analysis using Free Open Source Software"
-shorttitle        : "BEST PRACTICES IN LATENT CLASS ANALYSIS"
+title             : "Best Practices in Latent Class Analysis using the Free Open Source Software"
+shorttitle        : "BEST PRACTICES LATENT CLASS ANALYSIS"
 author: 
   - name          : "Caspar J. van Lissa"
-    affiliation   : "1,2"
+    affiliation   : "1"
     corresponding : yes    # Define only one corresponding author
-    address       : "Padualaan 14, 3584CH Utrecht, The Netherlands"
-    email         : "c.j.vanlissa@gmail.com"
+    address: "Professor Cobbenhagenlaan 125, 5037 DB Tilburg, The Netherlands"
+    email: "c.j.vanlissa@tilburguniversity.edu"
+    role:         # Contributorship roles (e.g., CRediT, https://credit.niso.org/)
+      - Conceptualization
+      - Software
+      - Supervision
+      - Writing – original draft
+      - Writing – review & editing
   - name          : "Mauricio Garnier-Villarreal"
-    affiliation   : "3"
+    affiliation   : "2"
     corresponding : no   
     email         : "m.garniervillarreal@vu.nl"
+    role:
+      - Writing – review & editing
   - name          : "Daniel Anadria"
-    affiliation   : "1"
+    affiliation   : "3"
     corresponding : no
-    address       : "Padualaan 14, 3584CH Utrecht, The Netherlands"
     email         : "d.anadria@uu.nl"
+    role:
+      - Writing – original draft
+      - Writing – review & editing
 affiliation:
   - id            : "1"
-    institution   : "Utrecht University, Methodology & Statistics"
+    institution   : "Tilburg University, Methodology & Statistics"
   - id            : "2"
-    institution   : "Open Science Community Utrecht"
-  - id            : "3"
     institution   : "Vrije Universiteit Amsterdam, Sociology"
+  - id            : "3"
+    institution   : "Utrecht University, Methodology & Statistics"
 author_note: |
   Methodology & Statistics
   Padualaan 14
