@@ -113,7 +113,7 @@ FOSS is freely available for anyone to use, modify, and distribute, which means 
 This is invaluable for reducing gatekeeping of researchers with limited budgets, such as those from developing countries.
 Furthermore, FOSS promotes collaboration within the scientific community,
 as its users can contribute to the development, maintenance, and support of the software.
-Finally, FOSS promotes tranparency and reproducibility: Because the source code for FOSS is accessible,
+Finally, FOSS promotes transparency and reproducibility: Because the source code for FOSS is accessible,
 researchers can review and verify the methods and algorithms used,
 which helps to ensure the integrity and reliability of research findings.
 Overall, FOSS has the potential to significantly improve the efficiency and effectiveness of scientific research, while also promoting transparency, collaboration, and inclusivity within the scientific community.
@@ -121,6 +121,7 @@ Overall, FOSS has the potential to significantly improve the efficiency and effe
 Notable FOSS for LCA includes `mclust` [@scrucca_mclust_2016], `depmixS4` [@visser_depmixs4_2010], and `OpenMx` [@neale_openmx_2016].
 A crucial limitation of these existing packages is that some have limited functionality (e.g., `mclust`),
 or implement specific innovations (e.g., `depmixS4`).
+<!-- DA: I don't understand the message for `depmixS4`. Why is 'implementing specific innovations' a limitation? If this is a euphemism, we can express the limitation more directly, or qualify these innovations. -->
 `OpenMx` is unique in that, like proprietary *Mplus*, it implements LCA in the context of a fully featured structural equation modeling framework.
 A major downside of `OpenMx` is that it is not very user-friendly and its functionality is poorly documented.
 
@@ -195,7 +196,7 @@ knitr::include_graphics("shoedens.png")
 ```
 
 The distribution is evidently bimodal, which bodes well for the intended
-mixture model. In this case, the number of classes is known a-priori.
+mixture model. In this case, the number of classes is known a priori.
 When estimating a two-class mixture model, the detective observes that
 the model estimates the mean shoe size of the two groups as equal to
 `r report(estparam[1], equals = FALSE)` and
@@ -227,7 +228,7 @@ factor analysis as a "variable-centered" technique
 
 When the focus is on the model parameters in each group, LCA can be
 thought of as similar to a multi-group structural equation model. The
-main distinction is that group membership is not known a-priori, but estimated from the data.
+main distinction is that group membership is not known a priori, but estimated from the data.
 Whereas in a multi-group model, the data are split by group and treated
 as independent samples, in LCA, all cases contribute to the estimation
 of all parameters in all groups. The relative contribution of each case
@@ -944,7 +945,7 @@ When poor data quality is to blame, the only solution is to collect more, or hig
 Class enumeration refers to the process of determining the appropriate number of classes.
 It is approached differently for exploratory versus confirmatory LCA.
 In exploratory LCA, the set of models typically consists of a sequence from 1 to the maximum number of classes $k$. 
-The number $k$ may be chosen a-priori or dictated by the data.
+The number $k$ may be chosen a priori or dictated by the data.
 It is sensible to limit $k$ to the maximum number of classes that result in valid and interpretable solutions (also see Classification Diagnostics).
 Above a certain number of classes,
 convergence problems typically arise, 
@@ -1089,7 +1090,7 @@ Future versions of `tidySEM` will likely incorporate this test.
 <!-- 1. We do not consider classes with, on average, fewer than 5 participants per parameter in a class due to potential local underidentification -->
 <!-- 1. We do not consider solutions with entropy < .90 because poor class separability compromises interpretability of the results -->
 <!-- 1. We do not consider solutions with minimum posterior classification probability < .90 because poor class separability compromises interpretability of the results -->
-<!-- Nevertheless, researchers can set an a-priori threshold for the minimum proportion of cases per class, -->
+<!-- Nevertheless, researchers can set an a priori threshold for the minimum proportion of cases per class, -->
 <!-- for example by considering only solutions with a number of participants at least five times as large as the number of parameters per class. -->
 Classification diagnostics assess whether the classes identified by LCA are distinct and clearly separable.
 These diagnostics are not model fit indices and should never be used for class enumeration.
