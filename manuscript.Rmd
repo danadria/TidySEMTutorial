@@ -573,7 +573,7 @@ and moderating the `tidyLPA` Google group suggest that the
 misapplication of mixture models to ordinal (e.g., Likert-type)
 indicators is the most common source of user error. Whereas it has been
 argued that some parametric methods are robust when scales with 7+
-response categories are treated as continuous [e.g., @norman_likert_2010; rhemtulla_when_2012],
+response categories are treated as continuous [e.g., @norman_likert_2010; @rhemtulla_when_2012],
 it is very unlikely
 that an ordinal variable can be modeled as a *mixture* of multiple
 normal distributions.
@@ -763,14 +763,14 @@ The second consideration in model specification is the risk of overfitting [@has
 Overfitting occurs when a model has many parameters relative to the number of observations,
 causing it to capture idiosyncratic noise in the sample and limiting its generalizability to new samples.
 As explained before, the number of parameters in LCA scales with the number of estimated classes.
-Consequently, LCA with many classes have a potentially very high number of parameters.
+Consequently, LCA with many classes have a large number of parameters.
 In Bayesian mixture modeling,
 it was observed that if the estimated number of classes exceeded the true number, the number of observations assigned to these classes tended towards zero as sample size increased [@rousseau_asymptotic_2011].
 Although it is not known whether frequentist LCA exhibits the same behavior,
 low class counts are still an indicator of potential overfitting.
 The section on Class Enumeration addresses ways to guard against overfitting.
 
-Models can be specified in `tidySEM` in different ways.
+In `tidySEM` models can be specified in different ways.
 The wrapper functions `mx_profiles()` and `mx_lca()` construct LCA models for continuous and ordinal indicators respectively, without needing to specify model syntax.
 The function `mx_profiles()` has two arguments to free elements of the covariance matrix: `variances` and `covariances`.
 By default, `mx_profiles()` fixes covariances to zero, and thus performs latent profile analysis.
@@ -859,7 +859,7 @@ because the algorithm begins with random starting values,
 it is inefficient because many marbles are likely to start far away from any valley.
 Additionally, if all sets of starting values are close to a specific local optimum,
 there is a risk that the global optimum is never found.
-An alternative solution that overcomes these challenges is to use a global optimizer, like simulated annealing [SA, @corana_minimizing_1987].
+An alternative solution that overcomes these challenges is to use a global optimizer, like *simulated annealing* [*SA*, @corana_minimizing_1987].
 SA does not behave quite like the marbles of the random starts approach;
 instead, it iteratively considers some "destination" in the landscape,
 and compares its $-2LL$ to the current one.
@@ -916,7 +916,7 @@ Specify the argument `run = FALSE` in the call to `mx_mixture()` and related fun
 This returns the model with default starting values, which can be updated.
 Nonconvergence and local optima may also be overcome by re-estimating the model while permuting the starting values.
 The `OpenMx` package contains a family of functions for this purpose: `mxTryHard()` and `mxTryHardWideSearch()` for continuous indicators, and `mxTryHardOrdinal()` for ordinal indicators.
-When poor data quality is to blame, the only solution is to collect more, or higher quality, data.
+When poor data quality is to blame, the only solution is to collect more, or higher quality data.
 
 <!-- A problem which can occur is that of inadmissible solutions. With binary -->
 <!-- indicators, LCA is modeling a cross-table with all the predictors. The -->
@@ -964,7 +964,7 @@ In exploratory LCA, these criteria may be decisive in selecting a final model;
 in the confirmatory case, the burden of proof is reversed: there must be convincing evidence against the theoretical model in order to reject it.
 Statistical criteria to consider in class enumeration include model fit indices and
 likelihood ratio tests [@weller_latent_2020; @masyn_latent_2013].
-Substantive criteria include convergence and model identification,
+Substantive criteria include model convergence and identification, and
 class separability,
 and interpretability.
 We address each of these criteria below.
@@ -984,7 +984,7 @@ We address each of these criteria below.
 
 Due to the lack of absolute fit indices for LCA, the assessment of relative fit
 relies on information criteria.
-Information criteria (ICs) are computed from the $-2LL$,
+*Information criteria* (*ICs*) are computed from the $-2LL$,
 which is the most basic fit measure, testing the overall hypothesis if the model properly represents the data.
 In addition to capturing model fit, ICs add a penalty for model complexity thus
 preferring more model fit and parsimony.
@@ -1019,8 +1019,8 @@ The preferred number of classes can be found at the inflection point where the s
 Adding this many classes results in substantial decreases of the ICs,
 and adding additional classes may add too much complexity to the model while not lowering the IC value.
 
-Given a specific information criterion, it is also possible to calculate so-called "IC-weights",
-which indicate the relative support the data provides for each model in the set [@wagenmakers_aic_2004].
+Given a specific information criterion, it is also possible to calculate *IC-weights*,
+which indicate the relative support the data provides for each model under consideration [@wagenmakers_aic_2004].
 This is particularly useful for confirmatory LCA,
 as it allows one to quantify the support for the theoretical model.
 In `tidySEM`, IC-weights are calculated by calling `ic_weights()` on the model fit table.
@@ -1065,7 +1065,7 @@ Simulation studies suggest that the BLRT has greater statistical power than the 
 although both perform comparably well at detecting the true number of classes [@nylund_deciding_2007; @tein_statistical_2013].
 A crucial limitation of the BLRT is that it is very computationally expensive.
 With this in mind, `table_fit()` does not provide the BLRT by default.
-Specific models can be compared using the function `BLRT()`.
+Instead, specific models can be compared using the function `BLRT()`.
 
 There are known limitations to both aforementioned tests;
 on the one hand, the LRT is known to contain mathematical inaccuracies [@jeffriesNoteTestingNumber2003a], yet still shows reasonable performance in simulation studies.

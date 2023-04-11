@@ -636,7 +636,7 @@ and moderating the \texttt{tidyLPA} Google group suggest that the
 misapplication of mixture models to ordinal (e.g., Likert-type)
 indicators is the most common source of user error. Whereas it has been
 argued that some parametric methods are robust when scales with 7+
-response categories are treated as continuous {[}e.g., Norman (2010); rhemtulla\_when\_2012{]},
+response categories are treated as continuous (e.g., Norman, 2010; Rhemtulla, Brosseau-Liard, \& Savalei, 2012),
 it is very unlikely
 that an ordinal variable can be modeled as a \emph{mixture} of multiple
 normal distributions.
@@ -779,14 +779,14 @@ The second consideration in model specification is the risk of overfitting (Hast
 Overfitting occurs when a model has many parameters relative to the number of observations,
 causing it to capture idiosyncratic noise in the sample and limiting its generalizability to new samples.
 As explained before, the number of parameters in LCA scales with the number of estimated classes.
-Consequently, LCA with many classes have a potentially very high number of parameters.
+Consequently, LCA with many classes have a large number of parameters.
 In Bayesian mixture modeling,
 it was observed that if the estimated number of classes exceeded the true number, the number of observations assigned to these classes tended towards zero as sample size increased (Rousseau \& Mengersen, 2011).
 Although it is not known whether frequentist LCA exhibits the same behavior,
 low class counts are still an indicator of potential overfitting.
 The section on Class Enumeration addresses ways to guard against overfitting.
 
-Models can be specified in \texttt{tidySEM} in different ways.
+In \texttt{tidySEM} models can be specified in different ways.
 The wrapper functions \texttt{mx\_profiles()} and \texttt{mx\_lca()} construct LCA models for continuous and ordinal indicators respectively, without needing to specify model syntax.
 The function \texttt{mx\_profiles()} has two arguments to free elements of the covariance matrix: \texttt{variances} and \texttt{covariances}.
 By default, \texttt{mx\_profiles()} fixes covariances to zero, and thus performs latent profile analysis.
@@ -848,7 +848,7 @@ because the algorithm begins with random starting values,
 it is inefficient because many marbles are likely to start far away from any valley.
 Additionally, if all sets of starting values are close to a specific local optimum,
 there is a risk that the global optimum is never found.
-An alternative solution that overcomes these challenges is to use a global optimizer, like simulated annealing (SA, Corana et al., 1987).
+An alternative solution that overcomes these challenges is to use a global optimizer, like \emph{simulated annealing} (\emph{SA}, Corana et al., 1987).
 SA does not behave quite like the marbles of the random starts approach;
 instead, it iteratively considers some ``destination'' in the landscape,
 and compares its \(-2LL\) to the current one.
@@ -905,7 +905,7 @@ Specify the argument \texttt{run\ =\ FALSE} in the call to \texttt{mx\_mixture()
 This returns the model with default starting values, which can be updated.
 Nonconvergence and local optima may also be overcome by re-estimating the model while permuting the starting values.
 The \texttt{OpenMx} package contains a family of functions for this purpose: \texttt{mxTryHard()} and \texttt{mxTryHardWideSearch()} for continuous indicators, and \texttt{mxTryHardOrdinal()} for ordinal indicators.
-When poor data quality is to blame, the only solution is to collect more, or higher quality, data.
+When poor data quality is to blame, the only solution is to collect more, or higher quality data.
 
 \hypertarget{class-enumeration}{%
 \subsubsection{Class Enumeration}\label{class-enumeration}}
@@ -932,7 +932,7 @@ In exploratory LCA, these criteria may be decisive in selecting a final model;
 in the confirmatory case, the burden of proof is reversed: there must be convincing evidence against the theoretical model in order to reject it.
 Statistical criteria to consider in class enumeration include model fit indices and
 likelihood ratio tests (Masyn, 2013; Weller et al., 2020).
-Substantive criteria include convergence and model identification,
+Substantive criteria include model convergence and identification, and
 class separability,
 and interpretability.
 We address each of these criteria below.
@@ -942,7 +942,7 @@ We address each of these criteria below.
 
 Due to the lack of absolute fit indices for LCA, the assessment of relative fit
 relies on information criteria.
-Information criteria (ICs) are computed from the \(-2LL\),
+\emph{Information criteria} (\emph{ICs}) are computed from the \(-2LL\),
 which is the most basic fit measure, testing the overall hypothesis if the model properly represents the data.
 In addition to capturing model fit, ICs add a penalty for model complexity thus
 preferring more model fit and parsimony.
@@ -977,8 +977,8 @@ The preferred number of classes can be found at the inflection point where the s
 Adding this many classes results in substantial decreases of the ICs,
 and adding additional classes may add too much complexity to the model while not lowering the IC value.
 
-Given a specific information criterion, it is also possible to calculate so-called ``IC-weights'',
-which indicate the relative support the data provides for each model in the set (Wagenmakers \& Farrell, 2004).
+Given a specific information criterion, it is also possible to calculate \emph{IC-weights},
+which indicate the relative support the data provides for each model under consideration (Wagenmakers \& Farrell, 2004).
 This is particularly useful for confirmatory LCA,
 as it allows one to quantify the support for the theoretical model.
 In \texttt{tidySEM}, IC-weights are calculated by calling \texttt{ic\_weights()} on the model fit table.
@@ -1005,7 +1005,7 @@ Simulation studies suggest that the BLRT has greater statistical power than the 
 although both perform comparably well at detecting the true number of classes (Nylund et al., 2007; Tein et al., 2013).
 A crucial limitation of the BLRT is that it is very computationally expensive.
 With this in mind, \texttt{table\_fit()} does not provide the BLRT by default.
-Specific models can be compared using the function \texttt{BLRT()}.
+Instead, specific models can be compared using the function \texttt{BLRT()}.
 
 There are known limitations to both aforementioned tests;
 on the one hand, the LRT is known to contain mathematical inaccuracies (Jeffries, 2003), yet still shows reasonable performance in simulation studies.
@@ -1678,6 +1678,9 @@ Pavlopoulos, D., \& Vermunt, J. K. (2015). \emph{Measuring temporary employment.
 
 \leavevmode\vadjust pre{\hypertarget{ref-peikert_reproducible_2021}{}}%
 Peikert, A., Van Lissa, C. J., \& Brandmaier, A. M. (2021). Reproducible research in r: A tutorial on how to do the same thing more than once. \emph{Psych}, \emph{3}(4), 836--867. \url{https://doi.org/10.3390/psych3040053}
+
+\leavevmode\vadjust pre{\hypertarget{ref-rhemtulla_when_2012}{}}%
+Rhemtulla, M., Brosseau-Liard, P. É., \& Savalei, V. (2012). When can categorical variables be treated as continuous? A comparison of robust continuous and categorical {SEM} estimation methods under suboptimal conditions. \emph{Psychological Methods}, \emph{17}, 354--373. \url{https://doi.org/10.1037/a0029315}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Rissanen_1985}{}}%
 Rissanen, J. (1983). {A Universal Prior for Integers and Estimation by Minimum Description Length}. \emph{The Annals of Statistics}, \emph{11}(2), 416--431. \url{https://doi.org/10.1214/aos/1176346150}
