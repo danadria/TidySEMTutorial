@@ -121,7 +121,7 @@ Overall, FOSS has the potential to significantly improve the efficiency and effe
 Notable FOSS for LCA includes `mclust` [@scrucca_mclust_2016], `depmixS4` [@visser_depmixs4_2010], and `OpenMx` [@neale_openmx_2016].
 A crucial limitation of these existing packages is that some have limited functionality (e.g., `mclust`),
 or implement specific innovations (e.g., `depmixS4`).
-<!-- DA: I don't understand the message for `depmixS4`. Why is 'implementing specific innovations' a limitation? If this is a euphemism, we can express the limitation more directly, or qualify these innovations. -->
+<!-- DA: I don't understand the message for `depmixS4`. Why is 'implementing specific innovations' a limitation? If this is a euphemism, we can express the limitation more directly, i.e. qualify these innovations, e.g. [...] which are not software-agnostic (if that is the limitation). -->
 `OpenMx` is unique in that, like proprietary *Mplus*, it implements LCA in the context of a fully featured structural equation modeling framework.
 A major downside of `OpenMx` is that it is not very user-friendly and its functionality is poorly documented.
 
@@ -131,7 +131,7 @@ The package also includes convenience functions to obtain relevant statistics, t
 The primary purpose of the `tidySEM` package is to provide a tidy workflow for generating, estimating, reporting, and plotting structural equation models in a software-agnostic way.
 The user interface is simple, as models can be specified using the widely used `lavaan` syntax [@rosseel_lavaan_2012].
 The package contains user-friendly wrapper functions to conduct LCA with sensible defaults,
-but the resulting models can still be fully customized making it a low threshold - high ceiling package.
+but the resulting models can still be fully customized making it a low threshold high ceiling package.
 For instance, LCA models constructed in `tidySEM` inherit the `MxModel` format from `OpenMx` which renders them compatible with various legacy functions from `OpenMx` and related LCA ecosystem .
 Since `tidySEM` was developed with open science in mind, it facilitates fully-reproducible analyses and adheres to the *FAIR (Findable, Accessible, Interoperable, and Reusable) software principles* [@lamprecht_towards_2020],
 and the [*OpenSSF Best Practices*](https://bestpractices.coreinfrastructure.org/en/criteria) for FOSS software.
@@ -241,14 +241,14 @@ Specifically, the posterior class probability that an individual belongs to a la
 can be computed from the likelihood of that individual's observed data given the class-specific model.
 These posterior class probabilities can be used to weight follow-up analyses,
 or to assign individuals to classes based on their highest class probability.
-If the classes are clearly distinct, measurement error is low, and the latter approach may be acceptable.
-This perspective on mixture modeling is sometimes referred to as "model-based
-clustering" [@hennig_handbook_2015; @scrucca_mclust_2016]. 
-Many clustering algorithms apply some recursive splitting algorithm to the data. By
-contrast "model-based" clustering refers to the fact that LCA estimates
+The latter approach may be acceptable when the classes are clearly distinct and the measurement error is low. 
+This perspective on mixture modeling is sometimes referred to as *model-based
+clustering* [@hennig_handbook_2015; @scrucca_mclust_2016]. 
+Many clustering algorithms apply some recursive splitting algorithm to the data. 
+By contrast, model-based clustering refers to the fact that LCA estimates
 cluster membership based on a parametric model.
-Since a parametric model estimates only a fixed number of parameters,
-it can be a relatively parsimonious solution compared to non-parametric techniques.
+Since parametric models estimate only a fixed number of parameters,
+they can be a relatively parsimonious solution compared to non-parametric techniques. 
 
 Finally, in the context of machine learning, LCA can be considered as an
 *unsupervised* learning method for *classification* [@figueiredo_unsupervised_2002].
@@ -259,18 +259,18 @@ outcome: class membership.
 
 ## A Taxonomy of Latent Class Analysis Methods
 
-The term LCA was initially conceived to refer to analyses with categorical,
+Initially, the term LCA was conceived to refer to analyses with categorical,
 usually binary indicators [@collins_latent_2009].
-It was later generalized to refer to any technique that estimates a categorical latent variable based on a
-parametric model of observed indicators, as it only refers
+Later, it became generalized to refer to any technique that estimates a categorical latent variable based on a
+parametric model of observed indicators, as the term only refers
 to the purpose of the analysis, and does not imply restrictions to the
 model used, or the level of measurement of the indicators [@vermunt_latent_2004].
 To prevent ambiguity, we refer to LCA with binary or ordinal indicators as *LCA with ordinal indicators*,
-and the sole *LCA* expression as an umbrella term.
+and use *LCA* as an umbrella term for the family techniques.
 Given the abundance of redundant terms in use for closely related types of LCA models,
 we here provide a rudimentary taxonomy.
 
-A common type of LCA is the *finite Gaussian mixture model*; a
+A common type of LCA is the *finite Gaussian mixture model*, a
 univariate analysis where the observed distribution of a single variable
 is assumed to result from a mixture of a known number of normal
 (Gaussian) distributions. The parameters of a finite Gaussian mixture
@@ -288,7 +288,7 @@ indicators. Conditional independence means that, after class membership
 is accounted for,
 the residual covariances/correlations between indicators are
 assumed to be zero.
-In some cases, such constraints
+In some cases such constraints
 will be inappropriate; for instance when the cohesion between indicators
 is expected to differ between classes [@collins_latent_2009].
 Consider, for example, a mixture model of ocean plastic particles, which found two classes of particles based on length and width:
@@ -296,11 +296,11 @@ a class of larger particles with a low correlation between length and width,
 and a class of smaller particles with a high correlation between length and width.
 The reason for this difference in correlations makes theoretical sense:
 the large particles were heterogenous in shape,
-whereas the smaller particles had been polished to a more uniform (rounded) shape by the elements [@alkema_maximizing_2022].
+whereas the smaller particles had been polished to a more uniform, rounded shape by the elements [@alkema_maximizing_2022].
 
 A longitudinal extension of LCA is the *Hidden Markov Model* (*HMM*, also
 called *Latent Transition Analysis*), which estimates the change in class
-membership over time under the Markov assumption. The Markov
+membership over time under the *Markov assumption*. The Markov
 assumption states that class membership at time $t$ is only affected
 by the class membership at time $t-1$. The structural part of the model
 is comprised of the initial states (proportion of the sample in each
@@ -331,7 +331,7 @@ latent trajectories is assumed to be error variance.
 
 There are multiple use cases for which LCA methods are suitable. We present their brief overview.
 
-### Testing theory
+### Testing Theory
 
 Although LCA is often discussed as an exploratory analysis technique,
 it can also be used in a confirmatory manner.
@@ -365,7 +365,7 @@ Knowing that the population of suicidal service members is heterogeneous can inf
 Appendix B offers a tutorial for exploratory LCA,
 based on the aforementioned study of the distribution of ocean microplastics [@alkema_maximizing_2022].
 
-### Measurement model
+### Measurement Model
 
 LCA can also be used as a measurement model, similar to confirmatory factor analysis.
 This is useful when class membership is measured imperfectly by several indicators:
@@ -391,7 +391,7 @@ see a study on university admission tests of Saudi Arabian students [@tsaousis_m
 <!-- indicators. Therefore, gender should be included as a covariate when fitting  -->
 <!-- a LCA model in order to obtain unbiased estimates. -->
 
-### Dimension reduction
+### Dimension Reduction
 
 LCA can also be used to reduce high-dimensional data
 to just a few prototypes.
@@ -522,7 +522,7 @@ including latent
 class growth analysis [@van_de_schoot_grolts-checklist_2017] and latent
 class analysis with ordinal indicators [e.g., @nylund-gibson_ten_2018].
 These guidelines were generalized to be relevant to all types of LCA, 
-and updated to current best practices, as explained below.
+and updated to current best practices showcasing `tidySEM` syntax.
 <!-- In order to aid researchers working with latent trajectory models, -->
 <!-- @van_de_schoot_grolts-checklist_2017 developed a protocol called -->
 <!-- Guidelines for Reporting on Latent Trajectory Studies (GRoLTS). -->
@@ -532,17 +532,17 @@ and updated to current best practices, as explained below.
 ```{r checkest-tab, include=TRUE}
 item <- data.frame(Item = c(
   "Examining Observed Data",
+  "Data Preprocessing",
   "Handling Missing Data",
-  "Alternative Model Specifications",
-  "Software",
-  "Algorithm",
+  "Model Specification",
+  "Estimation and Convergence",
   "Class Enumeration",
   "Model Fit Indices",
+  "Nested Model Tests",
   "Classification Diagnostics",
-  "Interpreting Class Solutions",
-  "Label switching"
-  
-))
+  "Labelling Classes",
+  "Follow-up Analyses"
+)) 
 
 item$`#` = paste0(1:length(item$Item), ".")
 knitr::kable(item[, c("#", "Item")], caption = "")
@@ -595,7 +595,7 @@ LCA with ordinal indicators is more appropriate.
 <!-- Nominal variables must be recoded to multiple ordinal dummy variables, e.g., using the function `mx_dummies()`.  -->
 LCA can accommodate variables of different measurement levels: continuous, binary, nominal, and ordinal.
 Numeric variables should have an interval measurement level,
-such that it is sensible to estimate theirmeans and (co)variances.
+such that it is sensible to estimate their means and (co)variances.
 For the remaining three measurement levels,
 some preprocessing is required.
 The exact data types accepted by `tidySEM` at the time of writing are `numeric` and `ordered`.
